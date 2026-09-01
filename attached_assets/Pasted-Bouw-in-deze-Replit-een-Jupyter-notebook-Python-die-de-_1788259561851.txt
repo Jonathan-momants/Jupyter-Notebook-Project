@@ -1,0 +1,86 @@
+Bouw in deze Replit een Jupyter notebook (Python) die de basis legt voor
+Momants' sentimentclassificatie. Dit is een leeromgeving/prototype, geen
+productiecode. Scope voor nu: ALLEEN sentiment. Onderwerp-classificatie
+komt in een latere stap, niet nu bouwen.
+
+DOEL
+Ruwe berichten inladen — nu vanuit een lokaal CSV-bestand, straks
+vanuit een endpoint op de Momants-database — de bezoekersberichten per
+gesprek groeperen, het sentiment bepalen met een HuggingFace-model, en
+de uitkomst met een zekerheidsscore in een tabel zetten. De databron
+moet zo gebouwd zijn dat overstappen van bestand naar endpoint later
+één regel is, geen herschrijving.
+
+STAP 1 — Setup
+- Installeer: transformers, torch, pandas
+- Laad het sentimentmodel via de `pipeline`-functie van transformers,
+  task "text-classification", model "tabularisai/multilingual-sentiment-analysis".
+- Zet het model-ID en de label-mapping (zie stap 5) in aparte variabelen
+  bovenaan het notebook — zo kan het model later vervangen worden door
+  alleen die paar regels te wijzigen.
+- Eén stap per cel, met een korte uitleg in gewone taal erboven — ik leer
+  Python nog.
+
+STAP 2 — Data inladen (bestand nu, endpoint later)
+- Zet het inladen achter één functie, bv. `laad_gesprekken(bron)`, die de
+  rest van het notebook aanroept zonder te weten waar de data vandaan komt.
+- Voor nu: `bron` is een lokaal CSV-pad, ingelezen met pd.read_csv(pad).
+- Bouw het endpoint zelf NIET — dat bestaat nog niet, dat is Mark's kant.
+  Zet wel een placeholder-comment klaar voor later:
+    # Zodra het endpoint bestaat: pd.read_csv(url), met een API-key uit
+    # Replit Secrets (nooit in de code), een `since`-parameter zodat je
+    # alleen nieuwe gesprekken ophaalt, en in blokken (bv. 1000 rijen)
+    # zodat één verzoek niet vastloopt bij veel data.
+
+STAP 3 — Groeperen
+De CSV is een export op berichtniveau, niet op gespreksniveau: elke rij
+is één bericht, geen gesprek. Relevante kolommen:
+  created_at, text, from_agent, message_type, conversation_id, agent_id
+- Groepeer de rijen per `conversation_id` en sorteer elke groep op
+  `created_at`, zodat je per gesprek de berichten in de juiste volgorde hebt.
+- Filter binnen elk gesprek op bezoekersberichten: `from_agent == False`
+  én `text` niet leeg. Sentiment gaat over hoe de bezoeker zich voelt, niet
+  over de toon van de bot-antwoorden.
+- Sla rijen over waarvan `text` een kale URL is of leeg (stickers, knoppen,
+  interactieve kaarten zonder vrije tekst) — die zeggen niets over sentiment.
+
+STAP 4 — Privacy: kolommen die NIET mee mogen
+- Gebruik alleen: created_at, text, from_agent, message_type,
+  conversation_id, agent_id.
+- Laat `raw_json` en `chat_sender` volledig achterwege bij het inlezen
+  (of drop ze meteen erna) — `raw_json` bevat WhatsApp-profielnamen en
+  telefoonnummers in leesbare tekst, en `chat_sender` is soms zelf een kaal
+  telefoonnummer in plaats van een intern ID. Ook `media`, `media_url` en
+  `file` niet meenemen.
+- Harde regel: zolang er geen aparte stap is die telefoonnummers uit `text`
+  zelf filtert (bezoekers typen soms hun eigen nummer in een bericht), mogen
+  alleen nep-/testgesprekken gebruikt worden. Geen echte bezoekersdata naar
+  Replit tot die stap er is.
+
+STAP 5 — Sentiment classificeren
+- Roep het model per bezoekersbericht aan; dat geeft een label en een score
+  terug (bijvoorbeeld "Negative", 0.81).
+- Zet de modellabels om naar de vier Momants-waarden via een losse mapping
+  (zodat een ander model straks alleen een nieuwe mapping nodig heeft):
+    Very Positive, Positive  -> Positief
+    Neutral                  -> Neutraal (taakgericht)
+    Negative                 -> Negatief (gefrustreerd)
+    Very Negative             -> Boos (paniek)
+  Dit is een aanname, geen vaste regel — check zelf een paar voorbeelden
+  of dit klopt voor jullie gesprekken.
+- Bepaal ook één sentiment per heel gesprek (bijv. het laatste
+  bezoekersbericht, of het meest negatieve) — leg in een comment vast
+  welke keuze je maakt en waarom.
+
+STAP 6 — Output
+- Eén tabel: conversation_id, aantal_bezoekersberichten, sentiment_gesprek,
+  zekerheid.
+- Extra kolom met een korte uitleg in gewone taal per rij.
+- Print aan het eind een voorbeeld van 5-10 rijen.
+
+NIET DOEN
+- Geen live endpoint bouwen — bestaat nog niet, dat is Mark's kant.
+- Geen onderwerp-classificatie (komt later).
+- Geen model voor urgentie.
+- Geen wegschrijven naar de Momants-database — blijft lokaal in het notebook.
+- Geen raw_json of chat_sender inlezen of printen, ook niet "even om te kijken".

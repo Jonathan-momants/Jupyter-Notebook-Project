@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "uu4EA1PM36FVxV1cJ-akq"
+uri = "file://notebooks/00_momants_sentiment.ipynb"
+type = "unspecified"
+title = "Momants sentimentclassificatie"
+description = "Uitgevoerde Jupyter-notebook met synthetische testdata, privacyveilige CSV-invoer, Hugging Face-sentimentanalyse en één samenvatting per gesprek."
+logical_id = "3194aeec-0e89-4006-ac40-88e903b2969e"
+content_hash = "sha256:a1e9176fec13b416ea4f70827afc6e92e08ae532728a46abcc53155c8054bfd4"
+size = 35515
+mtime_ms = 1788259880766
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/3194aeec-0e89-4006-ac40-88e903b2969e/665a0b9a-9512-47d7-ad13-077c7dc89a8c"
+storage_version_token = "1788259906294675"
+content_type = "application/octet-stream"

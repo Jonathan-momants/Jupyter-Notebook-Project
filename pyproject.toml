@@ -1,9 +1,22 @@
 [project]
-name = "repl-nix-workspace"
+name = "momants-sentiment-notebook"
 version = "0.1.0"
-description = "Jupyter Notebook project"
-requires-python = ">=3.11"
+description = "Leeromgeving voor Momants sentimentclassificatie"
+requires-python = ">=3.11,<3.12"
 dependencies = [
     "ipykernel>=7.3.0",
     "jupyterlab>=4.6.3",
+    "pandas>=3.0.5",
+    "torch>=2.13.0",
+    "transformers>=4.57.1",
+]
+
+[[tool.uv.index]]
+explicit = true
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cpu", marker = "platform_system == 'Linux'" },
 ]
