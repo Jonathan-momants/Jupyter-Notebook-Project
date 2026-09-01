@@ -1,0 +1,11 @@
+{
+  "normalize_embeddings": false,
+  "labels": [
+    "Informatie opvragen",
+    "Probleem of Incident oplossen",
+    "Transactie / Mutatie uitvoeren",
+    "Actievere Navigatiehulp",
+    "Systeem bedienen",
+    "Noodgeval melden"
+  ]
+}

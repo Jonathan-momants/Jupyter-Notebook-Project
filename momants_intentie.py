@@ -104,6 +104,7 @@ def train_model(
         output_dir="model/checkpoints-intentie",
         batch_size=16,
         num_epochs=(1, 16),
+        num_iterations=2,
         report_to="none",
         save_strategy="no",
     )
