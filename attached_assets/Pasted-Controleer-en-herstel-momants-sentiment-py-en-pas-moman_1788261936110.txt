@@ -1,0 +1,20 @@
+Controleer en herstel momants_sentiment.py (en pas momants_sentiment.ipynb aan waar nodig) zodat het aan onderstaande eisen voldoet. Dit is een sentiment-classificatiesysteem voor Momants-gesprekken (festival-chatbot), scope is ALLEEN sentiment, geen onderwerp-classificatie.
+
+Model: tabularisai/multilingual-sentiment-analysis (DistilBERT, 5 klassen Very Negative t/m Very Positive). Zet het model-ID en de label-mapping in een geïsoleerde plek in de code (bv. losse constanten/functie bovenaan), zodat het model later makkelijk vervangen kan worden.
+
+Databron: CSV-export op BERICHTniveau met kolommen: created_at, updated_at, id, text, location, media, media_url, file, from_agent, chat_sender, message_type, raw_json, llm_message_dump, external_id, read_at, delivered_at, archived_at, agent_id, agent_member_id, conversation_id, card_type, mime_type.
+
+Verplichte eisen — controleer de HUIDIGE code hierop en corrigeer waar nodig:
+
+Data-inladen zit achter één functie (bv. laad_momants_csv(bron)) zodat een lokaal CSV-pad later vervangen kan worden door een endpoint-URL zonder de rest van de code aan te passen. Er mag GEEN poging staan om nu al een live endpoint aan te roepen — dat bestaat nog niet.
+Rijen worden gegroepeerd per conversation_id en binnen elk gesprek gesorteerd op created_at.
+Alleen bezoekersberichten tellen mee voor sentiment: from_agent == False én text niet leeg en geen kale URL.
+PRIVACY — dit is de belangrijkste eis: raw_json en chat_sender mogen NERGENS ingelezen, gebruikt of geprint worden (kunnen telefoonnummers en WhatsApp-profielnamen bevatten). Ook media, media_url, file niet gebruiken. Alleen deze kolommen mogen gebruikt worden: created_at, text, from_agent, message_type, conversation_id, agent_id. Laat expliciet zien (bv. door alleen die kolommen te selecteren direct na het inladen) dat de rest nooit verder de pipeline in gaat.
+Sentiment wordt PER GESPREK twee keer bepaald: apart op het EERSTE en het LAATSTE bezoekersbericht van dat gesprek (sentiment_start en sentiment_eind), NIET samengevat tot één waarde per gesprek. Bij een gesprek met maar 1 bezoekersbericht zijn start en eind gelijk (hetzelfde bericht, niet twee keer opnieuw het model aanroepen als dat niet nodig is). Handel ook gesprekken met 0 bezoekersberichten netjes af (skippen, niet crashen).
+Modellabels worden via een aparte mapping omgezet naar precies deze vier Momants-waarden: Positief / Neutraal (taakgericht) / Negatief (gefrustreerd) / Boos (paniek).
+Output is ÉÉN tabel (niet twee losse CSV's) met exact deze kolommen: conversation_id, aantal_bezoekersberichten, sentiment_start, zekerheid_start, sentiment_eind, zekerheid_eind, en een kolom met een korte uitleg in gewone taal per rij (bv. uitleg).
+NIET aanwezig mag zijn: onderwerp-classificatie, een urgentie-model, wegschrijven naar de Momants-database, of gebruik van echte bezoekersdata in voorbeelden/tests (gebruik alleen nep-/testdata, tenzij er een aparte stap is die telefoonnummers uit de vrije tekst zelf filtert).
+
+Loop de bestaande code puntsgewijs langs deze 8 punten na, benoem expliciet per punt of het klopt of niet, en pas de code aan waar het afwijkt. Let vooral op punt 4 (privacy) en punt 5/7 (per-gesprek start/eind sentiment in één outputtabel, niet een samengevat gesprekssentiment of twee losse bestanden).
+
+Geef me na afloop het volledige, bijgewerkte momants_sentiment.py bestand terug.

@@ -1,12 +1,10 @@
-"""Verwerk een Momants CSV-export tot sentiment per bericht en per gesprek."""
+"""Verwerk een Momants CSV-export tot start- en eindsentiment per gesprek."""
 
 from __future__ import annotations
 
 import argparse
-import csv
 from pathlib import Path
 import re
-import sys
 from typing import Iterable
 
 import pandas as pd
@@ -32,6 +30,16 @@ VEILIGE_KOLOMMEN = [
     "agent_id",
 ]
 
+UITVOERKOLOMMEN = [
+    "conversation_id",
+    "aantal_bezoekersberichten",
+    "sentiment_start",
+    "zekerheid_start",
+    "sentiment_eind",
+    "zekerheid_eind",
+    "uitleg",
+]
+
 VERPLICHTE_KOLOMMEN = {
     "created_at",
     "text",
@@ -39,15 +47,14 @@ VERPLICHTE_KOLOMMEN = {
     "conversation_id",
 }
 
-# Posities in het headerloze Momants-exportformaat uit het aangeleverde voorbeeld.
-# De privacygevoelige velden chat_sender en raw_json worden bewust niet geselecteerd.
+# Posities van uitsluitend veilige velden in het headerloze 22-veldenformaat.
 HEADERLOZE_POSITIES = {
     0: "created_at",
     3: "text",
     8: "from_agent",
     10: "message_type",
-    18: "conversation_id",
-    19: "agent_id",
+    17: "agent_id",
+    19: "conversation_id",
 }
 
 KOLOM_ALIASES = {
@@ -100,32 +107,33 @@ def _lees_met_header(csv_pad: Path) -> pd.DataFrame:
 
 
 def _lees_zonder_header(csv_pad: Path) -> pd.DataFrame:
-    """Lees veilige kolomposities uit het bekende 22-veldenformaat."""
-    csv.field_size_limit(sys.maxsize)
-    veilige_records: list[dict[str, object]] = []
-    hoogste_positie = max(HEADERLOZE_POSITIES)
-
-    with csv_pad.open(newline="", encoding="utf-8-sig") as csv_bestand:
-        for record in csv.reader(csv_bestand):
-            if len(record) <= hoogste_positie:
-                continue
-            veilige_records.append(
-                {
-                    kolomnaam: record[positie]
-                    for positie, kolomnaam in HEADERLOZE_POSITIES.items()
-                }
-            )
-
-    return pd.DataFrame(veilige_records, columns=VEILIGE_KOLOMMEN)
+    """Lees uitsluitend veilige kolomposities uit het 22-veldenformaat."""
+    posities = list(HEADERLOZE_POSITIES)
+    data = pd.read_csv(
+        csv_pad,
+        header=None,
+        usecols=posities,
+        on_bad_lines="skip",
+    )
+    return data.rename(columns=HEADERLOZE_POSITIES)
 
 
-def laad_momants_csv(csv_pad: str | Path) -> pd.DataFrame:
-    """Laad een Momants-export zonder privacygevoelige kolommen te bewaren."""
-    pad = Path(csv_pad).expanduser()
+def laad_momants_csv(bron: str | Path) -> pd.DataFrame:
+    """Laad een lokale Momants-export en laat alleen veilige kolommen door."""
+    if isinstance(bron, str) and re.match(r"^https?://", bron, re.IGNORECASE):
+        raise ValueError(
+            "Endpoint-URL's worden nog niet ondersteund; geef een lokaal CSV-pad op."
+        )
+
+    pad = Path(bron).expanduser()
     if not pad.is_file():
         raise FileNotFoundError(f"CSV-bestand niet gevonden: {pad}")
 
-    data = _lees_met_header(pad) if _heeft_momants_header(pad) else _lees_zonder_header(pad)
+    data = (
+        _lees_met_header(pad)
+        if _heeft_momants_header(pad)
+        else _lees_zonder_header(pad)
+    )
 
     ontbrekend = VERPLICHTE_KOLOMMEN - set(data.columns)
     if ontbrekend:
@@ -186,7 +194,10 @@ def classificeer_berichten(
 ) -> pd.DataFrame:
     """Classificeer alle bezoekersberichten in batches met TabularisAI."""
     if bezoekersberichten.empty:
-        raise ValueError("De CSV bevat geen bruikbare bezoekersberichten.")
+        resultaat = bezoekersberichten.copy()
+        resultaat["sentiment_bericht"] = pd.Series(dtype="object")
+        resultaat["zekerheid_bericht"] = pd.Series(dtype="float64")
+        return resultaat
 
     sentiment_model = pipeline(
         task="text-classification",
@@ -206,75 +217,80 @@ def classificeer_berichten(
     return resultaat
 
 
-def maak_gespreksoverzicht(berichtresultaten: pd.DataFrame) -> pd.DataFrame:
-    """Vat ieder gesprek samen op basis van het laatste bezoekersbericht."""
-    gegroepeerd = berichtresultaten.groupby("conversation_id", sort=False)
-
-    overzicht = gegroepeerd.agg(
-        eerste_bericht_at=("created_at", "min"),
-        laatste_bericht_at=("created_at", "max"),
-        aantal_bezoekersberichten=("text", "size"),
+def _selecteer_grensberichten(
+    bezoekersberichten: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.Index, pd.Index]:
+    """Selecteer unieke eerste/laatste rijen, zodat één bericht één modelcall krijgt."""
+    gesorteerd = bezoekersberichten.sort_values(
+        ["conversation_id", "created_at"]
     )
-
-    # Het laatste bericht benadert de stemming waarmee de bezoeker vertrekt.
-    laatste = (
-        berichtresultaten.sort_values(["conversation_id", "created_at"])
-        .groupby("conversation_id", as_index=False)
-        .tail(1)
-        .set_index("conversation_id")
+    groepen = gesorteerd.groupby("conversation_id", sort=False)
+    eerste_indices = groepen.head(1).index
+    laatste_indices = groepen.tail(1).index
+    grensindices = pd.Index(
+        list(dict.fromkeys([*eerste_indices, *laatste_indices]))
     )
-    overzicht["sentiment_gesprek"] = laatste["sentiment_bericht"]
-    overzicht["zekerheid"] = laatste["zekerheid_bericht"]
+    return gesorteerd.loc[grensindices].copy(), eerste_indices, laatste_indices
+
+
+def maak_gespreksoverzicht(
+    bezoekersberichten: pd.DataFrame,
+    batchgrootte: int = 32,
+) -> pd.DataFrame:
+    """Bepaal per gesprek sentiment op het eerste én laatste bezoekersbericht."""
+    if bezoekersberichten.empty:
+        return pd.DataFrame(columns=UITVOERKOLOMMEN)
+
+    grensberichten, eerste_indices, laatste_indices = _selecteer_grensberichten(
+        bezoekersberichten
+    )
+    geclassificeerd = classificeer_berichten(grensberichten, batchgrootte)
+
+    aantallen = (
+        bezoekersberichten.groupby("conversation_id", sort=False)
+        .size()
+        .rename("aantal_bezoekersberichten")
+    )
+    eerste = geclassificeerd.loc[eerste_indices].set_index("conversation_id")
+    laatste = geclassificeerd.loc[laatste_indices].set_index("conversation_id")
+
+    overzicht = aantallen.to_frame()
+    overzicht["sentiment_start"] = eerste["sentiment_bericht"]
+    overzicht["zekerheid_start"] = eerste["zekerheid_bericht"]
+    overzicht["sentiment_eind"] = laatste["sentiment_bericht"]
+    overzicht["zekerheid_eind"] = laatste["zekerheid_bericht"]
     overzicht = overzicht.reset_index()
     overzicht["uitleg"] = overzicht.apply(
         lambda rij: (
-            f"Het laatste van {rij['aantal_bezoekersberichten']} bruikbare "
-            f"bezoekersberichten is {rij['sentiment_gesprek']} "
-            f"({rij['zekerheid']:.0%} zekerheid)."
+            f"Het gesprek begint {rij['sentiment_start'].lower()} en eindigt "
+            f"{rij['sentiment_eind'].lower()}, op basis van "
+            f"{rij['aantal_bezoekersberichten']} "
+            f"{'bruikbaar bezoekersbericht' if rij['aantal_bezoekersberichten'] == 1 else 'bruikbare bezoekersberichten'}."
         ),
         axis=1,
     )
-    return overzicht
-
-
-def _berichtuitvoer(
-    berichtresultaten: pd.DataFrame,
-    tekst_opnemen: bool,
-) -> pd.DataFrame:
-    """Maak de veilige berichtentabel; tekst is standaard uitgesloten."""
-    kolommen = [
-        "conversation_id",
-        "created_at",
-        "message_type",
-        "agent_id",
-        "sentiment_bericht",
-        "zekerheid_bericht",
-    ]
-    if tekst_opnemen:
-        kolommen.insert(2, "text")
-    return berichtresultaten[kolommen].copy()
+    return overzicht[UITVOERKOLOMMEN]
 
 
 def verwerk_csv(
     csv_pad: str | Path,
     uitvoermap: str | Path = "resultaten",
     batchgrootte: int = 32,
-    tekst_opnemen: bool = False,
-) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Voer de volledige verwerking uit en schrijf twee resultaatbestanden."""
+) -> pd.DataFrame:
+    """Voer de verwerking uit en schrijf één veilige gesprekstabel."""
     data = laad_momants_csv(csv_pad)
     bezoekersberichten = selecteer_bezoekersberichten(data)
-    berichtresultaten = classificeer_berichten(bezoekersberichten, batchgrootte)
-    gespreksoverzicht = maak_gespreksoverzicht(berichtresultaten)
+    gespreksoverzicht = maak_gespreksoverzicht(
+        bezoekersberichten,
+        batchgrootte=batchgrootte,
+    )
 
     map_pad = Path(uitvoermap).expanduser()
     map_pad.mkdir(parents=True, exist_ok=True)
 
-    veilige_berichten = _berichtuitvoer(berichtresultaten, tekst_opnemen)
-    veilige_berichten.to_csv(map_pad / "sentiment_per_bericht.csv", index=False)
     gespreksoverzicht.to_csv(map_pad / "sentiment_per_gesprek.csv", index=False)
 
-    return veilige_berichten, gespreksoverzicht
+    return gespreksoverzicht
 
 
 def _maak_parser() -> argparse.ArgumentParser:
@@ -286,18 +302,13 @@ def _maak_parser() -> argparse.ArgumentParser:
         "--uitvoermap",
         type=Path,
         default=Path("resultaten"),
-        help="Map voor de twee resultaat-CSV's (standaard: resultaten).",
+        help="Map voor sentiment_per_gesprek.csv (standaard: resultaten).",
     )
     parser.add_argument(
         "--batchgrootte",
         type=int,
         default=32,
         help="Aantal berichten per modelbatch (standaard: 32).",
-    )
-    parser.add_argument(
-        "--tekst-opnemen",
-        action="store_true",
-        help="Neem berichttekst op in de berichtuitvoer; standaard blijft die weg.",
     )
     parser.add_argument(
         "--alleen-controleren",
@@ -318,13 +329,11 @@ def main(argv: Iterable[str] | None = None) -> int:
         print(f"Gesprekken: {bezoekers['conversation_id'].nunique()}")
         return 0
 
-    berichten, gesprekken = verwerk_csv(
+    gesprekken = verwerk_csv(
         csv_pad=argumenten.csv_pad,
         uitvoermap=argumenten.uitvoermap,
         batchgrootte=argumenten.batchgrootte,
-        tekst_opnemen=argumenten.tekst_opnemen,
     )
-    print(f"Berichtresultaten: {len(berichten)}")
     print(f"Gesprekresultaten: {len(gesprekken)}")
     print(f"Uitvoer geschreven naar: {argumenten.uitvoermap.resolve()}")
     return 0

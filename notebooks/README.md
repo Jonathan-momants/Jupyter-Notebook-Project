@@ -21,13 +21,10 @@ Voer daarna de sentimentclassificatie uit:
 python momants_sentiment.py pad/naar/export.csv --uitvoermap resultaten
 ```
 
-Dit schrijft:
-
-- `resultaten/sentiment_per_bericht.csv`
-- `resultaten/sentiment_per_gesprek.csv`
-
-De berichttekst staat standaard niet in de uitvoer. Voeg alleen wanneer nodig
-`--tekst-opnemen` toe.
+Dit schrijft één tabel: `resultaten/sentiment_per_gesprek.csv`. Per gesprek
+bevat die het sentiment en de zekerheid van zowel het eerste als het laatste
+bruikbare bezoekersbericht. De oorspronkelijke berichttekst staat niet in de
+uitvoer.
 
 De processor ondersteunt Momants-CSV's met kolomkoppen en het headerloze
 22-veldenformaat uit de aangeleverde structuur. Privacyvelden zoals `raw_json`
