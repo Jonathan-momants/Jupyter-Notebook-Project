@@ -17,17 +17,17 @@ from momants_sentiment import load_momants_csv
 
 
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-TRAINING_DATA_PATH = Path("notebooks/intentie_training.csv")
+TRAINING_DATA_PATH = Path("intent_training.csv")
 LOCAL_MODEL_PATH = Path("model/momants-intentie")
 CONFIDENCE_THRESHOLD = 0.60
 
 INTENT_CATEGORIES = [
-    "Information request",
-    "Problem or Incident resolution",
-    "Transaction / Mutation execution",
-    "Active Navigation assistance",
-    "System operation",
-    "Emergency report",
+    "Request Information",
+    "Resolve Problem or Incident",
+    "Perform Transaction / Change",
+    "Active Navigation Help",
+    "Operate System",
+    "Report Emergency",
 ]
 
 OUTPUT_COLUMNS = [

@@ -1,0 +1,123 @@
+text,intent
+Hoe laat gaan de deuren open?,Request Information
+Waar kan ik het programma vinden?,Request Information
+Is er een kluisje te huur op het terrein?,Request Information
+Wat kost een consumptie gemiddeld?,Request Information
+Mag ik mijn eigen eten meenemen?,Request Information
+Hoe laat speelt de hoofdact?,Request Information
+Kan ik met de trein naar het festival komen?,Request Information
+Zijn honden toegestaan op het terrein?,Request Information
+hoe laat sluit de camping vanavond,Request Information
+is er wifi op het terrein?,Request Information
+wat zijn de openingstijden van de winkels,Request Information
+mag ik een tent meenemen die groter is dan 3 man,Request Information
+is er een kledingvoorschrift,Request Information
+welke betaalmethodes accepteren jullie,Request Information
+hoeveel kost een parkeerplek,Request Information
+is er een oplaadpunt voor elektrische auto's,Request Information
+what time do the gates open tomorrow,Request Information
+is er een apotheek in de buurt van het terrein,Request Information
+mogen we eigen drinken meenemen op de camping,Request Information
+waar kan ik mijn fiets stallen,Request Information
+is er een minimumleeftijd voor het festival,Request Information
+wat is de line-up voor zaterdag,Request Information
+Mijn ticket scant niet bij de ingang.,Resolve Problem or Incident
+Ik heb mijn polsbandje kapot getrokken.,Resolve Problem or Incident
+Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.,Resolve Problem or Incident
+De douches op de camping werken niet.,Resolve Problem or Incident
+Ik krijg steeds een foutmelding bij het inloggen.,Resolve Problem or Incident
+Mijn naam staat verkeerd op het ticket.,Resolve Problem or Incident
+Mijn tent is beschadigd geraakt door de storm.,Resolve Problem or Incident
+De app crasht steeds als ik mijn ticket wil laten zien.,Resolve Problem or Incident
+mijn qr code doet het niet,Resolve Problem or Incident
+ik heb betaald maar geen bevestiging ontvangen,Resolve Problem or Incident
+"de kluisjes gaan niet meer open, mijn spullen zitten erin",Resolve Problem or Incident
+er zit geen stroom op mijn stopcontact bij de camperplek,Resolve Problem or Incident
+mijn e-ticket is niet aangekomen in mijn mail,Resolve Problem or Incident
+het toilet bij vak 3 is verstopt,Resolve Problem or Incident
+ik kan niet inloggen op mijn account,Resolve Problem or Incident
+my wristband broke and won't scan anymore,Resolve Problem or Incident
+de betaalpas-lezer bij de bar accepteert mijn kaart niet,Resolve Problem or Incident
+ik heb het verkeerde tickettype gekregen na aankoop,Resolve Problem or Incident
+mijn bagage is kwijtgeraakt bij de garderobe,Resolve Problem or Incident
+het water op de camping is bruin,Resolve Problem or Incident
+Ik wil een extra ticket bijkopen.,Perform Transaction / Change
+Kan ik mijn ticket omzetten naar een ander type?,Perform Transaction / Change
+Ik wil mijn parkeerplek annuleren.,Perform Transaction / Change
+Kan ik mijn tentplek upgraden naar een camperplek?,Perform Transaction / Change
+Ik wil me uitschrijven voor de nieuwsbrief.,Perform Transaction / Change
+Ik wil saldo bijladen op mijn cashcard.,Perform Transaction / Change
+Kan ik mijn ticket op naam van iemand anders zetten?,Perform Transaction / Change
+ik wil graag mijn bestelling annuleren,Perform Transaction / Change
+kan ik nog een dagticket omzetten in een weekendticket,Perform Transaction / Change
+ik wil mijn adresgegevens wijzigen,Perform Transaction / Change
+graag wil ik nog 2 parkeerkaarten toevoegen aan mijn bestelling,Perform Transaction / Change
+kan ik mijn ticket terugverkopen via jullie platform,Perform Transaction / Change
+i would like to cancel my camping reservation,Perform Transaction / Change
+ik wil mijn e-mailadres aanpassen in mijn account,Perform Transaction / Change
+graag mijn ticket omruilen voor een ander weekend,Perform Transaction / Change
+Hoe kom ik van de camping naar het hoofdpodium?,Active Navigation Help
+Waar vind ik het dichtstbijzijnde toilet vanaf hier?,Active Navigation Help
+Kun je me de route naar de parkeerplaats laten zien?,Active Navigation Help
+Waar is het EHBO-punt op het terrein?,Active Navigation Help
+Hoe loop ik het snelst naar uitgang 3?,Active Navigation Help
+Waar sta ik nu precies op de plattegrond?,Active Navigation Help
+hoe kom ik bij vak C vanaf de hoofdingang,Active Navigation Help
+welke kant moet ik op voor de foodtrucks,Active Navigation Help
+"ik sta bij podium 2, waar is de dichtstbijzijnde bar",Active Navigation Help
+kun je me de kortste weg naar mijn tent wijzen,Active Navigation Help
+where is the nearest exit from here,Active Navigation Help
+hoe ver is het van de camping naar de ingang lopen,Active Navigation Help
+Kun je me doorverbinden met een medewerker?,Operate System
+Stop met berichten sturen.,Operate System
+Kan ik dit gesprek opnieuw beginnen?,Operate System
+Ik wil geen automatische updates meer ontvangen.,Operate System
+Zet me weer op de mailinglijst.,Operate System
+Praat ik nu met een echt persoon of een bot?,Operate System
+kan ik een mens spreken alsjeblieft,Operate System
+stuur me niet meer zoveel berichten,Operate System
+reset dit gesprek,Operate System
+ik wil me weer aanmelden voor notificaties,Operate System
+schakel de automatische antwoorden uit,Operate System
+"Er ligt iemand bewusteloos bij podium 2, help!",Report Emergency
+Ik zie brand bij de foodtrucks.,Report Emergency
+Er is een vechtpartij aan de gang bij de ingang.,Report Emergency
+"Mijn kind is zoek, ik kan haar nergens vinden.",Report Emergency
+Iemand heeft net een epileptische aanval gehad.,Report Emergency
+Er is iemand in elkaar gezakt bij de bar.,Report Emergency
+help iemand is flauwgevallen bij vak 4,Report Emergency
+"er breekt paniek uit bij de ingang, te veel mensen",Report Emergency
+"iemand bloedt hevig, we hebben nu hulp nodig",Report Emergency
+"help snel, iemand verdrinkt bijna in de vijver",Report Emergency
+there's a medical emergency near the main stage,Report Emergency
+er ligt iemand op de grond en reageert niet,Report Emergency
+The security guard was incredibly rude to me for no reason.,Resolve Problem or Incident
+"One of your staff members yelled at my kid, that's unacceptable.",Resolve Problem or Incident
+De steward bij ingang B duwde me zomaar opzij zonder uitleg.,Resolve Problem or Incident
+I was treated very disrespectfully by one of your crew members.,Resolve Problem or Incident
+Een medewerker weigerde me te helpen en liep gewoon weg.,Resolve Problem or Incident
+Your bartender overcharged me and refused to fix it.,Resolve Problem or Incident
+De beveiliger schreeuwde tegen me terwijl ik niks verkeerd deed.,Resolve Problem or Incident
+One of your employees was extremely unhelpful and dismissive.,Resolve Problem or Incident
+Can you transfer me to an actual person please.,Operate System
+I don't want any more automated messages.,Operate System
+Is this a bot or a real human replying?,Operate System
+Please stop sending me automatic replies.,Operate System
+Restart this conversation from the beginning.,Operate System
+"Kun je me doorschakelen naar een medewerker, geen bot meer graag.",Operate System
+Ik wil niet langer geautomatiseerde berichten ontvangen.,Operate System
+Turn off the automatic responses for this chat.,Operate System
+Can you show me the way from here to the main stage?,Active Navigation Help
+Which direction is the exit from where I'm standing?,Active Navigation Help
+Guide me to the nearest ATM please.,Active Navigation Help
+"Ik sta bij ingang C, hoe loop ik naar de camping?",Active Navigation Help
+What's the quickest route to the food court from stage 2?,Active Navigation Help
+"Point me toward the lockers, I'm lost.",Active Navigation Help
+Welke weg moet ik nemen om bij de hoofdingang te komen?,Active Navigation Help
+Can you walk me through how to get to the parking area from here?,Active Navigation Help
+What time does the show start tonight?,Request Information
+Is there a cash machine somewhere on site?,Request Information
+Do you accept credit cards at the bars?,Request Information
+Are pets allowed on the campsite?,Request Information
+Zijn er ook gratis watervulpunten op het terrein?,Request Information
+Is there a lost and found service at this festival?,Request Information

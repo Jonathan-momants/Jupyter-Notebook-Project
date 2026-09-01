@@ -8,8 +8,8 @@ widget:
 - text: Ik zie brand bij de foodtrucks.
 - text: hoeveel kost een parkeerplek
 - text: Wat kost een consumptie gemiddeld?
+- text: De steward bij ingang B duwde me zomaar opzij zonder uitleg.
 - text: het toilet bij vak 3 is verstopt
-- text: ik heb betaald maar geen bevestiging ontvangen
 metrics:
 - accuracy
 pipeline_tag: text-classification
@@ -46,14 +46,14 @@ The model has been trained using an efficient few-shot learning technique that i
 - **Blogpost:** [SetFit: Efficient Few-Shot Learning Without Prompts](https://huggingface.co/blog/setfit)
 
 ### Model Labels
-| Label                            | Examples                                                                                                                                                                                          |
-|:---------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Information request              | <ul><li>'Hoe laat gaan de deuren open?'</li><li>'Waar kan ik het programma vinden?'</li><li>'Is er een kluisje te huur op het terrein?'</li></ul>                                                 |
-| Problem or Incident resolution   | <ul><li>'Mijn ticket scant niet bij de ingang.'</li><li>'Ik heb mijn polsbandje kapot getrokken.'</li><li>'Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.'</li></ul>           |
-| Transaction / Mutation execution | <ul><li>'Ik wil een extra ticket bijkopen.'</li><li>'Kan ik mijn ticket omzetten naar een ander type?'</li><li>'Ik wil mijn parkeerplek annuleren.'</li></ul>                                     |
-| Active Navigation assistance     | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
-| System operation                 | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
-| Emergency report                 | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
+| Label                        | Examples                                                                                                                                                                                          |
+|:-----------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Information          | <ul><li>'Hoe laat gaan de deuren open?'</li><li>'Waar kan ik het programma vinden?'</li><li>'Is er een kluisje te huur op het terrein?'</li></ul>                                                 |
+| Resolve Problem or Incident  | <ul><li>'Mijn ticket scant niet bij de ingang.'</li><li>'Ik heb mijn polsbandje kapot getrokken.'</li><li>'Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.'</li></ul>           |
+| Perform Transaction / Change | <ul><li>'Ik wil een extra ticket bijkopen.'</li><li>'Kan ik mijn ticket omzetten naar een ander type?'</li><li>'Ik wil mijn parkeerplek annuleren.'</li></ul>                                     |
+| Active Navigation Help       | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
+| Operate System               | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
+| Report Emergency             | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
 
 ## Uses
 
@@ -105,16 +105,16 @@ preds = model("hoeveel kost een parkeerplek")
 ### Training Set Metrics
 | Training set | Min | Median | Max |
 |:-------------|:----|:-------|:----|
-| Word count   | 3   | 7.4891 | 12  |
+| Word count   | 3   | 7.8934 | 14  |
 
-| Label                            | Training Sample Count |
-|:---------------------------------|:----------------------|
-| Information request              | 22                    |
-| Problem or Incident resolution   | 20                    |
-| Transaction / Mutation execution | 15                    |
-| Active Navigation assistance     | 12                    |
-| System operation                 | 11                    |
-| Emergency report                 | 12                    |
+| Label                        | Training Sample Count |
+|:-----------------------------|:----------------------|
+| Request Information          | 28                    |
+| Resolve Problem or Incident  | 28                    |
+| Perform Transaction / Change | 15                    |
+| Active Navigation Help       | 20                    |
+| Operate System               | 19                    |
+| Report Emergency             | 12                    |
 
 ### Training Hyperparameters
 - batch_size: (16, 16)
@@ -138,7 +138,7 @@ preds = model("hoeveel kost een parkeerplek")
 ### Training Results
 | Epoch  | Step | Training Loss | Validation Loss |
 |:------:|:----:|:-------------:|:---------------:|
-| 0.0435 | 1    | 0.2124        | -               |
+| 0.0323 | 1    | 0.3595        | -               |
 
 ### Framework Versions
 - Python: 3.11.14
