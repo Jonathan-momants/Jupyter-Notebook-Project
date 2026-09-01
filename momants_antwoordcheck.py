@@ -1,4 +1,4 @@
-"""Determine whether visitor questions were answered in each Momants conversation."""
+"""Bepaal per Momants-gesprek of vragen van bezoekers zijn beantwoord."""
 
 from __future__ import annotations
 
@@ -8,18 +8,15 @@ from pathlib import Path
 import re
 from typing import Iterable
 
+import numpy as np
 import pandas as pd
-import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from sentence_transformers import CrossEncoder
 
 from momants_sentiment import load_momants_csv
 
 
-MODEL_ID = "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli"
-HYPOTHESIS = "This answers the visitor's question."
-ENTAILMENT_THRESHOLD = 0.50
-# Temporary: set to False to write only the privacy-conscious summary again.
-INCLUDE_CONVERSATION_TEXT = True
+CROSS_ENCODER_MODEL_ID = "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1"
+RELEVANCE_THRESHOLD = -3.0
 
 DUTCH_QUESTION_STARTS = (
     "wie",
@@ -35,17 +32,13 @@ DUTCH_QUESTION_STARTS = (
     "zijn er",
 )
 
-BASE_OUTPUT_COLUMNS = [
-    "conversation_id",
-    "question_count",
-    "answered_count",
-    "answered_percentage",
-    "status",
-    "explanation",
-]
 OUTPUT_COLUMNS = [
-    *BASE_OUTPUT_COLUMNS,
-    *(["conversation_text"] if INCLUDE_CONVERSATION_TEXT else []),
+    "conversation_id",
+    "aantal_vragen",
+    "aantal_beantwoord",
+    "percentage_beantwoord",
+    "eindoordeel",
+    "uitleg",
 ]
 
 BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
@@ -117,104 +110,53 @@ def pair_questions_with_answers(data: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(pairs, columns=columns)
 
 
-def _label_indices(model: AutoModelForSequenceClassification) -> dict[str, int]:
-    """Find the three NLI label indices in the model configuration."""
-    labels = {
-        str(label).strip().lower(): int(index)
-        for index, label in model.config.id2label.items()
-    }
-    missing = {"entailment", "neutral", "contradiction"} - set(labels)
-    if missing:
-        raise ValueError(
-            "The model configuration is missing NLI labels: "
-            f"{', '.join(sorted(missing))}."
-        )
-    return labels
-
-
 def classify_question_answer_pairs(
     pairs: pd.DataFrame,
     batch_size: int = 32,
-    tokenizer: AutoTokenizer | None = None,
-    model: AutoModelForSequenceClassification | None = None,
+    model: CrossEncoder | None = None,
 ) -> pd.DataFrame:
-    """Calculate NLI scores for pairs that have an agent answer."""
+    """Bereken relevantiescores voor paren met een agentantwoord."""
     result = pairs.copy()
     result["answered"] = False
-    result["entailment_score"] = pd.Series(index=result.index, dtype="float64")
+    result["relevance_score"] = pd.Series(index=result.index, dtype="float64")
 
     to_classify = result.index[result["has_agent_answer"]]
     if to_classify.empty:
         return result
 
-    tokenizer = tokenizer or AutoTokenizer.from_pretrained(MODEL_ID)
-    model = model or AutoModelForSequenceClassification.from_pretrained(MODEL_ID)
-    model.eval()
-    indices = _label_indices(model)
-
-    for start in range(0, len(to_classify), batch_size):
-        batch_indices = to_classify[start : start + batch_size]
-        answers = result.loc[batch_indices, "answer_text"].tolist()
-        hypotheses = [HYPOTHESIS] * len(answers)
-        inputs = tokenizer(
-            answers,
-            hypotheses,
-            padding=True,
-            truncation=True,
-            return_tensors="pt",
+    model = model or CrossEncoder(CROSS_ENCODER_MODEL_ID)
+    question_answer_pairs = list(
+        zip(
+            result.loc[to_classify, "question_text"].astype(str),
+            result.loc[to_classify, "answer_text"].astype(str),
         )
-        with torch.no_grad():
-            probabilities = torch.softmax(model(**inputs).logits, dim=-1).cpu()
-
-        entailment = probabilities[:, indices["entailment"]]
-        neutral = probabilities[:, indices["neutral"]]
-        contradiction = probabilities[:, indices["contradiction"]]
-        answered = (
-            entailment.ge(ENTAILMENT_THRESHOLD)
-            & entailment.gt(neutral)
-            & entailment.gt(contradiction)
-        )
-        result.loc[batch_indices, "entailment_score"] = entailment.tolist()
-        result.loc[batch_indices, "answered"] = answered.tolist()
-
-    result["entailment_score"] = result["entailment_score"].round(4)
+    )
+    scores = np.asarray(
+        model.predict(question_answer_pairs, batch_size=batch_size),
+        dtype=float,
+    ).reshape(-1)
+    result.loc[to_classify, "relevance_score"] = scores
+    result.loc[to_classify, "answered"] = scores >= RELEVANCE_THRESHOLD
+    result["relevance_score"] = result["relevance_score"].round(4)
     return result
 
 
 def _final_status(question_count: int, answered_count: int) -> str:
     if question_count == 0:
-        return "No questions found"
+        return "Geen vragen gevonden"
     if answered_count == question_count:
-        return "Answered"
+        return "Beantwoord"
     if answered_count == 0:
-        return "Not answered"
-    return "Partially answered"
-
-
-def _build_conversation_texts(data: pd.DataFrame) -> pd.Series:
-    """Temporarily combine visitor and agent text per conversation in time order."""
-    sorted_data = data.sort_values(
-        ["conversation_id", "created_at"], kind="stable"
-    ).copy()
-    has_text = sorted_data["text"].notna() & sorted_data["text"].astype(str).str.strip().ne("")
-    sorted_data = sorted_data.loc[has_text].copy()
-    sorted_data["line"] = (
-        sorted_data["from_agent"]
-        .map({True: "Agent", False: "Visitor"})
-        .fillna("Unknown")
-        + ": "
-        + sorted_data["text"].astype(str).str.strip()
-    )
-    return sorted_data.groupby("conversation_id", sort=False)["line"].agg("\n".join)
+        return "Niet beantwoord"
+    return "Deels beantwoord"
 
 
 def create_conversation_summary(
     data: pd.DataFrame,
     batch_size: int = 32,
-    tokenizer: AutoTokenizer | None = None,
-    model: AutoModelForSequenceClassification | None = None,
+    model: CrossEncoder | None = None,
 ) -> pd.DataFrame:
-    """Create one answer status per conversation, including conversations without questions."""
+    """Maak één antwoordstatus per gesprek, inclusief gesprekken zonder vragen."""
     conversations = pd.Index(
         data["conversation_id"].drop_duplicates(), name="conversation_id"
     )
@@ -222,54 +164,48 @@ def create_conversation_summary(
     assessed = classify_question_answer_pairs(
         pairs,
         batch_size=batch_size,
-        tokenizer=tokenizer,
         model=model,
     )
 
     counts = assessed.groupby("conversation_id", sort=False).agg(
-        question_count=("conversation_id", "size"),
-        answered_count=("answered", "sum"),
+        aantal_vragen=("conversation_id", "size"),
+        aantal_beantwoord=("answered", "sum"),
     )
     summary = counts.reindex(conversations, fill_value=0).reset_index()
-    summary["question_count"] = summary["question_count"].astype(int)
-    summary["answered_count"] = summary["answered_count"].astype(int)
-    summary["answered_percentage"] = (
-        summary["answered_count"]
-        .div(summary["question_count"].where(summary["question_count"].ne(0)))
+    summary["aantal_vragen"] = summary["aantal_vragen"].astype(int)
+    summary["aantal_beantwoord"] = summary["aantal_beantwoord"].astype(int)
+    summary["percentage_beantwoord"] = (
+        summary["aantal_beantwoord"]
+        .div(summary["aantal_vragen"].where(summary["aantal_vragen"].ne(0)))
         .mul(100)
         .fillna(0)
         .round(1)
     )
-    summary["status"] = summary.apply(
+    summary["eindoordeel"] = summary.apply(
         lambda row: _final_status(
-            int(row["question_count"]), int(row["answered_count"])
+            int(row["aantal_vragen"]), int(row["aantal_beantwoord"])
         ),
         axis=1,
     )
-    summary["explanation"] = summary.apply(
+    summary["uitleg"] = summary.apply(
         lambda row: (
-            "No visitor questions were found."
-            if row["question_count"] == 0
+            "Er zijn geen vragen van de bezoeker gevonden."
+            if row["aantal_vragen"] == 0
             else (
-                f"{int(row['answered_count'])} of "
-                f"{int(row['question_count'])} "
-                f"{'question was' if row['question_count'] == 1 else 'questions were'} "
-                "answered."
+                f"{int(row['aantal_beantwoord'])} van de "
+                f"{int(row['aantal_vragen'])} "
+                f"{'vraag is' if row['aantal_vragen'] == 1 else 'vragen zijn'} "
+                "beantwoord."
             )
         ),
         axis=1,
     )
-    if INCLUDE_CONVERSATION_TEXT:
-        conversation_texts = _build_conversation_texts(data)
-        summary["conversation_text"] = (
-            summary["conversation_id"].map(conversation_texts).fillna("")
-        )
     return summary[OUTPUT_COLUMNS]
 
 
 def process_csv(
     csv_path: str | Path,
-    output_dir: str | Path = "results",
+    output_dir: str | Path = "resultaten",
     batch_size: int = 32,
 ) -> pd.DataFrame:
     """Process a local export and write one safe conversation table."""
@@ -279,7 +215,7 @@ def process_csv(
     output_path = Path(output_dir).expanduser()
     output_path.mkdir(parents=True, exist_ok=True)
     timestamp = started_at.strftime("%Y%m%d_%H%M%S_%f")
-    csv_output_path = output_path / f"answer_check_per_conversation_{timestamp}.csv"
+    csv_output_path = output_path / f"antwoordcheck_per_gesprek_{timestamp}.csv"
     summary.to_csv(csv_output_path, index=False)
     summary.attrs["output_path"] = csv_output_path.resolve()
     return summary
@@ -287,25 +223,28 @@ def process_csv(
 
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Check whether visitor questions were answered in each Momants conversation."
+        description="Controleer per Momants-gesprek of bezoekersvragen zijn beantwoord."
     )
-    parser.add_argument("csv_path", type=Path, help="Path to the Momants CSV export.")
+    parser.add_argument("csv_path", type=Path, help="Pad naar de Momants CSV-export.")
     parser.add_argument(
-        "--output-dir",
+        "--uitvoermap",
+        dest="output_dir",
         type=Path,
-        default=Path("results"),
-        help="Directory for answer_check_per_conversation_<timestamp>.csv.",
+        default=Path("resultaten"),
+        help="Map voor antwoordcheck_per_gesprek_<tijdstempel>.csv.",
     )
     parser.add_argument(
-        "--batch-size",
+        "--batchgrootte",
+        dest="batch_size",
         type=int,
         default=32,
-        help="Number of question-answer pairs per model batch.",
+        help="Aantal vraag-antwoordparen per modelbatch.",
     )
     parser.add_argument(
-        "--check-only",
+        "--alleen-controleren",
+        dest="check_only",
         action="store_true",
-        help="Check loading and question detection without starting the model.",
+        help="Controleer inladen en vraagdetectie zonder het model te starten.",
     )
     return parser
 
@@ -316,9 +255,9 @@ def main(argv: Iterable[str] | None = None) -> int:
     if arguments.check_only:
         data = load_momants_csv(arguments.csv_path)
         questions = detect_questions(data)
-        print(f"Message rows loaded: {len(data)}")
-        print(f"Questions found: {len(questions)}")
-        print(f"Conversations with questions: {questions['conversation_id'].nunique()}")
+        print(f"Berichtrijen ingelezen: {len(data)}")
+        print(f"Vragen gevonden: {len(questions)}")
+        print(f"Gesprekken met vragen: {questions['conversation_id'].nunique()}")
         return 0
 
     summary = process_csv(
@@ -326,8 +265,8 @@ def main(argv: Iterable[str] | None = None) -> int:
         output_dir=arguments.output_dir,
         batch_size=arguments.batch_size,
     )
-    print(f"Conversation results: {len(summary)}")
-    print(f"Output written to: {summary.attrs['output_path']}")
+    print(f"Gesprekresultaten: {len(summary)}")
+    print(f"Uitvoer geschreven naar: {summary.attrs['output_path']}")
     return 0
 
 
