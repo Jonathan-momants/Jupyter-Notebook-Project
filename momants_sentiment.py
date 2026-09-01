@@ -114,6 +114,7 @@ def _lees_zonder_header(csv_pad: Path) -> pd.DataFrame:
         header=None,
         usecols=posities,
         on_bad_lines="skip",
+        engine="python",
     )
     return data.rename(columns=HEADERLOZE_POSITIES)
 
