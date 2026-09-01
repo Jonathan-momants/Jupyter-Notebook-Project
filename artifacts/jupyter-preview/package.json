@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "jupyter lab --ip=0.0.0.0 --port=$PORT --no-browser --ServerApp.root_dir=../.. --LabApp.default_url=/lab/tree/notebooks/momants_sentiment.ipynb --ServerApp.allow_remote_access=True --ServerApp.allow_origin='*' --IdentityProvider.token=''",
+    "dev": "rm -f $HOME/.jupyter/lab/workspaces/momants-*.jupyterlab-workspace && jupyter lab --ip=0.0.0.0 --port=$PORT --no-browser --ServerApp.root_dir=../.. --LabApp.default_url=/lab/workspaces/momants/tree/notebooks/momants_sentiment.ipynb --ServerApp.allow_remote_access=True --ServerApp.allow_origin='*' --IdentityProvider.token=''",
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit"
