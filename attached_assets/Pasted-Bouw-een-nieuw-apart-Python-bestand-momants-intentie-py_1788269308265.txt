@@ -1,0 +1,25 @@
+Bouw een nieuw, apart Python-bestand momants_intentie.py plus een bijbehorende notebook momants_intentie.ipynb, naast de bestaande momants_sentiment.py en momants_antwoordcheck.py. Dit systeem werkt met dezelfde Momants CSV-export als de andere twee, maar bepaalt met welke intentie(s) een bezoeker een gesprek voert. Scope is ALLEEN dit — geen sentiment, geen onderwerp, geen antwoord-check.
+
+Model: SetFit (pip install setfit), met als basis-embeddingmodel sentence-transformers/paraphrase-multilingual-mpnet-base-v2. Train een classifier met de 6 vaste intentiecategorieën, met trainingsdata uit een los CSV-bestand intentie_training.csv (kolommen: tekst, intentie) — dit bestand bevat uitsluitend handgeschreven voorbeeldzinnen, GEEN echte bezoekersdata. Zet het model-ID, de trainingsdata-locatie en de zekerheidsdrempel geïsoleerd bovenaan als constanten.
+
+De 6 vaste intentiecategorieën (exact deze namen, niet aanpassen):
+
+Informatie opvragen
+Probleem of Incident oplossen
+Transactie / Mutatie uitvoeren
+Actievere Navigatiehulp
+Systeem bedienen
+Noodgeval melden
+
+Verplichte eisen:
+
+Data-inladen zit achter één functie, lokaal CSV-pad, geen live endpoint-aanroep. Mag laad_momants_csv hergebruiken uit momants_sentiment.py als dat in hetzelfde project staat.
+PRIVACY — net als de andere twee systemen: raw_json, chat_sender, media, media_url, file mogen NERGENS ingelezen, gebruikt of geprint worden. Alleen created_at, text, from_agent, message_type, conversation_id, agent_id mogen gebruikt worden.
+Classificeer elk bruikbaar bezoekersbericht (from_agent == False, tekst niet leeg, geen kale URL) los, met het getrainde SetFit-model.
+Aggregatie per gesprek: een gesprek kan meerdere intenties bevatten (net als conversation_topics, dit is dus geen "één label per gesprek"-systeem). Verzamel per gesprek de unieke intenties waarvan de zekerheid boven de drempel komt. Sla per intentie op: de zekerheid en het tijdstip van het EERSTE bezoekersbericht in dat gesprek waarin die intentie werd gedetecteerd.
+Output is één tabel met exact deze kolommen: conversation_id, intentie, zekerheid, eerst_gedetecteerd_op. Eén rij per gesprek-intentie-combinatie — dus een gesprek met 2 intenties levert 2 rijen op. Een gesprek zonder enige intentie boven de drempel levert geen rijen op (niet crashen).
+Bouw een apart traincommando/functie (bv. python momants_intentie.py --train) dat het SetFit-model traint op intentie_training.csv en lokaal opslaat (bv. in een map model/), zodat trainen en classificeren twee gescheiden stappen zijn — je hoeft niet elke keer opnieuw te trainen.
+Bouw daarnaast het gebruikelijke command-line-commando om een CSV te classificeren (python momants_intentie.py jouw-bestand.csv) met een --alleen-controleren-vlag die alleen het inladen test, zonder het model te laden.
+Niet aanwezig mag zijn: sentiment, onderwerp-classificatie, antwoord-check, wegschrijven naar de Momants-database, of gebruik van echte bezoekersdata in trainingsvoorbeelden of tests.
+
+Geef me na afloop het volledige momants_intentie.py bestand, de notebookcellen, en een korte uitleg terug van hoe ik het traincommando eenmalig moet draaien voordat ik kan classificeren.
