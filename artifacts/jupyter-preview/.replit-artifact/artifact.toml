@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Momants Notebook"
+description = "Een previewhost die de Momants sentiment-POC rechtstreeks als interactieve JupyterLab-notebook opent."
+version = "1.0.0"
+id = "artifacts/jupyter-preview"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24253
+
+[services.development]
+run = "pnpm --filter @workspace/jupyter-preview run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/jupyter-preview", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/jupyter-preview/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24253"
+BASE_PATH = "/"

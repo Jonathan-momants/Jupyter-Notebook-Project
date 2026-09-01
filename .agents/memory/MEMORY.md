@@ -1,1 +1,2 @@
 - [Python ML package-index](python-ml-package-index.md) — houd alleen torch aan de CPU-index gekoppeld; brede bronmapping blokkeert Transformers op Linux.
+- [Jupyter artifact-routing](jupyter-artifact-routing.md) — host Jupyter als root-artifact op de geïnjecteerde poort en houd `/api` vrij voor Jupyter zelf.
