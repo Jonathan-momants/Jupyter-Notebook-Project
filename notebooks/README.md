@@ -1,17 +1,34 @@
-# Momants sentimentclassificatie
+# Momants CSV-sentimentprocessor
 
-Open `00_momants_sentiment.ipynb` en voer de cellen van boven naar beneden uit.
-De eerste modeldownload kan enkele minuten duren.
+Er wordt geen voorbeeld- of nep-CSV meegeleverd.
 
-## Belangrijk
+## Notebook
 
-- Gebruik uitsluitend nep- of testgesprekken.
-- De notebook leest alleen `created_at`, `text`, `from_agent`, `message_type`,
-  `conversation_id` en `agent_id`.
-- `raw_json`, `chat_sender`, `media`, `media_url` en `file` worden niet
-  ingelezen.
-- Het prototype doet alleen sentimentclassificatie.
-- De databron is nu `data/voorbeeld_gesprekken.csv`.
-- Er wordt niets naar de Momants-database geschreven.
+Open `momants_sentiment.ipynb`, vul `CSV_PAD` in en voer de cellen van boven
+naar beneden uit.
 
-De Python-afhankelijkheden staan in `pyproject.toml`.
+## Commandoregel
+
+Controleer eerst of een export goed wordt herkend:
+
+```bash
+python momants_sentiment.py pad/naar/export.csv --alleen-controleren
+```
+
+Voer daarna de sentimentclassificatie uit:
+
+```bash
+python momants_sentiment.py pad/naar/export.csv --uitvoermap resultaten
+```
+
+Dit schrijft:
+
+- `resultaten/sentiment_per_bericht.csv`
+- `resultaten/sentiment_per_gesprek.csv`
+
+De berichttekst staat standaard niet in de uitvoer. Voeg alleen wanneer nodig
+`--tekst-opnemen` toe.
+
+De processor ondersteunt Momants-CSV's met kolomkoppen en het headerloze
+22-veldenformaat uit de aangeleverde structuur. Privacyvelden zoals `raw_json`
+en `chat_sender` worden niet geselecteerd.

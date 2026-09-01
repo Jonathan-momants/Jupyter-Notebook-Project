@@ -41,6 +41,7 @@ testem.log
 __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
+resultaten/
 
 # System Files
 .DS_Store

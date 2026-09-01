@@ -14,3 +14,17 @@ mtime_ms = 1788259880766
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/3194aeec-0e89-4006-ac40-88e903b2969e/665a0b9a-9512-47d7-ad13-077c7dc89a8c"
 storage_version_token = "1788259906294675"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "SHsppr9Rdpw6e7wmBkGcA"
+uri = "file://notebooks/momants_sentiment.ipynb"
+type = "unspecified"
+title = "Momants CSV-sentimentprocessor"
+description = "Notebook-interface zonder voorbeelddata. Vul een Momants CSV-pad in om sentiment per bericht en per gesprek te exporteren."
+logical_id = "563acd5f-f217-4e3f-aa96-abb9018a531b"
+content_hash = "sha256:eb3dd84eccc695a8807284bda02723c7cc18277df473a7e7db23153be0fe561f"
+size = 3501
+mtime_ms = 1788260340882
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/563acd5f-f217-4e3f-aa96-abb9018a531b/d6ebedc7-d0c9-4247-8175-82d432dc13a3"
+storage_version_token = "1788260436405960"
+content_type = "application/octet-stream"
