@@ -10,6 +10,8 @@ out-tsc
 
 # dependencies
 node_modules
+.pythonlibs/
+.venv/
 
 # IDEs and editors
 /.idea
@@ -36,6 +38,9 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
 
 # System Files
 .DS_Store

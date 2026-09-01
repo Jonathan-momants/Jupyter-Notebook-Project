@@ -1,6 +1,6 @@
-# [Project name]
+# Jupyter Notebook Project
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Een Python/Jupyter-omgeving voor data-analyse en onderzoek die stap voor stap wordt ingevuld.
 
 ## Run & Operate
 
@@ -10,6 +10,7 @@ _Replace the heading above with the project's name, and this line with one sente
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- `jupyter lab` — start JupyterLab vanuit de projectomgeving
 
 ## Stack
 
@@ -22,7 +23,9 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `notebooks/00_start.ipynb` — eerste notebook en startpunt voor de analyse
+- `notebooks/README.md` — korte werkwijze voor notebooks
+- `pyproject.toml` — Python- en Jupyter-afhankelijkheden
 
 ## Architecture decisions
 
@@ -30,7 +33,7 @@ _Populate as you build — non-obvious choices a reader couldn't infer from the 
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+De projectinhoud wordt bepaald door de nog te volgen instructies.
 
 ## User preferences
 
