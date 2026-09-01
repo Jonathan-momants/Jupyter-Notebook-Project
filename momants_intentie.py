@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import re
+import shutil
 from typing import Iterable
 
 from datasets import Dataset
@@ -15,7 +16,7 @@ from momants_sentiment import laad_momants_csv
 
 
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-TRAININGSDATA_PAD = Path("intentie_training.csv")
+TRAININGSDATA_PAD = Path("notebooks/intentie_training.csv")
 LOKAAL_MODEL_PAD = Path("model/momants-intentie")
 ZEKERHEIDSDREMPEL = 0.60
 
@@ -117,7 +118,29 @@ def train_model(
 
     doel = Path(model_pad).expanduser()
     doel.parent.mkdir(parents=True, exist_ok=True)
-    model.save_pretrained(doel)
+    tijdelijk_doel = doel.with_name(f".{doel.name}-nieuw")
+    if tijdelijk_doel.exists():
+        shutil.rmtree(tijdelijk_doel)
+
+    try:
+        model.save_pretrained(tijdelijk_doel)
+        if doel.exists():
+            shutil.rmtree(doel)
+        tijdelijk_doel.replace(doel)
+    except Exception:
+        if tijdelijk_doel.exists():
+            shutil.rmtree(tijdelijk_doel)
+        raise
+
+    aantallen = (
+        training["intentie"]
+        .value_counts()
+        .reindex(INTENTIECATEGORIEEN, fill_value=0)
+    )
+    print(f"Trainingsvoorbeelden gebruikt: {len(training)}")
+    print("Voorbeelden per categorie:")
+    for intentie, aantal in aantallen.items():
+        print(f"- {intentie}: {int(aantal)}")
     return doel
 
 

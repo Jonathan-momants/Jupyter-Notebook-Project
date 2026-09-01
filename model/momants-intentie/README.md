@@ -5,11 +5,11 @@ tags:
 - text-classification
 - generated_from_setfit_trainer
 widget:
-- text: Mijn invoer wordt niet opgeslagen.
-- text: Wat zijn de voorwaarden van deze dienst?
-- text: Maak een nieuwe aanvraag voor mij aan.
-- text: Schrijf mij in voor de volgende beschikbare datum.
-- text: Ik wil deze bestelling annuleren.
+- text: Ik zie brand bij de foodtrucks.
+- text: hoeveel kost een parkeerplek
+- text: Wat kost een consumptie gemiddeld?
+- text: het toilet bij vak 3 is verstopt
+- text: ik heb betaald maar geen bevestiging ontvangen
 metrics:
 - accuracy
 pipeline_tag: text-classification
@@ -46,14 +46,14 @@ The model has been trained using an efficient few-shot learning technique that i
 - **Blogpost:** [SetFit: Efficient Few-Shot Learning Without Prompts](https://huggingface.co/blog/setfit)
 
 ### Model Labels
-| Label                          | Examples                                                                                                                                                                                     |
-|:-------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Informatie opvragen            | <ul><li>'Welke openingstijden gelden er?'</li><li>'Wat zijn de voorwaarden van deze dienst?'</li><li>'Hoeveel kost het standaardpakket?'</li></ul>                                           |
-| Probleem of Incident oplossen  | <ul><li>'De pagina geeft steeds een foutmelding.'</li><li>'Mijn invoer wordt niet opgeslagen.'</li><li>'De verbinding valt telkens weg.'</li></ul>                                           |
-| Transactie / Mutatie uitvoeren | <ul><li>'Ik wil mijn afspraak verplaatsen.'</li><li>'Kun je mijn adres aanpassen?'</li><li>'Ik wil deze bestelling annuleren.'</li></ul>                                                     |
-| Actievere Navigatiehulp        | <ul><li>'Waar moet ik klikken om mijn gegevens te vinden?'</li><li>'Kun je mij stap voor stap naar het formulier leiden?'</li><li>'Ik kan de juiste pagina niet vinden.'</li></ul>           |
-| Systeem bedienen               | <ul><li>'Open het instellingenmenu.'</li><li>'Start de controle opnieuw.'</li><li>'Log mij uit van dit apparaat.'</li></ul>                                                                  |
-| Noodgeval melden               | <ul><li>'Er is direct hulp nodig vanwege een gevaarlijke situatie.'</li><li>'Ik moet met spoed iemand spreken.'</li><li>'Er is een noodgeval en we hebben nu ondersteuning nodig.'</li></ul> |
+| Label                          | Examples                                                                                                                                                                                          |
+|:-------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Informatie opvragen            | <ul><li>'Hoe laat gaan de deuren open?'</li><li>'Waar kan ik het programma vinden?'</li><li>'Is er een kluisje te huur op het terrein?'</li></ul>                                                 |
+| Probleem of Incident oplossen  | <ul><li>'Mijn ticket scant niet bij de ingang.'</li><li>'Ik heb mijn polsbandje kapot getrokken.'</li><li>'Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.'</li></ul>           |
+| Transactie / Mutatie uitvoeren | <ul><li>'Ik wil een extra ticket bijkopen.'</li><li>'Kan ik mijn ticket omzetten naar een ander type?'</li><li>'Ik wil mijn parkeerplek annuleren.'</li></ul>                                     |
+| Actievere Navigatiehulp        | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
+| Systeem bedienen               | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
+| Noodgeval melden               | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
 
 ## Uses
 
@@ -73,7 +73,7 @@ from setfit import SetFitModel
 # Download from the 🤗 Hub
 model = SetFitModel.from_pretrained("setfit_model_id")
 # Run inference
-preds = model("Ik wil deze bestelling annuleren.")
+preds = model("hoeveel kost een parkeerplek")
 ```
 
 <!--
@@ -105,16 +105,16 @@ preds = model("Ik wil deze bestelling annuleren.")
 ### Training Set Metrics
 | Training set | Min | Median | Max |
 |:-------------|:----|:-------|:----|
-| Word count   | 3   | 6.5278 | 10  |
+| Word count   | 3   | 7.4891 | 12  |
 
 | Label                          | Training Sample Count |
 |:-------------------------------|:----------------------|
-| Informatie opvragen            | 6                     |
-| Probleem of Incident oplossen  | 6                     |
-| Transactie / Mutatie uitvoeren | 6                     |
-| Actievere Navigatiehulp        | 6                     |
-| Systeem bedienen               | 6                     |
-| Noodgeval melden               | 6                     |
+| Informatie opvragen            | 22                    |
+| Probleem of Incident oplossen  | 20                    |
+| Transactie / Mutatie uitvoeren | 15                    |
+| Actievere Navigatiehulp        | 12                    |
+| Systeem bedienen               | 11                    |
+| Noodgeval melden               | 12                    |
 
 ### Training Hyperparameters
 - batch_size: (16, 16)
@@ -138,7 +138,7 @@ preds = model("Ik wil deze bestelling annuleren.")
 ### Training Results
 | Epoch  | Step | Training Loss | Validation Loss |
 |:------:|:----:|:-------------:|:---------------:|
-| 0.1111 | 1    | 0.2011        | -               |
+| 0.0435 | 1    | 0.2124        | -               |
 
 ### Framework Versions
 - Python: 3.11.14
