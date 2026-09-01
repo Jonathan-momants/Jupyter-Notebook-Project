@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 from pathlib import Path
 import re
 import shutil
@@ -244,6 +245,7 @@ def verwerk_csv(
     batchgrootte: int = 32,
 ) -> pd.DataFrame:
     """Classificeer een Momants-export en schrijf de gesprek-intenties."""
+    gestart_op = datetime.now().astimezone()
     data = laad_momants_csv(csv_pad)
     bezoekersberichten = selecteer_bezoekersberichten(data)
     geclassificeerd = classificeer_berichten(
@@ -255,7 +257,10 @@ def verwerk_csv(
 
     doelmap = Path(uitvoermap).expanduser()
     doelmap.mkdir(parents=True, exist_ok=True)
-    overzicht.to_csv(doelmap / "intenties_per_gesprek.csv", index=False)
+    tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
+    uitvoerpad = doelmap / f"intenties_per_gesprek_{tijdstempel}.csv"
+    overzicht.to_csv(uitvoerpad, index=False)
+    overzicht.attrs["uitvoerpad"] = uitvoerpad.resolve()
     return overzicht
 
 
@@ -320,25 +325,22 @@ def main(argv: Iterable[str] | None = None) -> int:
     if argumenten.csv_pad is None:
         raise SystemExit("Geef een CSV-pad op, of gebruik --train.")
 
-    data = laad_momants_csv(argumenten.csv_pad)
-    bezoekers = selecteer_bezoekersberichten(data)
     if argumenten.alleen_controleren:
+        data = laad_momants_csv(argumenten.csv_pad)
+        bezoekers = selecteer_bezoekersberichten(data)
         print(f"Berichtrijen ingelezen: {len(data)}")
         print(f"Bruikbare bezoekersberichten: {len(bezoekers)}")
         print(f"Gesprekken: {bezoekers['conversation_id'].nunique()}")
         return 0
 
-    geclassificeerd = classificeer_berichten(
-        bezoekers,
+    overzicht = verwerk_csv(
+        csv_pad=argumenten.csv_pad,
+        uitvoermap=argumenten.uitvoermap,
         model_pad=argumenten.model_pad,
         batchgrootte=argumenten.batchgrootte,
     )
-    overzicht = maak_intentieoverzicht(geclassificeerd)
-    argumenten.uitvoermap.mkdir(parents=True, exist_ok=True)
-    uitvoerpad = argumenten.uitvoermap / "intenties_per_gesprek.csv"
-    overzicht.to_csv(uitvoerpad, index=False)
     print(f"Gesprek-intenties: {len(overzicht)}")
-    print(f"Uitvoer geschreven naar: {uitvoerpad.resolve()}")
+    print(f"Uitvoer geschreven naar: {overzicht.attrs['uitvoerpad']}")
     return 0
 
 

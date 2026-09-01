@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 from pathlib import Path
 import re
 from typing import Iterable
@@ -279,6 +280,7 @@ def verwerk_csv(
     batchgrootte: int = 32,
 ) -> pd.DataFrame:
     """Voer de verwerking uit en schrijf één veilige gesprekstabel."""
+    gestart_op = datetime.now().astimezone()
     data = laad_momants_csv(csv_pad)
     bezoekersberichten = selecteer_bezoekersberichten(data)
     gespreksoverzicht = maak_gespreksoverzicht(
@@ -288,8 +290,10 @@ def verwerk_csv(
 
     map_pad = Path(uitvoermap).expanduser()
     map_pad.mkdir(parents=True, exist_ok=True)
-
-    gespreksoverzicht.to_csv(map_pad / "sentiment_per_gesprek.csv", index=False)
+    tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
+    uitvoerpad = map_pad / f"sentiment_per_gesprek_{tijdstempel}.csv"
+    gespreksoverzicht.to_csv(uitvoerpad, index=False)
+    gespreksoverzicht.attrs["uitvoerpad"] = uitvoerpad.resolve()
 
     return gespreksoverzicht
 
@@ -336,7 +340,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         batchgrootte=argumenten.batchgrootte,
     )
     print(f"Gesprekresultaten: {len(gesprekken)}")
-    print(f"Uitvoer geschreven naar: {argumenten.uitvoermap.resolve()}")
+    print(f"Uitvoer geschreven naar: {gesprekken.attrs['uitvoerpad']}")
     return 0
 
 

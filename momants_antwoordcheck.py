@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
 from pathlib import Path
 import re
 from typing import Iterable
@@ -272,11 +273,15 @@ def verwerk_csv(
     batchgrootte: int = 32,
 ) -> pd.DataFrame:
     """Verwerk een lokale export en schrijf één veilige gesprekstabel."""
+    gestart_op = datetime.now().astimezone()
     data = laad_momants_csv(csv_pad)
     overzicht = maak_gespreksoverzicht(data, batchgrootte=batchgrootte)
     map_pad = Path(uitvoermap).expanduser()
     map_pad.mkdir(parents=True, exist_ok=True)
-    overzicht.to_csv(map_pad / "antwoordcheck_per_gesprek.csv", index=False)
+    tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
+    uitvoerpad = map_pad / f"antwoordcheck_per_gesprek_{tijdstempel}.csv"
+    overzicht.to_csv(uitvoerpad, index=False)
+    overzicht.attrs["uitvoerpad"] = uitvoerpad.resolve()
     return overzicht
 
 
@@ -307,24 +312,22 @@ def _maak_parser() -> argparse.ArgumentParser:
 
 def main(argv: Iterable[str] | None = None) -> int:
     argumenten = _maak_parser().parse_args(argv)
-    data = laad_momants_csv(argumenten.csv_pad)
 
     if argumenten.alleen_controleren:
+        data = laad_momants_csv(argumenten.csv_pad)
         vragen = detecteer_vragen(data)
         print(f"Berichtrijen ingelezen: {len(data)}")
         print(f"Vragen gevonden: {len(vragen)}")
         print(f"Gesprekken met vragen: {vragen['conversation_id'].nunique()}")
         return 0
 
-    overzicht = maak_gespreksoverzicht(
-        data,
+    overzicht = verwerk_csv(
+        csv_pad=argumenten.csv_pad,
+        uitvoermap=argumenten.uitvoermap,
         batchgrootte=argumenten.batchgrootte,
     )
-    argumenten.uitvoermap.mkdir(parents=True, exist_ok=True)
-    uitvoerpad = argumenten.uitvoermap / "antwoordcheck_per_gesprek.csv"
-    overzicht.to_csv(uitvoerpad, index=False)
     print(f"Gesprekresultaten: {len(overzicht)}")
-    print(f"Uitvoer geschreven naar: {uitvoerpad.resolve()}")
+    print(f"Uitvoer geschreven naar: {overzicht.attrs['uitvoerpad']}")
     return 0
 
 
