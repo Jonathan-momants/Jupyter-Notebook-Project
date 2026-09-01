@@ -1,0 +1,24 @@
+Bouw een nieuw, apart Python-bestand momants_antwoordcheck.py plus een bijbehorende notebook momants_antwoordcheck.ipynb, naast de bestaande momants_sentiment.py. Dit systeem werkt met dezelfde Momants CSV-export als het sentimentsysteem, maar heeft een andere taak: per gesprek bepalen of de vragen van de bezoeker beantwoord zijn. Scope is ALLEEN dit — geen sentiment, geen onderwerp-classificatie, geen urgentiemodel.
+
+Model: MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli (multilingual NLI-model). Gebruik het via AutoTokenizer + AutoModelForSequenceClassification + torch.softmax (de NLI-aanpak uit de modelkaart), NIET de zero-shot-classification pipeline-wrapper. Zet het model-ID, de hypothesezin en de beslisdrempel geïsoleerd bovenaan als constanten, zodat ze later makkelijk aan te passen zijn.
+
+Databron: dezelfde CSV op berichtniveau als bij het sentimentsysteem (created_at, text, from_agent, message_type, conversation_id, agent_id, plus overige kolommen die NIET gebruikt mogen worden — zie privacy-eis).
+
+Verplichte eisen:
+
+Data-inladen zit achter één functie (bv. laad_momants_csv(bron)), lokaal CSV-pad, geen live endpoint-aanroep (die bestaat nog niet). Mag hergebruikt worden uit momants_sentiment.py als dat in hetzelfde project staat, zolang de functie zelf ongewijzigd blijft.
+Berichten worden gegroepeerd per conversation_id en binnen elk gesprek gesorteerd op created_at.
+PRIVACY — net als bij het sentimentsysteem: raw_json, chat_sender, media, media_url, file mogen NERGENS ingelezen, gebruikt of geprint worden. Alleen created_at, text, from_agent, message_type, conversation_id, agent_id mogen gebruikt worden.
+Vraagdetectie: een bezoekersbericht (from_agent == False, tekst niet leeg, geen kale URL) telt als "vraag" als de tekst een vraagteken bevat OF begint met een vraagwoord (bv. wie, wat, waar, wanneer, hoe, waarom, welke, mag, kan, is er, zijn er — zet deze lijst in een losse, makkelijk aan te passen constante/functie).
+Koppelen van vraag aan antwoord: voor elke gedetecteerde vraag is het antwoord het eerstvolgende bericht met from_agent == True ná dat bezoekersbericht, binnen hetzelfde gesprek, op basis van created_at. Als er geen zo'n agent-bericht bestaat, is de vraag automatisch "niet beantwoord" — sla deze over bij de modelaanroep (geen onnodige classificatie).
+Classificatie: voor elk overgebleven vraag-antwoordpaar, geef het antwoord als premise en de vaste hypothesezin "Dit antwoordt op de vraag van de bezoeker." aan het model. Gebruik de entailment-score om te bepalen of de vraag beantwoord is (drempelwaarde instelbaar, bv. entailment-score hoger dan contradiction- én neutral-score).
+Aggregatie per gesprek: tel per gesprek het aantal gedetecteerde vragen en het aantal daarvan dat beantwoord is. Bepaal één eindoordeel per gesprek:
+0 vragen gevonden → "Geen vragen gevonden"
+alle vragen beantwoord → "Beantwoord"
+geen enkele vraag beantwoord → "Niet beantwoord"
+een deel beantwoord → "Deels beantwoord"
+Output is één tabel met exact deze kolommen: conversation_id, aantal_vragen, aantal_beantwoord, percentage_beantwoord, eindoordeel, en een uitleg-kolom met een korte tekst in gewone taal per rij (bv. "2 van de 3 vragen zijn beantwoord.").
+Niet aanwezig mag zijn: sentimentclassificatie, onderwerp-classificatie, urgentiemodel, wegschrijven naar de Momants-database, of gebruik van echte bezoekersdata (alleen nep-/testdata).
+Bouw net als bij momants_sentiment.py een command-line-ingang (python momants_antwoordcheck.py jouw-bestand.csv) met een --alleen-controleren-vlag die alleen het inladen en de vraagdetectie test, zonder het model te starten.
+
+Geef me na afloop het volledige momants_antwoordcheck.py bestand en de notebookcellen terug.
