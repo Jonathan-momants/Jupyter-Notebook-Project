@@ -17,6 +17,8 @@ from momants_sentiment import laad_momants_csv
 MODEL_ID = "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli"
 HYPOTHESE = "Dit antwoordt op de vraag van de bezoeker."
 ENTAILMENT_DREMPEL = 0.50
+# Tijdelijk: zet op False om weer uitsluitend de privacy-arme samenvatting te schrijven.
+VOEG_GESPREKSTEKST_TOE = True
 
 VRAAGSTARTEN = (
     "wie",
@@ -32,13 +34,17 @@ VRAAGSTARTEN = (
     "zijn er",
 )
 
-UITVOERKOLOMMEN = [
+BASIS_UITVOERKOLOMMEN = [
     "conversation_id",
     "aantal_vragen",
     "aantal_beantwoord",
     "percentage_beantwoord",
     "eindoordeel",
     "uitleg",
+]
+UITVOERKOLOMMEN = [
+    *BASIS_UITVOERKOLOMMEN,
+    *(["gesprekstekst"] if VOEG_GESPREKSTEKST_TOE else []),
 ]
 
 KALE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
@@ -184,6 +190,23 @@ def _eindoordeel(aantal_vragen: int, aantal_beantwoord: int) -> str:
     return "Deels beantwoord"
 
 
+def _maak_gespreksteksten(data: pd.DataFrame) -> pd.Series:
+    """Combineer tijdelijk bezoeker- en agenttekst per gesprek in tijdsvolgorde."""
+    gesorteerd = data.sort_values(
+        ["conversation_id", "created_at"], kind="stable"
+    ).copy()
+    heeft_tekst = gesorteerd["text"].notna() & gesorteerd["text"].astype(str).str.strip().ne("")
+    gesorteerd = gesorteerd.loc[heeft_tekst].copy()
+    gesorteerd["regel"] = (
+        gesorteerd["from_agent"]
+        .map({True: "Agent", False: "Bezoeker"})
+        .fillna("Onbekend")
+        + ": "
+        + gesorteerd["text"].astype(str).str.strip()
+    )
+    return gesorteerd.groupby("conversation_id", sort=False)["regel"].agg("\n".join)
+
+
 def maak_gespreksoverzicht(
     data: pd.DataFrame,
     batchgrootte: int = 32,
@@ -235,6 +258,11 @@ def maak_gespreksoverzicht(
         ),
         axis=1,
     )
+    if VOEG_GESPREKSTEKST_TOE:
+        gespreksteksten = _maak_gespreksteksten(data)
+        overzicht["gesprekstekst"] = (
+            overzicht["conversation_id"].map(gespreksteksten).fillna("")
+        )
     return overzicht[UITVOERKOLOMMEN]
 
 
