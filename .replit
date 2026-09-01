@@ -11,6 +11,27 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "JupyterLab"
+
+[[workflows.workflow]]
+name = "JupyterLab"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "jupyter lab --ip=0.0.0.0 --port=8000 --no-browser --ServerApp.root_dir=. --ServerApp.default_url=/lab/tree/notebooks/momants_sentiment.ipynb --ServerApp.allow_remote_access=True --ServerApp.allow_origin='*' --IdentityProvider.token=''"
+waitForPort = 8000
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
