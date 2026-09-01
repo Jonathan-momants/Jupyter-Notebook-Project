@@ -1,4 +1,4 @@
-"""Train en gebruik een SetFit-classifier voor Momants-gespreksintenties."""
+"""Train and use a SetFit classifier for Momants conversation intents."""
 
 from __future__ import annotations
 
@@ -13,94 +13,94 @@ from datasets import Dataset
 import pandas as pd
 from setfit import SetFitModel, Trainer, TrainingArguments
 
-from momants_sentiment import laad_momants_csv
+from momants_sentiment import load_momants_csv
 
 
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-TRAININGSDATA_PAD = Path("notebooks/intentie_training.csv")
-LOKAAL_MODEL_PAD = Path("model/momants-intentie")
-ZEKERHEIDSDREMPEL = 0.60
+TRAINING_DATA_PATH = Path("notebooks/intentie_training.csv")
+LOCAL_MODEL_PATH = Path("model/momants-intentie")
+CONFIDENCE_THRESHOLD = 0.60
 
-INTENTIECATEGORIEEN = [
-    "Informatie opvragen",
-    "Probleem of Incident oplossen",
-    "Transactie / Mutatie uitvoeren",
-    "Actievere Navigatiehulp",
-    "Systeem bedienen",
-    "Noodgeval melden",
+INTENT_CATEGORIES = [
+    "Information request",
+    "Problem or Incident resolution",
+    "Transaction / Mutation execution",
+    "Active Navigation assistance",
+    "System operation",
+    "Emergency report",
 ]
 
-UITVOERKOLOMMEN = [
+OUTPUT_COLUMNS = [
     "conversation_id",
-    "intentie",
-    "zekerheid",
-    "eerst_gedetecteerd_op",
+    "intent",
+    "confidence",
+    "first_detected_at",
 ]
 
-KALE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
+BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
 
 
 def _valideer_trainingsdata(data: pd.DataFrame) -> pd.DataFrame:
-    """Controleer het trainingsschema en de zes toegestane intentielabels."""
-    vereiste_kolommen = {"tekst", "intentie"}
+    """Validate the training schema and the six permitted intent labels."""
+    vereiste_kolommen = {"text", "intent"}
     ontbrekend = vereiste_kolommen - set(data.columns)
     if ontbrekend:
         raise ValueError(
-            "De trainings-CSV mist kolommen: "
+            "The training CSV is missing columns: "
             f"{', '.join(sorted(ontbrekend))}."
         )
 
-    schoon = data[["tekst", "intentie"]].copy()
+    schoon = data[["text", "intent"]].copy()
     if schoon.isna().any().any():
         raise ValueError(
-            "De trainingsdata bevat ontbrekende tekst- of intentiewaarden."
+            "The training data contains missing text or intent values."
         )
-    schoon["tekst"] = schoon["tekst"].astype(str).str.strip()
-    schoon["intentie"] = schoon["intentie"].astype(str).str.strip()
-    if schoon["tekst"].eq("").any() or schoon["intentie"].eq("").any():
+    schoon["text"] = schoon["text"].astype(str).str.strip()
+    schoon["intent"] = schoon["intent"].astype(str).str.strip()
+    if schoon["text"].eq("").any() or schoon["intent"].eq("").any():
         raise ValueError(
-            "De trainingsdata bevat lege tekst- of intentiewaarden."
+            "The training data contains empty text or intent values."
         )
 
-    onbekend = set(schoon["intentie"]) - set(INTENTIECATEGORIEEN)
+    onbekend = set(schoon["intent"]) - set(INTENT_CATEGORIES)
     if onbekend:
         raise ValueError(
-            "Onbekende intentielabels in de trainingsdata: "
+            "Unknown intent labels in the training data: "
             f"{', '.join(sorted(onbekend))}."
         )
 
-    ontbrekende_labels = set(INTENTIECATEGORIEEN) - set(schoon["intentie"])
+    ontbrekende_labels = set(INTENT_CATEGORIES) - set(schoon["intent"])
     if ontbrekende_labels:
         raise ValueError(
-            "Trainingsvoorbeelden ontbreken voor: "
+            "Training examples are missing for: "
             f"{', '.join(sorted(ontbrekende_labels))}."
         )
     return schoon
 
 
 def train_model(
-    trainingsdata_pad: str | Path = TRAININGSDATA_PAD,
-    model_pad: str | Path = LOKAAL_MODEL_PAD,
+    training_data_path: str | Path = TRAINING_DATA_PATH,
+    model_path: str | Path = LOCAL_MODEL_PATH,
 ) -> Path:
-    """Train SetFit op handgeschreven voorbeelden en sla het model lokaal op."""
-    bron = Path(trainingsdata_pad).expanduser()
+    """Train SetFit on handwritten examples and save the model locally."""
+    bron = Path(training_data_path).expanduser()
     if not bron.is_file():
-        raise FileNotFoundError(f"Trainingsbestand niet gevonden: {bron}")
+        raise FileNotFoundError(f"Training file not found: {bron}")
 
     training = _valideer_trainingsdata(pd.read_csv(bron))
     label_naar_index = {
-        label: index for index, label in enumerate(INTENTIECATEGORIEEN)
+        label: index for index, label in enumerate(INTENT_CATEGORIES)
     }
     dataset = Dataset.from_dict(
         {
-            "text": training["tekst"].tolist(),
-            "label": training["intentie"].map(label_naar_index).tolist(),
+            "text": training["text"].tolist(),
+            "label": training["intent"].map(label_naar_index).tolist(),
         }
     )
 
     model = SetFitModel.from_pretrained(
         BASIS_MODEL_ID,
-        labels=INTENTIECATEGORIEEN,
+        labels=INTENT_CATEGORIES,
     )
     argumenten = TrainingArguments(
         output_dir="model/checkpoints-intentie",
@@ -117,7 +117,7 @@ def train_model(
     )
     trainer.train()
 
-    doel = Path(model_pad).expanduser()
+    doel = Path(model_path).expanduser()
     doel.parent.mkdir(parents=True, exist_ok=True)
     tijdelijk_doel = doel.with_name(f".{doel.name}-nieuw")
     if tijdelijk_doel.exists():
@@ -134,12 +134,12 @@ def train_model(
         raise
 
     aantallen = (
-        training["intentie"]
+        training["intent"]
         .value_counts()
-        .reindex(INTENTIECATEGORIEEN, fill_value=0)
+        .reindex(INTENT_CATEGORIES, fill_value=0)
     )
-    print(f"Trainingsvoorbeelden gebruikt: {len(training)}")
-    print("Voorbeelden per categorie:")
+    print(f"Training examples used: {len(training)}")
+    print("Examples per category:")
     for intentie, aantal in aantallen.items():
         print(f"- {intentie}: {int(aantal)}")
     return doel
@@ -149,11 +149,11 @@ def _is_bruikbaar_bezoekersbericht(rij: pd.Series) -> bool:
     if bool(rij["from_agent"]) or pd.isna(rij["text"]):
         return False
     tekst = str(rij["text"]).strip()
-    return bool(tekst) and KALE_URL.fullmatch(tekst) is None
+    return bool(tekst) and BARE_URL.fullmatch(tekst) is None
 
 
 def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
-    """Selecteer uitsluitend bruikbare bezoekersberichten in tijdsvolgorde."""
+    """Select only usable visitor messages in chronological order."""
     selectie = data.loc[
         data.apply(_is_bruikbaar_bezoekersbericht, axis=1)
     ].copy()
@@ -163,34 +163,37 @@ def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
     ).reset_index(drop=True)
 
 
+select_visitor_messages = selecteer_bezoekersberichten
+
+
 def _modellabels(model: SetFitModel) -> list[str]:
     labels = [str(label) for label in model.labels]
-    if set(labels) != set(INTENTIECATEGORIEEN):
+    if set(labels) != set(INTENT_CATEGORIES):
         raise ValueError(
-            "Het lokale model bevat niet exact de zes vereiste intentielabels."
+            "The local model does not contain exactly the six required intent labels."
         )
     return labels
 
 
 def classificeer_berichten(
     bezoekersberichten: pd.DataFrame,
-    model_pad: str | Path = LOKAAL_MODEL_PAD,
+    model_pad: str | Path = LOCAL_MODEL_PATH,
     batchgrootte: int = 32,
     model: SetFitModel | None = None,
 ) -> pd.DataFrame:
-    """Classificeer ieder bruikbaar bezoekersbericht afzonderlijk."""
+    """Classify each usable visitor message separately."""
     if bezoekersberichten.empty:
         leeg = bezoekersberichten.copy()
-        leeg["intentie"] = pd.Series(dtype="object")
-        leeg["zekerheid"] = pd.Series(dtype="float64")
+        leeg["intent"] = pd.Series(dtype="object")
+        leeg["confidence"] = pd.Series(dtype="float64")
         return leeg
 
     if model is None:
         pad = Path(model_pad).expanduser()
         if not pad.is_dir():
             raise FileNotFoundError(
-                f"Getraind intentiemodel niet gevonden in {pad}. "
-                "Draai eerst: python momants_intentie.py --train"
+                f"Trained intent model not found in {pad}. "
+                "Run first: python momants_intentie.py --train"
             )
         model = SetFitModel.from_pretrained(pad, local_files_only=True)
 
@@ -205,142 +208,153 @@ def classificeer_berichten(
     beste_scores = kansen.max(axis=1)
 
     resultaat = bezoekersberichten.copy()
-    resultaat["intentie"] = [labels[index] for index in beste_indices]
-    resultaat["zekerheid"] = beste_scores
+    resultaat["intent"] = [labels[index] for index in beste_indices]
+    resultaat["confidence"] = beste_scores
     return resultaat
+
+
+classify_messages = classificeer_berichten
 
 
 def maak_intentieoverzicht(
     geclassificeerd: pd.DataFrame,
-    zekerheidsdrempel: float = ZEKERHEIDSDREMPEL,
+    zekerheidsdrempel: float = CONFIDENCE_THRESHOLD,
 ) -> pd.DataFrame:
-    """Bewaar de eerste detectie per unieke gesprek-intentie-combinatie."""
+    """Keep the first detection per unique conversation-intent combination."""
     if geclassificeerd.empty:
-        return pd.DataFrame(columns=UITVOERKOLOMMEN)
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     boven_drempel = geclassificeerd.loc[
-        geclassificeerd["zekerheid"].gt(zekerheidsdrempel)
+        geclassificeerd["confidence"].gt(zekerheidsdrempel)
     ].copy()
     if boven_drempel.empty:
-        return pd.DataFrame(columns=UITVOERKOLOMMEN)
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     eerste = (
         boven_drempel.sort_values(
             ["conversation_id", "created_at"], kind="stable"
         )
-        .drop_duplicates(["conversation_id", "intentie"], keep="first")
-        .rename(columns={"created_at": "eerst_gedetecteerd_op"})
+        .drop_duplicates(["conversation_id", "intent"], keep="first")
+        .rename(columns={"created_at": "first_detected_at"})
     )
-    eerste["eerst_gedetecteerd_op"] = eerste[
-        "eerst_gedetecteerd_op"
+    eerste["first_detected_at"] = eerste[
+        "first_detected_at"
     ].apply(lambda waarde: waarde.isoformat())
-    eerste["zekerheid"] = eerste["zekerheid"].round(4)
-    return eerste[UITVOERKOLOMMEN].reset_index(drop=True)
+    eerste["confidence"] = eerste["confidence"].round(4)
+    return eerste[OUTPUT_COLUMNS].reset_index(drop=True)
 
 
-def verwerk_csv(
-    csv_pad: str | Path,
-    uitvoermap: str | Path = "resultaten",
-    model_pad: str | Path = LOKAAL_MODEL_PAD,
-    batchgrootte: int = 32,
+create_intent_summary = maak_intentieoverzicht
+
+
+def process_csv(
+    csv_path: str | Path,
+    output_directory: str | Path = "results",
+    model_path: str | Path = LOCAL_MODEL_PATH,
+    batch_size: int = 32,
 ) -> pd.DataFrame:
-    """Classificeer een Momants-export en schrijf de gesprek-intenties."""
+    """Classify a Momants export and write the conversation intents."""
     gestart_op = datetime.now().astimezone()
-    data = laad_momants_csv(csv_pad)
+    data = load_momants_csv(csv_path)
     bezoekersberichten = selecteer_bezoekersberichten(data)
     geclassificeerd = classificeer_berichten(
         bezoekersberichten,
-        model_pad=model_pad,
-        batchgrootte=batchgrootte,
+        model_pad=model_path,
+        batchgrootte=batch_size,
     )
     overzicht = maak_intentieoverzicht(geclassificeerd)
 
-    doelmap = Path(uitvoermap).expanduser()
+    doelmap = Path(output_directory).expanduser()
     doelmap.mkdir(parents=True, exist_ok=True)
     tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
-    uitvoerpad = doelmap / f"intenties_per_gesprek_{tijdstempel}.csv"
+    uitvoerpad = doelmap / f"intents_per_conversation_{tijdstempel}.csv"
     overzicht.to_csv(uitvoerpad, index=False)
-    overzicht.attrs["uitvoerpad"] = uitvoerpad.resolve()
+    overzicht.attrs["output_path"] = uitvoerpad.resolve()
     return overzicht
 
 
-def _maak_parser() -> argparse.ArgumentParser:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Train of gebruik de Momants-intentieclassifier."
+        description="Train or use the Momants intent classifier."
     )
     parser.add_argument(
-        "csv_pad",
+        "csv_path",
         type=Path,
         nargs="?",
-        help="Pad naar de lokale Momants CSV-export.",
+        help="Path to the local Momants CSV export.",
     )
     parser.add_argument(
         "--train",
         action="store_true",
-        help="Train het model eenmalig op intentie_training.csv.",
+        help="Train the model once on the configured training CSV.",
     )
     parser.add_argument(
-        "--trainingsdata",
+        "--training-data",
+        dest="training_data",
         type=Path,
-        default=TRAININGSDATA_PAD,
-        help="CSV met de kolommen tekst en intentie.",
+        default=TRAINING_DATA_PATH,
+        help="CSV with the text and intent columns.",
     )
     parser.add_argument(
-        "--model-pad",
+        "--model-path",
+        dest="model_path",
         type=Path,
-        default=LOKAAL_MODEL_PAD,
-        help="Map waarin het getrainde model staat.",
+        default=LOCAL_MODEL_PATH,
+        help="Directory containing the trained model.",
     )
     parser.add_argument(
-        "--uitvoermap",
+        "--output-directory",
+        dest="output_directory",
         type=Path,
-        default=Path("resultaten"),
-        help="Map voor intenties_per_gesprek.csv.",
+        default=Path("results"),
+        help="Directory for intents_per_conversation_<timestamp>.csv.",
     )
     parser.add_argument(
-        "--batchgrootte",
+        "--batch-size",
+        dest="batch_size",
         type=int,
         default=32,
-        help="Aantal bezoekersberichten per modelbatch.",
+        help="Number of visitor messages per model batch.",
     )
     parser.add_argument(
-        "--alleen-controleren",
+        "--check-only",
+        dest="check_only",
         action="store_true",
-        help="Controleer alleen het inladen, zonder het model te laden.",
+        help="Only validate loading, without loading the model.",
     )
     return parser
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    argumenten = _maak_parser().parse_args(argv)
+    args = _build_parser().parse_args(argv)
 
-    if argumenten.train:
+    if args.train:
         model_pad = train_model(
-            trainingsdata_pad=argumenten.trainingsdata,
-            model_pad=argumenten.model_pad,
+            training_data_path=args.training_data,
+            model_path=args.model_path,
         )
-        print(f"Intentiemodel opgeslagen in: {model_pad.resolve()}")
+        print(f"Intent model saved to: {model_pad.resolve()}")
         return 0
 
-    if argumenten.csv_pad is None:
-        raise SystemExit("Geef een CSV-pad op, of gebruik --train.")
+    if args.csv_path is None:
+        raise SystemExit("Provide a CSV path, or use --train.")
 
-    if argumenten.alleen_controleren:
-        data = laad_momants_csv(argumenten.csv_pad)
+    if args.check_only:
+        data = load_momants_csv(args.csv_path)
         bezoekers = selecteer_bezoekersberichten(data)
-        print(f"Berichtrijen ingelezen: {len(data)}")
-        print(f"Bruikbare bezoekersberichten: {len(bezoekers)}")
-        print(f"Gesprekken: {bezoekers['conversation_id'].nunique()}")
+        print(f"Message rows read: {len(data)}")
+        print(f"Usable visitor messages: {len(bezoekers)}")
+        print(f"Conversations: {bezoekers['conversation_id'].nunique()}")
         return 0
 
-    overzicht = verwerk_csv(
-        csv_pad=argumenten.csv_pad,
-        uitvoermap=argumenten.uitvoermap,
-        model_pad=argumenten.model_pad,
-        batchgrootte=argumenten.batchgrootte,
+    overzicht = process_csv(
+        csv_path=args.csv_path,
+        output_directory=args.output_directory,
+        model_path=args.model_path,
+        batch_size=args.batch_size,
     )
-    print(f"Gesprek-intenties: {len(overzicht)}")
-    print(f"Uitvoer geschreven naar: {overzicht.attrs['uitvoerpad']}")
+    print(f"Conversation intents: {len(overzicht)}")
+    print(f"Output written to: {overzicht.attrs['output_path']}")
     return 0
 
 

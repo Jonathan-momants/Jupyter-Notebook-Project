@@ -1,4 +1,4 @@
-"""Bepaal per Momants-gesprek of vragen van bezoekers zijn beantwoord."""
+"""Determine whether visitor questions were answered in each Momants conversation."""
 
 from __future__ import annotations
 
@@ -12,16 +12,16 @@ import pandas as pd
 import torch
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-from momants_sentiment import laad_momants_csv
+from momants_sentiment import load_momants_csv
 
 
 MODEL_ID = "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli"
-HYPOTHESE = "Dit antwoordt op de vraag van de bezoeker."
-ENTAILMENT_DREMPEL = 0.50
-# Tijdelijk: zet op False om weer uitsluitend de privacy-arme samenvatting te schrijven.
-VOEG_GESPREKSTEKST_TOE = True
+HYPOTHESIS = "This answers the visitor's question."
+ENTAILMENT_THRESHOLD = 0.50
+# Temporary: set to False to write only the privacy-conscious summary again.
+INCLUDE_CONVERSATION_TEXT = True
 
-VRAAGSTARTEN = (
+DUTCH_QUESTION_STARTS = (
     "wie",
     "wat",
     "waar",
@@ -35,299 +35,299 @@ VRAAGSTARTEN = (
     "zijn er",
 )
 
-BASIS_UITVOERKOLOMMEN = [
+BASE_OUTPUT_COLUMNS = [
     "conversation_id",
-    "aantal_vragen",
-    "aantal_beantwoord",
-    "percentage_beantwoord",
-    "eindoordeel",
-    "uitleg",
+    "question_count",
+    "answered_count",
+    "answered_percentage",
+    "status",
+    "explanation",
 ]
-UITVOERKOLOMMEN = [
-    *BASIS_UITVOERKOLOMMEN,
-    *(["gesprekstekst"] if VOEG_GESPREKSTEKST_TOE else []),
+OUTPUT_COLUMNS = [
+    *BASE_OUTPUT_COLUMNS,
+    *(["conversation_text"] if INCLUDE_CONVERSATION_TEXT else []),
 ]
 
-KALE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
-VRAAGSTARTPATROON = re.compile(
-    r"^(?:" + "|".join(re.escape(woord) for woord in VRAAGSTARTEN) + r")\b",
+BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
+QUESTION_START_PATTERN = re.compile(
+    r"^(?:" + "|".join(re.escape(word) for word in DUTCH_QUESTION_STARTS) + r")\b",
     flags=re.IGNORECASE,
 )
 
 
-def is_vraag(tekst: object) -> bool:
-    """Herken een niet-lege vraag aan een vraagteken of een vraagstart."""
-    if pd.isna(tekst):
+def is_question(text: object) -> bool:
+    """Recognize a non-empty question by a question mark or Dutch question start."""
+    if pd.isna(text):
         return False
-    schoon = str(tekst).strip()
-    if not schoon or KALE_URL.fullmatch(schoon):
+    cleaned = str(text).strip()
+    if not cleaned or BARE_URL.fullmatch(cleaned):
         return False
-    return "?" in schoon or VRAAGSTARTPATROON.match(schoon) is not None
+    return "?" in cleaned or QUESTION_START_PATTERN.match(cleaned) is not None
 
 
-def detecteer_vragen(data: pd.DataFrame) -> pd.DataFrame:
-    """Selecteer bruikbare bezoekersvragen in chronologische volgorde."""
-    bezoekers = data.loc[data["from_agent"].eq(False)].copy()
-    bezoekers = bezoekers.loc[bezoekers["text"].apply(is_vraag)].copy()
-    bezoekers["text"] = bezoekers["text"].astype(str).str.strip()
-    return bezoekers.sort_values(
+def detect_questions(data: pd.DataFrame) -> pd.DataFrame:
+    """Select usable visitor questions in chronological order."""
+    visitors = data.loc[data["from_agent"].eq(False)].copy()
+    visitors = visitors.loc[visitors["text"].apply(is_question)].copy()
+    visitors["text"] = visitors["text"].astype(str).str.strip()
+    return visitors.sort_values(
         ["conversation_id", "created_at"], kind="stable"
     ).reset_index(drop=True)
 
 
-def koppel_vragen_aan_antwoorden(data: pd.DataFrame) -> pd.DataFrame:
-    """Koppel iedere bezoekersvraag aan het eerstvolgende agentbericht."""
-    kolommen = [
+def pair_questions_with_answers(data: pd.DataFrame) -> pd.DataFrame:
+    """Pair each visitor question with the following agent message."""
+    columns = [
         "conversation_id",
-        "vraag_text",
-        "antwoord_text",
-        "heeft_agentantwoord",
+        "question_text",
+        "answer_text",
+        "has_agent_answer",
     ]
-    paren: list[dict[str, object]] = []
+    pairs: list[dict[str, object]] = []
 
-    gesorteerd = data.sort_values(
+    sorted_data = data.sort_values(
         ["conversation_id", "created_at"], kind="stable"
     )
-    for conversation_id, gesprek in gesorteerd.groupby(
+    for conversation_id, conversation in sorted_data.groupby(
         "conversation_id", sort=False
     ):
-        regels = list(gesprek.itertuples(index=False))
-        for positie, bericht in enumerate(regels):
-            if bool(bericht.from_agent) or not is_vraag(bericht.text):
+        messages = list(conversation.itertuples(index=False))
+        for position, message in enumerate(messages):
+            if bool(message.from_agent) or not is_question(message.text):
                 continue
 
-            antwoord_text: str | None = None
-            for volgend in regels[positie + 1 :]:
-                if volgend.created_at <= bericht.created_at:
+            answer_text: str | None = None
+            for following_message in messages[position + 1 :]:
+                if following_message.created_at <= message.created_at:
                     continue
-                if bool(volgend.from_agent):
-                    if pd.notna(volgend.text) and str(volgend.text).strip():
-                        antwoord_text = str(volgend.text).strip()
+                if bool(following_message.from_agent):
+                    if pd.notna(following_message.text) and str(following_message.text).strip():
+                        answer_text = str(following_message.text).strip()
                     break
 
-            paren.append(
+            pairs.append(
                 {
                     "conversation_id": conversation_id,
-                    "vraag_text": str(bericht.text).strip(),
-                    "antwoord_text": antwoord_text,
-                    "heeft_agentantwoord": antwoord_text is not None,
+                    "question_text": str(message.text).strip(),
+                    "answer_text": answer_text,
+                    "has_agent_answer": answer_text is not None,
                 }
             )
 
-    return pd.DataFrame(paren, columns=kolommen)
+    return pd.DataFrame(pairs, columns=columns)
 
 
-def _labelindices(model: AutoModelForSequenceClassification) -> dict[str, int]:
-    """Vind de drie NLI-labelindices in de modelconfiguratie."""
+def _label_indices(model: AutoModelForSequenceClassification) -> dict[str, int]:
+    """Find the three NLI label indices in the model configuration."""
     labels = {
         str(label).strip().lower(): int(index)
         for index, label in model.config.id2label.items()
     }
-    ontbrekend = {"entailment", "neutral", "contradiction"} - set(labels)
-    if ontbrekend:
+    missing = {"entailment", "neutral", "contradiction"} - set(labels)
+    if missing:
         raise ValueError(
-            "De modelconfiguratie mist NLI-labels: "
-            f"{', '.join(sorted(ontbrekend))}."
+            "The model configuration is missing NLI labels: "
+            f"{', '.join(sorted(missing))}."
         )
     return labels
 
 
-def classificeer_vraag_antwoordparen(
-    paren: pd.DataFrame,
-    batchgrootte: int = 32,
+def classify_question_answer_pairs(
+    pairs: pd.DataFrame,
+    batch_size: int = 32,
     tokenizer: AutoTokenizer | None = None,
     model: AutoModelForSequenceClassification | None = None,
 ) -> pd.DataFrame:
-    """Bereken NLI-scores voor paren die daadwerkelijk een agentantwoord hebben."""
-    resultaat = paren.copy()
-    resultaat["beantwoord"] = False
-    resultaat["entailment_score"] = pd.Series(index=resultaat.index, dtype="float64")
+    """Calculate NLI scores for pairs that have an agent answer."""
+    result = pairs.copy()
+    result["answered"] = False
+    result["entailment_score"] = pd.Series(index=result.index, dtype="float64")
 
-    te_classificeren = resultaat.index[resultaat["heeft_agentantwoord"]]
-    if te_classificeren.empty:
-        return resultaat
+    to_classify = result.index[result["has_agent_answer"]]
+    if to_classify.empty:
+        return result
 
     tokenizer = tokenizer or AutoTokenizer.from_pretrained(MODEL_ID)
     model = model or AutoModelForSequenceClassification.from_pretrained(MODEL_ID)
     model.eval()
-    indices = _labelindices(model)
+    indices = _label_indices(model)
 
-    for start in range(0, len(te_classificeren), batchgrootte):
-        batchindices = te_classificeren[start : start + batchgrootte]
-        antwoorden = resultaat.loc[batchindices, "antwoord_text"].tolist()
-        hypotheses = [HYPOTHESE] * len(antwoorden)
-        invoer = tokenizer(
-            antwoorden,
+    for start in range(0, len(to_classify), batch_size):
+        batch_indices = to_classify[start : start + batch_size]
+        answers = result.loc[batch_indices, "answer_text"].tolist()
+        hypotheses = [HYPOTHESIS] * len(answers)
+        inputs = tokenizer(
+            answers,
             hypotheses,
             padding=True,
             truncation=True,
             return_tensors="pt",
         )
         with torch.no_grad():
-            kansen = torch.softmax(model(**invoer).logits, dim=-1).cpu()
+            probabilities = torch.softmax(model(**inputs).logits, dim=-1).cpu()
 
-        entailment = kansen[:, indices["entailment"]]
-        neutral = kansen[:, indices["neutral"]]
-        contradiction = kansen[:, indices["contradiction"]]
-        beantwoord = (
-            entailment.ge(ENTAILMENT_DREMPEL)
+        entailment = probabilities[:, indices["entailment"]]
+        neutral = probabilities[:, indices["neutral"]]
+        contradiction = probabilities[:, indices["contradiction"]]
+        answered = (
+            entailment.ge(ENTAILMENT_THRESHOLD)
             & entailment.gt(neutral)
             & entailment.gt(contradiction)
         )
-        resultaat.loc[batchindices, "entailment_score"] = entailment.tolist()
-        resultaat.loc[batchindices, "beantwoord"] = beantwoord.tolist()
+        result.loc[batch_indices, "entailment_score"] = entailment.tolist()
+        result.loc[batch_indices, "answered"] = answered.tolist()
 
-    resultaat["entailment_score"] = resultaat["entailment_score"].round(4)
-    return resultaat
-
-
-def _eindoordeel(aantal_vragen: int, aantal_beantwoord: int) -> str:
-    if aantal_vragen == 0:
-        return "Geen vragen gevonden"
-    if aantal_beantwoord == aantal_vragen:
-        return "Beantwoord"
-    if aantal_beantwoord == 0:
-        return "Niet beantwoord"
-    return "Deels beantwoord"
+    result["entailment_score"] = result["entailment_score"].round(4)
+    return result
 
 
-def _maak_gespreksteksten(data: pd.DataFrame) -> pd.Series:
-    """Combineer tijdelijk bezoeker- en agenttekst per gesprek in tijdsvolgorde."""
-    gesorteerd = data.sort_values(
+def _final_status(question_count: int, answered_count: int) -> str:
+    if question_count == 0:
+        return "No questions found"
+    if answered_count == question_count:
+        return "Answered"
+    if answered_count == 0:
+        return "Not answered"
+    return "Partially answered"
+
+
+def _build_conversation_texts(data: pd.DataFrame) -> pd.Series:
+    """Temporarily combine visitor and agent text per conversation in time order."""
+    sorted_data = data.sort_values(
         ["conversation_id", "created_at"], kind="stable"
     ).copy()
-    heeft_tekst = gesorteerd["text"].notna() & gesorteerd["text"].astype(str).str.strip().ne("")
-    gesorteerd = gesorteerd.loc[heeft_tekst].copy()
-    gesorteerd["regel"] = (
-        gesorteerd["from_agent"]
-        .map({True: "Agent", False: "Bezoeker"})
-        .fillna("Onbekend")
+    has_text = sorted_data["text"].notna() & sorted_data["text"].astype(str).str.strip().ne("")
+    sorted_data = sorted_data.loc[has_text].copy()
+    sorted_data["line"] = (
+        sorted_data["from_agent"]
+        .map({True: "Agent", False: "Visitor"})
+        .fillna("Unknown")
         + ": "
-        + gesorteerd["text"].astype(str).str.strip()
+        + sorted_data["text"].astype(str).str.strip()
     )
-    return gesorteerd.groupby("conversation_id", sort=False)["regel"].agg("\n".join)
+    return sorted_data.groupby("conversation_id", sort=False)["line"].agg("\n".join)
 
 
-def maak_gespreksoverzicht(
+def create_conversation_summary(
     data: pd.DataFrame,
-    batchgrootte: int = 32,
+    batch_size: int = 32,
     tokenizer: AutoTokenizer | None = None,
     model: AutoModelForSequenceClassification | None = None,
 ) -> pd.DataFrame:
-    """Maak één antwoordstatus per gesprek, inclusief gesprekken zonder vragen."""
-    gesprekken = pd.Index(
+    """Create one answer status per conversation, including conversations without questions."""
+    conversations = pd.Index(
         data["conversation_id"].drop_duplicates(), name="conversation_id"
     )
-    paren = koppel_vragen_aan_antwoorden(data)
-    beoordeeld = classificeer_vraag_antwoordparen(
-        paren,
-        batchgrootte=batchgrootte,
+    pairs = pair_questions_with_answers(data)
+    assessed = classify_question_answer_pairs(
+        pairs,
+        batch_size=batch_size,
         tokenizer=tokenizer,
         model=model,
     )
 
-    aantallen = beoordeeld.groupby("conversation_id", sort=False).agg(
-        aantal_vragen=("conversation_id", "size"),
-        aantal_beantwoord=("beantwoord", "sum"),
+    counts = assessed.groupby("conversation_id", sort=False).agg(
+        question_count=("conversation_id", "size"),
+        answered_count=("answered", "sum"),
     )
-    overzicht = aantallen.reindex(gesprekken, fill_value=0).reset_index()
-    overzicht["aantal_vragen"] = overzicht["aantal_vragen"].astype(int)
-    overzicht["aantal_beantwoord"] = overzicht["aantal_beantwoord"].astype(int)
-    overzicht["percentage_beantwoord"] = (
-        overzicht["aantal_beantwoord"]
-        .div(overzicht["aantal_vragen"].where(overzicht["aantal_vragen"].ne(0)))
+    summary = counts.reindex(conversations, fill_value=0).reset_index()
+    summary["question_count"] = summary["question_count"].astype(int)
+    summary["answered_count"] = summary["answered_count"].astype(int)
+    summary["answered_percentage"] = (
+        summary["answered_count"]
+        .div(summary["question_count"].where(summary["question_count"].ne(0)))
         .mul(100)
         .fillna(0)
         .round(1)
     )
-    overzicht["eindoordeel"] = overzicht.apply(
-        lambda rij: _eindoordeel(
-            int(rij["aantal_vragen"]), int(rij["aantal_beantwoord"])
+    summary["status"] = summary.apply(
+        lambda row: _final_status(
+            int(row["question_count"]), int(row["answered_count"])
         ),
         axis=1,
     )
-    overzicht["uitleg"] = overzicht.apply(
-        lambda rij: (
-            "Er zijn geen vragen van de bezoeker gevonden."
-            if rij["aantal_vragen"] == 0
+    summary["explanation"] = summary.apply(
+        lambda row: (
+            "No visitor questions were found."
+            if row["question_count"] == 0
             else (
-                f"{int(rij['aantal_beantwoord'])} van de "
-                f"{int(rij['aantal_vragen'])} "
-                f"{'vraag is' if rij['aantal_vragen'] == 1 else 'vragen zijn'} "
-                "beantwoord."
+                f"{int(row['answered_count'])} of "
+                f"{int(row['question_count'])} "
+                f"{'question was' if row['question_count'] == 1 else 'questions were'} "
+                "answered."
             )
         ),
         axis=1,
     )
-    if VOEG_GESPREKSTEKST_TOE:
-        gespreksteksten = _maak_gespreksteksten(data)
-        overzicht["gesprekstekst"] = (
-            overzicht["conversation_id"].map(gespreksteksten).fillna("")
+    if INCLUDE_CONVERSATION_TEXT:
+        conversation_texts = _build_conversation_texts(data)
+        summary["conversation_text"] = (
+            summary["conversation_id"].map(conversation_texts).fillna("")
         )
-    return overzicht[UITVOERKOLOMMEN]
+    return summary[OUTPUT_COLUMNS]
 
 
-def verwerk_csv(
-    csv_pad: str | Path,
-    uitvoermap: str | Path = "resultaten",
-    batchgrootte: int = 32,
+def process_csv(
+    csv_path: str | Path,
+    output_dir: str | Path = "results",
+    batch_size: int = 32,
 ) -> pd.DataFrame:
-    """Verwerk een lokale export en schrijf één veilige gesprekstabel."""
-    gestart_op = datetime.now().astimezone()
-    data = laad_momants_csv(csv_pad)
-    overzicht = maak_gespreksoverzicht(data, batchgrootte=batchgrootte)
-    map_pad = Path(uitvoermap).expanduser()
-    map_pad.mkdir(parents=True, exist_ok=True)
-    tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
-    uitvoerpad = map_pad / f"antwoordcheck_per_gesprek_{tijdstempel}.csv"
-    overzicht.to_csv(uitvoerpad, index=False)
-    overzicht.attrs["uitvoerpad"] = uitvoerpad.resolve()
-    return overzicht
+    """Process a local export and write one safe conversation table."""
+    started_at = datetime.now().astimezone()
+    data = load_momants_csv(csv_path)
+    summary = create_conversation_summary(data, batch_size=batch_size)
+    output_path = Path(output_dir).expanduser()
+    output_path.mkdir(parents=True, exist_ok=True)
+    timestamp = started_at.strftime("%Y%m%d_%H%M%S_%f")
+    csv_output_path = output_path / f"answer_check_per_conversation_{timestamp}.csv"
+    summary.to_csv(csv_output_path, index=False)
+    summary.attrs["output_path"] = csv_output_path.resolve()
+    return summary
 
 
-def _maak_parser() -> argparse.ArgumentParser:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Controleer per Momants-gesprek of bezoekersvragen zijn beantwoord."
+        description="Check whether visitor questions were answered in each Momants conversation."
     )
-    parser.add_argument("csv_pad", type=Path, help="Pad naar de Momants CSV-export.")
+    parser.add_argument("csv_path", type=Path, help="Path to the Momants CSV export.")
     parser.add_argument(
-        "--uitvoermap",
+        "--output-dir",
         type=Path,
-        default=Path("resultaten"),
-        help="Map voor antwoordcheck_per_gesprek.csv.",
+        default=Path("results"),
+        help="Directory for answer_check_per_conversation_<timestamp>.csv.",
     )
     parser.add_argument(
-        "--batchgrootte",
+        "--batch-size",
         type=int,
         default=32,
-        help="Aantal vraag-antwoordparen per modelbatch.",
+        help="Number of question-answer pairs per model batch.",
     )
     parser.add_argument(
-        "--alleen-controleren",
+        "--check-only",
         action="store_true",
-        help="Controleer inladen en vraagdetectie zonder het model te starten.",
+        help="Check loading and question detection without starting the model.",
     )
     return parser
 
 
 def main(argv: Iterable[str] | None = None) -> int:
-    argumenten = _maak_parser().parse_args(argv)
+    arguments = _build_parser().parse_args(argv)
 
-    if argumenten.alleen_controleren:
-        data = laad_momants_csv(argumenten.csv_pad)
-        vragen = detecteer_vragen(data)
-        print(f"Berichtrijen ingelezen: {len(data)}")
-        print(f"Vragen gevonden: {len(vragen)}")
-        print(f"Gesprekken met vragen: {vragen['conversation_id'].nunique()}")
+    if arguments.check_only:
+        data = load_momants_csv(arguments.csv_path)
+        questions = detect_questions(data)
+        print(f"Message rows loaded: {len(data)}")
+        print(f"Questions found: {len(questions)}")
+        print(f"Conversations with questions: {questions['conversation_id'].nunique()}")
         return 0
 
-    overzicht = verwerk_csv(
-        csv_pad=argumenten.csv_pad,
-        uitvoermap=argumenten.uitvoermap,
-        batchgrootte=argumenten.batchgrootte,
+    summary = process_csv(
+        csv_path=arguments.csv_path,
+        output_dir=arguments.output_dir,
+        batch_size=arguments.batch_size,
     )
-    print(f"Gesprekresultaten: {len(overzicht)}")
-    print(f"Uitvoer geschreven naar: {overzicht.attrs['uitvoerpad']}")
+    print(f"Conversation results: {len(summary)}")
+    print(f"Output written to: {summary.attrs['output_path']}")
     return 0
 
 

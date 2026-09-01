@@ -46,14 +46,14 @@ The model has been trained using an efficient few-shot learning technique that i
 - **Blogpost:** [SetFit: Efficient Few-Shot Learning Without Prompts](https://huggingface.co/blog/setfit)
 
 ### Model Labels
-| Label                          | Examples                                                                                                                                                                                          |
-|:-------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Informatie opvragen            | <ul><li>'Hoe laat gaan de deuren open?'</li><li>'Waar kan ik het programma vinden?'</li><li>'Is er een kluisje te huur op het terrein?'</li></ul>                                                 |
-| Probleem of Incident oplossen  | <ul><li>'Mijn ticket scant niet bij de ingang.'</li><li>'Ik heb mijn polsbandje kapot getrokken.'</li><li>'Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.'</li></ul>           |
-| Transactie / Mutatie uitvoeren | <ul><li>'Ik wil een extra ticket bijkopen.'</li><li>'Kan ik mijn ticket omzetten naar een ander type?'</li><li>'Ik wil mijn parkeerplek annuleren.'</li></ul>                                     |
-| Actievere Navigatiehulp        | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
-| Systeem bedienen               | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
-| Noodgeval melden               | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
+| Label                            | Examples                                                                                                                                                                                          |
+|:---------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Information request              | <ul><li>'Hoe laat gaan de deuren open?'</li><li>'Waar kan ik het programma vinden?'</li><li>'Is er een kluisje te huur op het terrein?'</li></ul>                                                 |
+| Problem or Incident resolution   | <ul><li>'Mijn ticket scant niet bij de ingang.'</li><li>'Ik heb mijn polsbandje kapot getrokken.'</li><li>'Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.'</li></ul>           |
+| Transaction / Mutation execution | <ul><li>'Ik wil een extra ticket bijkopen.'</li><li>'Kan ik mijn ticket omzetten naar een ander type?'</li><li>'Ik wil mijn parkeerplek annuleren.'</li></ul>                                     |
+| Active Navigation assistance     | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
+| System operation                 | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
+| Emergency report                 | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
 
 ## Uses
 
@@ -107,14 +107,14 @@ preds = model("hoeveel kost een parkeerplek")
 |:-------------|:----|:-------|:----|
 | Word count   | 3   | 7.4891 | 12  |
 
-| Label                          | Training Sample Count |
-|:-------------------------------|:----------------------|
-| Informatie opvragen            | 22                    |
-| Probleem of Incident oplossen  | 20                    |
-| Transactie / Mutatie uitvoeren | 15                    |
-| Actievere Navigatiehulp        | 12                    |
-| Systeem bedienen               | 11                    |
-| Noodgeval melden               | 12                    |
+| Label                            | Training Sample Count |
+|:---------------------------------|:----------------------|
+| Information request              | 22                    |
+| Problem or Incident resolution   | 20                    |
+| Transaction / Mutation execution | 15                    |
+| Active Navigation assistance     | 12                    |
+| System operation                 | 11                    |
+| Emergency report                 | 12                    |
 
 ### Training Hyperparameters
 - batch_size: (16, 16)
