@@ -1,0 +1,108 @@
+OPDRACHT — FASE 2
+
+Fase 1 is afgerond en gevalideerd: 89,9% hoofdonderwerp en 87,1% macro-recall op
+answer_key_extra158.csv, tegen een naive_baseline van 48,6%. Voer nu de vijf correcties
+hieronder uit.
+
+Verander NIETS aan de seedbeschrijvingen, de None-prototypes, het model of de
+classificatielogica. Dit zijn robuustheids- en leesbaarheidscorrecties, geen
+verbeterpogingen. De privacyregel geldt onverkort: alleen created_at, text, from_agent,
+message_type, conversation_id, agent_id. De velden raw_json, chat_sender, media,
+media_url en file mogen nergens worden ingelezen, gebruikt of geprint.
+
+
+2a. Stil dataverlies bij een lege from_agent
+
+In _is_bruikbaar_bezoekersbericht staat: if bool(rij["from_agent"]). In Python is
+bool(nan) gelijk aan True, dus een bezoekersbericht met een lege from_agent wordt als
+agent-bericht gezien en zonder melding weggegooid. In de synthetische testset is die
+kolom altijd gevuld, in een echte Momants-export mogelijk niet.
+
+Vergelijk expliciet op "is True" / "is False" in plaats van via bool(). Tel hoeveel rijen
+zijn overgeslagen omdat from_agent niet als booleaan te lezen was, en print dat aantal.
+Nul is de verwachting op de testset; elk ander aantal moet zichtbaar zijn en niet stil
+verdwijnen.
+
+
+2b. Slecht passende berichten zichtbaar maken
+
+Er is geen Other-fallback meer, en dat is bewust: je kunt niet cosine-matchen tegen een
+categorie zonder beschrijving. Gevolg is wel dat een bericht dat bij geen enkel
+subonderwerp past, naar het dichtstbijzijnde wordt geduwd zonder dat iets de slechte
+match signaleert. Bij een nieuwe klant met een dunne seed wordt dan alles in een paar
+subonderwerpen gepropt.
+
+Schrijf per run de 10% laagst scorende toewijzingen weg in een apart overzichtsbestand
+met text, main_topic, subtopic, similarity, gesorteerd op similarity oplopend.
+
+Voeg GEEN harde similarity-drempel toe die berichten wegfiltert. Dat is bij het
+intentiesysteem al eerder fout gegaan: een drempel filterde daar terechte noodgevallen
+met een lage score weg. Dit bestand is puur om na te kijken, niet om op te filteren.
+
+
+2c. Prestatie van de berichtselectie
+
+selecteer_bezoekersberichten gebruikt data.apply(..., axis=1), dus rij-voor-rij Python.
+Op de testset van 265 regels is dat onmerkbaar, op een echte export van tienduizenden
+berichten is het de traagste stap van de pijplijn.
+
+Vectoriseer die selectie, met exact hetzelfde resultaat en dezelfde chronologische
+sortering op (conversation_id, created_at). Combineer dit met 2a: de expliciete
+booleaanse check moet ook in de gevectoriseerde vorm blijven werken, inclusief het tellen
+van onleesbare from_agent-waarden.
+
+
+2d. Consistente Engelse naamgeving
+
+Conform de projectconventie is alle code Engels; alleen bezoekersberichttekst blijft
+onvertaald. Hernoem:
+
+    CSV_PAD                        -> CSV_PATH
+    laad_momants_csv               -> load_momants_csv  (of verwijder deze wrapper
+                                      helemaal, want hij geeft de gedeelde loader
+                                      ongewijzigd door)
+    laad_onderwerpen               -> load_topics
+    selecteer_bezoekersberichten   -> select_visitor_messages
+    classificeer_berichten         -> classify_messages
+    maak_onderwerpoverzicht        -> build_topic_overview
+    _encodeer                      -> _encode
+    _maak_embeddingmodel           -> _build_embedding_model
+    _is_bruikbaar_bezoekersbericht -> _is_usable_visitor_message
+
+En de interne variabelen: onderwerpen, bezoekers, werk, pad, kolommen, ontbrekend,
+dubbelen, batchgrootte, uitvoerpad, doelmap, tijdstempel, gestart_op, selectie, rij,
+kolom, leeg, eerste, combinaties, weergegeven, te_embedden, url_masker, positie,
+onderwerp_embeddings, none_embeddings, bericht_embeddings, onderwerp_scores,
+none_scores, beste_onderwerp_indices, beste_onderwerp_scores, beste_none_scores.
+
+Werk notebooks/momants_topic.ipynb mee bij, inclusief de validatiesecties.
+
+Verwijder ook de Nederlandse CLI-aliassen --uitvoermap, --batchgrootte en
+--alleen-controleren; houd alleen de Engelse vormen.
+
+
+2e. Dubbeltellen voorkomen in latere rapportage
+
+De dedup in build_topic_overview is op (conversation_id, main_topic, subtopic). Een
+gesprek met drie Venue-subonderwerpen levert dus drie rijen op. Wie later main_topic-
+rijen telt om te rapporteren "waar gaan de meeste vragen over", telt Venue dan drie keer.
+
+Voeg een korte comment toe die vastlegt dat de eenheid van die tabel het
+GESPREK-ONDERWERP is en niet het gesprek, en dat een rapportagestap nunique() op
+conversation_id moet gebruiken als de vraag is "hoeveel gesprekken gingen over Venue".
+Verander de dedup zelf niet.
+
+
+AFSLUITEN — verplicht
+
+Draai na alle vijf de correcties BEIDE validaties opnieuw:
+answer_key_v2.csv en answer_key_extra158.csv.
+
+Rapporteer beide keer de zes cijfers naast elkaar en bevestig expliciet dat ze
+ONVERANDERD zijn ten opzichte van fase 1 (100% / 100% / 97,2% / 97,2% / 100% / 61,3%
+respectievelijk 89,9% / 87,1% / 80,4% / 89,5% / 90,0% / 48,6%).
+
+Wijkt er iets af, hoe klein ook, dan heeft een correctie gedrag veranderd. Meld dat dan
+expliciet en leg uit welke correctie het was, in plaats van het verschil weg te werken.
+Print ook het aantal overgeslagen rijen uit 2a en het pad van het nieuwe
+lage-similarity-bestand uit 2b.

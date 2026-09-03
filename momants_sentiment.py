@@ -157,8 +157,8 @@ def load_momants_csv(source: str | Path) -> pd.DataFrame:
         .map({"true": True, "false": False, "1": True, "0": False})
     )
 
-    # Incomplete rows from a truncated export are not processed.
-    dataframe = dataframe.dropna(subset=["created_at", "from_agent", "conversation_id"])
+    # Keep unreadable from_agent values visible so each analysis can report them.
+    dataframe = dataframe.dropna(subset=["created_at", "conversation_id"])
     dataframe["conversation_id"] = dataframe["conversation_id"].astype(str).str.strip()
     dataframe = dataframe.loc[dataframe["conversation_id"].ne("")].copy()
 

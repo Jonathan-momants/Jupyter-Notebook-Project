@@ -159,12 +159,12 @@ def valideer(
     antwoordsleutel_pad: str | Path,
     seed_pad: str | Path = momants_topic.TOPICS_SEED_PATH,
     event_id: str = momants_topic.EVENT_ID,
-    batchgrootte: int = 16,
+    batch_size: int = 16,
     debug_pad: str | Path | None = None,
     voorspeld: pd.DataFrame | None = None,
 ) -> dict[str, float]:
     """Classify the test export and print metrics, confusion matrix, and errors."""
-    onderwerpen = momants_topic.laad_onderwerpen(seed_pad, event_id)
+    onderwerpen = momants_topic.load_topics(seed_pad, event_id)
     print(f"Active topic labels: {len(onderwerpen)}")
     if len(onderwerpen) != 28:
         print(
@@ -190,12 +190,12 @@ def valideer(
     else:
         if csv_pad is None:
             raise ValueError("Provide csv_pad, debug_pad, or predicted messages.")
-        data = momants_topic.laad_momants_csv(csv_pad)
-        berichten = momants_topic.selecteer_bezoekersberichten(data)
-        voorspeld = momants_topic.classificeer_berichten(
+        data = momants_topic.load_momants_csv(csv_pad)
+        berichten = momants_topic.select_visitor_messages(data)
+        voorspeld = momants_topic.classify_messages(
             berichten,
             onderwerpen,
-            batchgrootte=batchgrootte,
+            batch_size=batch_size,
         )
     voorspeld["normalized_text"] = voorspeld["text"].map(normaliseer_tekst)
 
@@ -424,7 +424,7 @@ def main(argv: Iterable[str] | None = None) -> int:
         antwoordsleutel_pad=args.answer_key,
         seed_pad=args.topics_seed,
         event_id=args.event_id,
-        batchgrootte=args.batch_size,
+        batch_size=args.batch_size,
     )
     geslaagd = (
         metrics["main_topic_accuracy"] >= 85.0
