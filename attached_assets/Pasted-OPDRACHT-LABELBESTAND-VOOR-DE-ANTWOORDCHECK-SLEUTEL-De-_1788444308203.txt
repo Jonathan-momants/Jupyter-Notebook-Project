@@ -1,0 +1,67 @@
+OPDRACHT — LABELBESTAND VOOR DE ANTWOORDCHECK-SLEUTEL
+
+De antwoordcheck is de enige as zonder meetbare validatie. De 82,9% recall komt uit een
+eerdere sessie en is niet reproduceerbaar. Voordat we daar iets aan verbeteren, moet er een
+antwoordsleutel zijn. Deze taak maakt alleen het labelbestand; ik label het daarna zelf met
+de hand.
+
+Wijzig niets aan momants_antwoordcheck.py. Dit is een export-taak.
+
+
+=== WAT JE MOET EXPORTEREN ===
+
+Draai de bestaande vraagdetectie op data/tests/conversations_100.csv (die vindt 52 vragen)
+en schrijf data/tests/answer_check_to_label.csv weg met deze kolommen, in deze volgorde:
+
+    pair_id            oplopend nummer
+    question           de tekst van de bezoekersvraag
+    agent_reply        het agent-bericht dat het systeem als antwoord koppelt
+    agent_reply_next   het daaropvolgende agent-bericht, als dat er is, anders leeg
+    occurrences        hoe vaak dit vraag-antwoordpaar in de export voorkomt
+    answered           LEEG, die vul ik in
+
+DEDUPLICEER op het genormaliseerde (question, agent_reply)-paar. De synthetische testset
+gebruikt dezelfde zinnen in meerdere gesprekken, dus 52 vragen zijn waarschijnlijk veel
+minder unieke paren. Zet in occurrences hoeveel instanties elk paar dekt, zodat de weging
+later klopt. Meld hoeveel unieke paren er zijn.
+
+Neem agent_reply_next mee omdat een antwoord soms over twee berichten verdeeld is; zonder
+die context kan ik sommige paren niet eerlijk beoordelen.
+
+
+=== WAT JE ER NIET IN MOET ZETTEN ===
+
+Zet de VOORSPELLING van het systeem NIET in dit bestand. Geen kolom met het huidige
+oordeel, geen relevantiescore, geen kleurtje, niets. Als ik zie wat het systeem denkt,
+stuurt dat mijn labels en meet ik daarna mijn eigen bevestiging in plaats van het systeem.
+
+Bewaar die voorspellingen wel apart, in data/tests/answer_check_predictions.csv met
+pair_id en de voorspelling, zodat we ze na het labelen kunnen samenvoegen.
+
+
+=== LABELCRITERIUM (zet dit als comment bovenaan het script) ===
+
+Het criterium is: KAN DE BEZOEKER HIERNA VERDER?
+
+  answered = yes      een concreet antwoord, OF een bruikbare doorverwijzing met een
+                      plaats of actie ("ga naar de Lost&Found-balie bij ingang Noord")
+  answered = no       geen antwoord, een ontwijking, of een vage doorverwijzing zonder
+                      plaats of actie ("neem contact op met de organisatie")
+  answered = unclear  ik kan het niet eerlijk beoordelen met de gegeven context
+
+Een bruikbare doorverwijzing telt dus als beantwoord. Dat is een bewuste keuze: de agent
+kan niet weten waar mijn telefoon ligt, maar hij kan me wel naar de juiste balie sturen.
+
+
+=== PRIVACY ===
+
+Onveranderd: alleen created_at, text, from_agent, message_type, conversation_id, agent_id.
+De PII-maskering in de gedeelde loader blijft aan, dus de geëxporteerde teksten zijn al
+gemaskeerd. Print geen berichtinhoud in de terminal-output; schrijf het bestand en meld
+alleen aantallen.
+
+
+=== STOP ===
+
+Meld: het aantal gedetecteerde vragen, het aantal unieke paren na deduplicatie, hoeveel
+paren een agent_reply_next hebben, en het pad van beide bestanden. Bouw nog geen validator.
