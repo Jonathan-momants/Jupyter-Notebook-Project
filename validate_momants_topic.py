@@ -161,6 +161,7 @@ def valideer(
     event_id: str = momants_topic.EVENT_ID,
     batchgrootte: int = 16,
     debug_pad: str | Path | None = None,
+    voorspeld: pd.DataFrame | None = None,
 ) -> dict[str, float]:
     """Classify the test export and print metrics, confusion matrix, and errors."""
     onderwerpen = momants_topic.laad_onderwerpen(seed_pad, event_id)
@@ -174,7 +175,9 @@ def valideer(
         aantal = int(onderwerpen["main_topic"].eq(hoofdonderwerp).sum())
         print(f"- {hoofdonderwerp}: {aantal} subtopics")
 
-    if debug_pad is not None:
+    if voorspeld is not None:
+        voorspeld = voorspeld.copy()
+    elif debug_pad is not None:
         debug_bron = Path(debug_pad).expanduser()
         voorspeld = pd.read_csv(
             debug_bron,
@@ -186,7 +189,7 @@ def valideer(
         )
     else:
         if csv_pad is None:
-            raise ValueError("Provide csv_pad or debug_pad.")
+            raise ValueError("Provide csv_pad, debug_pad, or predicted messages.")
         data = momants_topic.laad_momants_csv(csv_pad)
         berichten = momants_topic.selecteer_bezoekersberichten(data)
         voorspeld = momants_topic.classificeer_berichten(
