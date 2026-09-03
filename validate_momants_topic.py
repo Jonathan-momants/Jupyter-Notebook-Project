@@ -18,12 +18,14 @@ NONE_LABEL = "None"
 
 
 def normaliseer_tekst(value: object) -> str:
-    """Lowercase text, remove punctuation, and collapse whitespace."""
-    text = unicodedata.normalize("NFKC", str(value)).lower()
+    """Lowercase, remove accents, replace non-alphanumerics, collapse whitespace."""
+    text = unicodedata.normalize("NFKD", str(value)).lower()
     text = "".join(
-        " " if unicodedata.category(character).startswith("P") else character
+        character
         for character in text
+        if not unicodedata.category(character).startswith("M")
     )
+    text = "".join(character if character.isalnum() else " " for character in text)
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -153,27 +155,52 @@ def _percentage(masker: pd.Series) -> float:
 
 
 def valideer(
-    csv_pad: str | Path,
+    csv_pad: str | Path | None,
     antwoordsleutel_pad: str | Path,
     seed_pad: str | Path = momants_topic.TOPICS_SEED_PATH,
     event_id: str = momants_topic.EVENT_ID,
     batchgrootte: int = 16,
+    debug_pad: str | Path | None = None,
 ) -> dict[str, float]:
     """Classify the test export and print metrics, confusion matrix, and errors."""
-    data = momants_topic.laad_momants_csv(csv_pad)
-    berichten = momants_topic.selecteer_bezoekersberichten(data)
     onderwerpen = momants_topic.laad_onderwerpen(seed_pad, event_id)
-    voorspeld = momants_topic.classificeer_berichten(
-        berichten,
-        onderwerpen,
-        batchgrootte=batchgrootte,
-    )
+    print(f"Active topic labels: {len(onderwerpen)}")
+    if len(onderwerpen) != 28:
+        print(
+            "WARNING: expected 28 active topic labels; "
+            "the validation result is not meaningful."
+        )
+    for hoofdonderwerp in momants_topic.MAIN_TOPICS:
+        aantal = int(onderwerpen["main_topic"].eq(hoofdonderwerp).sum())
+        print(f"- {hoofdonderwerp}: {aantal} subtopics")
+
+    if debug_pad is not None:
+        debug_bron = Path(debug_pad).expanduser()
+        voorspeld = pd.read_csv(
+            debug_bron,
+            usecols=momants_topic.DEBUG_OUTPUT_COLUMNS,
+            keep_default_na=False,
+        )
+        voorspeld["similarity"] = pd.to_numeric(
+            voorspeld["similarity"], errors="coerce"
+        )
+    else:
+        if csv_pad is None:
+            raise ValueError("Provide csv_pad or debug_pad.")
+        data = momants_topic.laad_momants_csv(csv_pad)
+        berichten = momants_topic.selecteer_bezoekersberichten(data)
+        voorspeld = momants_topic.classificeer_berichten(
+            berichten,
+            onderwerpen,
+            batchgrootte=batchgrootte,
+        )
     voorspeld["normalized_text"] = voorspeld["text"].map(normaliseer_tekst)
 
     sleutel = laad_antwoordsleutel(antwoordsleutel_pad)
     onbekende_sleutelteksten = set(sleutel["normalized_text"]) - set(
         voorspeld["normalized_text"]
     )
+    print(f"Unmatched answer-key texts: {len(onbekende_sleutelteksten)}")
     if onbekende_sleutelteksten:
         print(
             f"Warning: {len(onbekende_sleutelteksten)} answer-key texts do not "
@@ -189,12 +216,13 @@ def valideer(
         validate="many_to_one",
     )
     zonder_antwoord = evaluatie["true_main_topic"].isna()
+    print(f"Unmatched visitor messages: {int(zonder_antwoord.sum())}")
     if zonder_antwoord.any():
-        voorbeelden = evaluatie.loc[zonder_antwoord, "text"].head(5).tolist()
-        raise ValueError(
-            f"{int(zonder_antwoord.sum())} visitor messages have no answer-key "
-            f"match. Examples: {voorbeelden}"
+        print(
+            "Warning: unmatched visitor messages will not be scored. Examples: "
+            f"{evaluatie.loc[zonder_antwoord, 'text'].head(5).tolist()}"
         )
+        evaluatie = evaluatie.loc[~zonder_antwoord].copy()
 
     toegestane_waarheid = set(momants_topic.MAIN_TOPICS) | {NONE_LABEL}
     onbekende_labels = set(evaluatie["true_main_topic"]) - toegestane_waarheid
@@ -287,6 +315,14 @@ def valideer(
         fill_value=0,
     )
     print(matrix.to_string())
+
+    print("\nMAIN-TOPIC PREDICTION COUNTS")
+    voorspellingstellingen = evaluatie["main_topic"].value_counts()
+    for hoofdonderwerp in momants_topic.MAIN_TOPICS + [NONE_LABEL]:
+        aantal = int(voorspellingstellingen.get(hoofdonderwerp, 0))
+        print(f"- {hoofdonderwerp}: {aantal}")
+        if hoofdonderwerp != NONE_LABEL and aantal == 0:
+            print(f"  WARNING: {hoofdonderwerp} was never predicted.")
 
     ruime_marge = hoofd_accuracy - naive_baseline
     checks = {

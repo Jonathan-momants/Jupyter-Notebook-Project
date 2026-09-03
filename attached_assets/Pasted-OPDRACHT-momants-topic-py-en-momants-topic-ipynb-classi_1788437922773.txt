@@ -1,0 +1,154 @@
+OPDRACHT
+
+momants_topic.py en momants_topic.ipynb classificeren correct, maar er wordt nog niets
+gemeten. Voeg in fase 1 de validatie toe. Fase 2 zijn losse correcties die je pas
+uitvoert nadat de cijfers zijn teruggekoppeld.
+
+De privacyregel geldt onverkort in alles wat je toevoegt: gebruik uitsluitend
+created_at, text, from_agent, message_type, conversation_id, agent_id. De velden
+raw_json, chat_sender, media, media_url en file mogen nergens worden ingelezen,
+gebruikt of geprint. Bezoekersberichttekst wordt nooit vertaald.
+
+
+=== FASE 1 - METEN ===
+
+1a. Export op berichtniveau
+
+Laat process_csv naast de bestaande tabel per gesprek ook een debugbestand wegschrijven,
+met een rij per bezoekersbericht en deze kolommen:
+
+    conversation_id, created_at, text, main_topic, subtopic, similarity
+
+Hierin staan OOK de berichten die None kregen, met main_topic = "None". Dit bestand is
+uitsluitend voor validatie en gaat nooit naar een klant.
+
+Dit is nodig omdat maak_onderwerpoverzicht dedupliceert op
+(conversation_id, main_topic, subtopic). Een validatie die berichten terugzoekt via
+(conversation_id, first_detected_at) zou daardoor het tweede bericht met hetzelfde
+subonderwerp ten onrechte als None tellen.
+
+1b. Nieuwe notebooksectie "5. Validation"
+
+Vergelijk het debugbestand met data/tests/answer_key_v2.csv (kolommen:
+text, main_topic, subtopic, intent, sentiment_tone_nl, old_main_topic).
+
+Matchen op genormaliseerde tekst: lowercase, accenten weg, alle niet-alfanumerieke
+tekens vervangen door een spatie, dubbele spaties samenvoegen. Dezelfde testzin komt in
+meerdere gesprekken voor met identieke labels; dat is verwacht, en alle instanties
+tellen mee in de weging.
+
+De sleutel bevat 7 regels met main_topic = "None". Dat zijn smalltalk-berichten; daar is
+de juiste uitkomst dat het systeem None teruggeeft en er dus GEEN rij in de
+gesprek-output verschijnt.
+
+Drie sleutelzinnen komen niet voor in de testset. Sla die over, maar print hoeveel
+sleutelzinnen en hoeveel berichten je niet hebt kunnen matchen. Een matchfout mag nooit
+als "alles goed" wegvallen.
+
+1c. Print deze zes cijfers
+
+1. main_topic_accuracy - instantiegewogen, over de berichten met een echt onderwerp.
+2. macro_recall - het ongewogen gemiddelde van de recall per hoofdonderwerp, over de
+   vijf hoofdonderwerpen apart. DIT CIJFER IS VERPLICHT. Zonder dit is niet te zien of
+   het systeem echt onderscheidt of alleen de grootste categorie gokt: een eerder getest
+   model haalde 56% accuratesse terwijl het "Venue" voorspelde voor 89 van 103 berichten.
+3. subtopic_accuracy_end_to_end
+4. subtopic_accuracy_given_correct_main
+5. smalltalk_rejected - percentage van de smalltalk-instanties dat None kreeg.
+6. naive_baseline - het percentage dat je haalt door altijd het grootste hoofdonderwerp
+   te raden.
+
+1d. Print daarnaast
+
+- De volledige confusiematrix, rij = waar, kolom = voorspeld, inclusief None-kolom.
+- Hoe vaak elk hoofdonderwerp is voorspeld. Komt een hoofdonderwerp op nul, meld dat
+  expliciet als waarschuwing, ook als de accuratesse hoog is.
+- Een tabel met alle foute berichten: tekst, waar-label, voorspeld label, similarity.
+
+1e. Twee sanity-checks
+
+- Active topic labels moet 28 zijn. Print een duidelijke waarschuwing als dat niet zo is:
+  dan filtert de seed verkeerd en is de hele meting zinloos.
+- Print het aantal subonderwerpen per hoofdonderwerp. Verwacht: Access 6, Transport 3,
+  Venue 13, Payments 4, Program 2.
+
+1f. Verwachting
+
+Lokaal gevalideerd op dezelfde data en dezelfde seed haalt deze aanpak ongeveer:
+main_topic_accuracy 91%, macro_recall circa 90%, subtopic_accuracy_end_to_end circa 79%,
+smalltalk_rejected boven 90%, tegen een naive_baseline van 62%.
+
+Wijkt jouw uitkomst meer dan ongeveer 10 procentpunt af, ga dan NIET tunen en pas ook de
+beschrijvingen in de seed niet aan. Rapporteer eerst de zes cijfers plus de
+confusiematrix, zodat we kunnen vaststellen of het verschil in de code of in de meting zit.
+
+STOP
+
+Rapporteer de zes cijfers, de confusiematrix en de foutentabel. Begin niet aan fase 2
+voordat dit is teruggekoppeld en bevestigd.
+
+
+=== FASE 2 - CORRECTIES (PAS NA TERUGKOPPELING) ===
+
+2a. Stil dataverlies bij een lege from_agent
+
+In _is_bruikbaar_bezoekersbericht staat: if bool(rij["from_agent"]). In Python is
+bool(nan) gelijk aan True, dus een bezoekersbericht met een lege from_agent wordt als
+agent-bericht gezien en zonder melding weggegooid. In de synthetische testset is die
+kolom altijd gevuld, in een echte export mogelijk niet.
+
+Vergelijk expliciet op "is True" / "is False" in plaats van via bool(), en tel hoeveel
+rijen zijn overgeslagen omdat from_agent niet als booleaan te lezen was. Print dat
+aantal. Nul overgeslagen rijen is de verwachting; elk ander aantal moet zichtbaar zijn.
+
+2b. Slecht passende berichten zichtbaar maken
+
+Er is geen Other-fallback meer, en dat is bewust: je kunt niet cosine-matchen tegen een
+categorie zonder beschrijving. Gevolg is wel dat een bericht dat bij geen enkel
+subonderwerp past, naar het dichtstbijzijnde wordt geduwd zonder dat iets de slechte
+match signaleert.
+
+Schrijf daarom per run de 10% laagst scorende toewijzingen weg in een apart
+overzichtsbestand met text, main_topic, subtopic, similarity, gesorteerd op similarity
+oplopend. Voeg GEEN harde similarity-drempel toe die berichten wegfiltert: dat is bij het
+intentiesysteem al eerder fout gegaan, waar een drempel terechte noodgevallen met een
+lage score wegfilterde.
+
+2c. Prestatie van de berichtselectie
+
+selecteer_bezoekersberichten gebruikt data.apply(..., axis=1), dus rij-voor-rij Python.
+Op de testset is dat onmerkbaar, op een echte export van tienduizenden berichten is het
+de traagste stap van de pijplijn. Vectoriseer, met behoud van exact hetzelfde resultaat
+en dezelfde chronologische sortering.
+
+2d. Consistente Engelse naamgeving
+
+Conform de projectconventie is alle code Engels. Hernoem:
+CSV_PAD -> CSV_PATH
+laad_momants_csv -> load_momants_csv (of verwijder de wrapper, want hij geeft de
+    gedeelde loader ongewijzigd door)
+laad_onderwerpen -> load_topics
+selecteer_bezoekersberichten -> select_visitor_messages
+classificeer_berichten -> classify_messages
+maak_onderwerpoverzicht -> build_topic_overview
+_encodeer -> _encode
+_maak_embeddingmodel -> _build_embedding_model
+_is_bruikbaar_bezoekersbericht -> _is_usable_visitor_message
+
+En de interne variabelen (onderwerpen, bezoekers, werk, pad, kolommen, ontbrekend,
+dubbelen, batchgrootte, uitvoerpad, doelmap, tijdstempel, gestart_op) naar Engelse
+equivalenten. Werk het notebook mee bij.
+
+Verwijder ook de Nederlandse CLI-aliassen --uitvoermap, --batchgrootte en
+--alleen-controleren; houd alleen de Engelse vormen.
+
+2e. Dubbeltellen voorkomen in rapportage
+
+De dedup in maak_onderwerpoverzicht is op (conversation_id, main_topic, subtopic). Een
+gesprek met drie Venue-subonderwerpen levert dus drie rijen. Voeg een korte comment toe
+die vastlegt dat de eenheid van die tabel het GESPREK-ONDERWERP is en niet het gesprek,
+zodat een latere rapportagestap nunique() op conversation_id gebruikt als de vraag is
+"hoeveel gesprekken gingen over Venue".
+
+Na fase 2: draai de validatie uit fase 1 opnieuw en bevestig dat de zes cijfers
+onveranderd zijn. Veranderen ze wel, dan heeft een correctie iets gebroken.

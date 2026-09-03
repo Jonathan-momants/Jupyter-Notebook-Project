@@ -50,6 +50,14 @@ OUTPUT_COLUMNS = [
     "similarity",
     "first_detected_at",
 ]
+DEBUG_OUTPUT_COLUMNS = [
+    "conversation_id",
+    "created_at",
+    "text",
+    "main_topic",
+    "subtopic",
+    "similarity",
+]
 BARE_URL = re.compile(
     r"^\s*(?:https?://|www\.)\S+\s*$",
     flags=re.IGNORECASE,
@@ -274,7 +282,7 @@ def process_csv(
     batch_size: int = 16,
     model: Any | None = None,
 ) -> pd.DataFrame:
-    """Classify topics and write one privacy-safe conversation-topic table."""
+    """Write privacy-safe conversation-topic and message-level validation tables."""
     gestart_op = datetime.now().astimezone()
     data = laad_momants_csv(csv_path)
     onderwerpen = laad_onderwerpen(seed_path, event_id)
@@ -291,8 +299,15 @@ def process_csv(
     doelmap.mkdir(parents=True, exist_ok=True)
     tijdstempel = gestart_op.strftime("%Y%m%d_%H%M%S_%f")
     uitvoerpad = doelmap / f"topics_per_conversation_{tijdstempel}.csv"
+    debugpad = doelmap / f"topics_per_message_{tijdstempel}.csv"
     overzicht.to_csv(uitvoerpad, index=False)
+    debugbestand = geclassificeerd[DEBUG_OUTPUT_COLUMNS].copy()
+    debugbestand["created_at"] = debugbestand["created_at"].apply(
+        lambda waarde: waarde.isoformat()
+    )
+    debugbestand.to_csv(debugpad, index=False)
     overzicht.attrs["output_path"] = uitvoerpad.resolve()
+    overzicht.attrs["debug_output_path"] = debugpad.resolve()
     return overzicht
 
 
@@ -364,6 +379,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     )
     print(f"Conversation-topic combinations: {len(overzicht)}")
     print(f"Output written to: {overzicht.attrs['output_path']}")
+    print(f"Validation debug output written to: {overzicht.attrs['debug_output_path']}")
     return 0
 
 
