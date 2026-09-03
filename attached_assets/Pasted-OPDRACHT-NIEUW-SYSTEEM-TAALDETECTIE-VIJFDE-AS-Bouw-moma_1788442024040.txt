@@ -1,0 +1,142 @@
+OPDRACHT — NIEUW SYSTEEM: TAALDETECTIE (VIJFDE AS)
+
+Bouw momants_language.py plus notebooks/momants_language.ipynb. Doel is tweeledig: taal is
+een zelfstandige klantstatistiek ("38% van je bezoekers schrijft Engels" is bruikbaar voor
+bemanning en voor welke taal de FAQ in moet), en het maakt een taaluitsplitsing van de
+bestaande metingen mogelijk.
+
+Geen LLM, conform de projectlijn. Privacyregels ongewijzigd: alleen created_at, text,
+from_agent, message_type, conversation_id, agent_id. De velden raw_json, chat_sender,
+media, media_url en file mogen nergens worden ingelezen, gebruikt of geprint. De
+PII-maskering zit al in de gedeelde loader; laat die staan.
+
+
+=== DEEL A — MODELKEUZE ===
+
+Gebruik lingua-py en beperk de kandidatenset expliciet tot Nederlands, Engels en Duits:
+
+    LanguageDetectorBuilder.from_languages(
+        Language.DUTCH, Language.ENGLISH, Language.GERMAN
+    ).build()
+
+Gebruik NIET from_all_languages(): dat laadt 75 talen en vreet geheugen. Het beperken van
+de kandidatenset is juist de grootste nauwkeurigheidswinst bij korte chattaal.
+
+Gebruik GEEN HuggingFace-transformer voor deze taak. Taalidentificatie werkt op
+karakter-n-grammen, niet op semantiek, en daar wint de klassieke methode. Een model als
+papluca/xlm-roberta-base-language-detection kost 1,1 GB en is niet beter op korte tekst.
+Het RAM-budget is al bezet door mpnet (onderwerp en de SetFit-body van intentie),
+DistilBERT (sentiment) en de mmarco cross-encoder (antwoordcheck).
+
+Lukt lingua-py niet in deze omgeving, gebruik dan fasttext lid.176 als terugvaloptie.
+Meld welke bibliotheek je hebt gebruikt en waarom.
+
+
+=== DEEL B — DETECTIE OP TWEE NIVEAUS ===
+
+B1. Per bericht
+
+Geef per bezoekersbericht: language en confidence.
+
+Retourneer "und" (undetermined) in plaats van een gok wanneer:
+  - de tekst alleen een URL is (hergebruik de bestaande BARE_URL-regex);
+  - de opgeschoonde tekst minder dan 4 tekens heeft;
+  - de hoogste confidence onder 0,55 ligt.
+
+Verzin nooit een taal voor een bericht dat er te weinig informatie voor heeft. "und" is
+een geldig en gewenst antwoord.
+
+B2. Per gesprek
+
+Dit is het cijfer dat de klant ziet. Bepaal de PRIMAIRE taal per gesprek door de
+per-berichtuitkomsten te aggregeren, gewogen op het AANTAL TEKENS per bericht — niet op
+aantal berichten. Zo bepaalt één lange Nederlandse vraag de gesprektaal, en niet drie keer
+"ok".
+
+Berichten met "und" tellen niet mee in de weging.
+
+Geef per gesprek terug: language, confidence, en een vlag is_multilingual die true is
+wanneer een tweede taal meer dan 25% van de tekens beslaat. Een bezoeker die halverwege
+van Nederlands naar Engels overschakelt is een reëel geval en mag niet stil worden
+platgeslagen.
+
+Krijgt een gesprek uitsluitend "und"-berichten, dan is de gesprektaal ook "und".
+
+B3. Klantstatistiek
+
+Print de verdeling van gesprektalen als percentages, plus het aantal
+meertalige gesprekken. Dat is de output waar een klant iets aan heeft.
+
+
+=== DEEL C — VALIDATIE, VERPLICHT ===
+
+Nieuw bestand: data/tests/answer_key_language.csv met kolommen text, language, chars,
+source. 199 unieke zinnen: nl 151, en 34, de 9, und 5. Gebruik alleen text en language.
+
+Classificeer die 199 teksten rechtstreeks met de per-berichtfunctie, zonder nepgesprekken
+te bouwen.
+
+Rapporteer:
+  - language_accuracy over de 194 zinnen met een echte taal
+  - macro_recall over nl, en en de apart
+  - und_correct: percentage van de 5 "und"-zinnen dat inderdaad "und" kreeg
+  - de volledige confusiematrix, rij = waar, kolom = voorspeld, inclusief und-kolom
+  - accuratesse uitgesplitst naar lengte: 1-11 tekens, 12-30, 31+
+  - alle foute zinnen met tekst, ware taal, voorspelde taal en confidence
+  - de gemiddelde tijd per bericht in milliseconden
+
+LET OP DE BASELINE. Nederlands is 151 van de 194 zinnen. Een implementatie die bij twijfel
+altijd "nl" teruggeeft haalt dus 77,8% zonder iets te kunnen. Rapporteer die naïeve
+baseline expliciet naast je eigen cijfer, en rapporteer macro_recall altijd naast
+accuratesse. Een hoge accuratesse met een lage macro_recall betekent dat het systeem Duits
+en Engels simpelweg niet ziet.
+
+Eerlijke beperking om te vermelden: Duits heeft maar n=9. Te klein voor een betrouwbaar
+percentage, groot genoeg om een totale mislukking te zien. Presenteer dat cijfer met die
+kanttekening.
+
+VERWACHTING (lokaal gemeten met lingua-py, 3 talen, drempel 0,55):
+language_accuracy 99,0%, macro_recall 99,6% (nl 99 / en 100 / de 100), und_correct 100%,
+tegen een naïeve baseline van 77,8%. Snelheid 3,85 ms per bericht, modelopbouw 0,00s.
+
+De enige twee fouten waren conservatief: "Oke helder, bedankt." (conf 0,52) en "Top!"
+(conf 0,45) kregen "und" in plaats van "nl". Dat is gewenst gedrag: liever geen antwoord
+dan een verkeerd antwoord. Verlaag de drempel dus NIET om die twee te repareren.
+
+Kom je meer dan 5 procentpunt lager uit, ga dan niet tunen maar rapporteer de
+confusiematrix, zodat we kunnen zien of het verschil in de bibliotheek, de drempel of de
+kandidatenset zit.
+
+
+=== DEEL D — TAALUITSPLITSING VAN DE BESTAANDE METINGEN ===
+
+Gebruik de WARE talen uit answer_key_language.csv — niet je eigen voorspellingen, anders
+meet je twee fouten door elkaar — om de bestaande validaties per taal uit te splitsen:
+
+  - onderwerp op answer_key_extra158.csv
+  - intentie op de intent-kolom van answer_key_v2.csv
+  - sentiment op answer_key_sentiment.csv
+
+Rapporteer per systeem en per taal: accuratesse en aantal zinnen. Vermeld bij elke cel het
+aantal, zodat een percentage op n=3 niet als bevinding wordt gelezen.
+
+Dit is de eigenlijke vraag erachter: zijn onze systemen in het Engels en Duits net zo goed
+als in het Nederlands? Dat is nooit gemeten.
+
+
+=== DEEL E — GOLDEN TEST ===
+
+Voeg het taalsysteem toe aan check_golden.py, met data/golden/language_golden.csv volgens
+dezelfde regels als de andere vier: deterministisch gesorteerd, geen run-tijdstempels,
+nooit stil overschrijven, niet-nul exitcode bij afwijking.
+
+Bevestig dat check_golden.py voor alle vijf systemen tweemaal achtereen OK geeft.
+
+
+=== STOP ===
+
+Rapporteer: de gekozen bibliotheek met reden, de taalvalidatiecijfers met confusiematrix
+en lengte-uitsplitsing, de naïeve baseline, de snelheid per bericht, de verdeling van
+gesprektalen, de taaluitsplitsing van de drie bestaande metingen, en de golden-testuitkomst.
+
+Verander niets aan de bestaande vier systemen. Begin daarna niets nieuws.

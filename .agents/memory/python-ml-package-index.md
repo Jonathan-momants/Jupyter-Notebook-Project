@@ -7,7 +7,7 @@ Koppel in `tool.uv.sources` uitsluitend `torch` aan de expliciete PyTorch CPU-in
 
 **Why:** De automatische Torch-installatiestap kan een brede lijst pakketten aan de expliciete CPU-index koppelen. Transformers bestaat daar niet, waardoor de resolver ten onrechte meldt dat er geen Linux-versie beschikbaar is.
 
-**How to apply:** Controleer na wijzigingen aan Python ML-afhankelijkheden of de bronmapping compact blijft. Herstel een brede mapping vóór het synchroniseren van de omgeving.
+**How to apply:** Controleer na wijzigingen aan Python ML-afhankelijkheden of de bronmapping compact blijft. Herstel een brede mapping vóór het synchroniseren van de omgeving. De beheerde package-installatiewrapper kan de brede mapping vóór resolutie opnieuw genereren; verwijder in dat geval de expliciete index tijdelijk, voeg de dependency toe, en herstel daarna onmiddellijk de uitsluitend-aan-`torch` gekoppelde CPU-index.
 
 SetFit 1.1.3 moet in dit project met Transformers 4.x draaien, niet met Transformers 5.x.
 

@@ -1,4 +1,4 @@
-"""Golden-output regression checks for all four Momants analysis systems."""
+"""Golden-output regression checks for all five Momants analysis systems."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ import pandas as pd
 
 import momants_answer_check
 import momants_intent
+import momants_language
 import momants_sentiment
 import momants_topic
 
@@ -21,6 +22,7 @@ SORT_COLUMNS = {
     "answer_check": ["conversation_id"],
     "intent": ["conversation_id", "intent", "first_detected_at"],
     "topic": ["conversation_id", "main_topic", "subtopic", "first_detected_at"],
+    "language": ["conversation_id"],
 }
 
 
@@ -46,11 +48,16 @@ def _run_all() -> dict[str, pd.DataFrame]:
     classified_topics = momants_topic.classify_messages(topic_messages, topics)
     topic = momants_topic.build_topic_overview(classified_topics)
 
+    language_messages = momants_language.select_visitor_messages(data)
+    classified_languages = momants_language.classify_messages(language_messages)
+    language = momants_language.create_conversation_summary(classified_languages)
+
     return {
         "sentiment": _canonicalize("sentiment", sentiment),
         "answer_check": _canonicalize("answer_check", answer_check),
         "intent": _canonicalize("intent", intent),
         "topic": _canonicalize("topic", topic),
+        "language": _canonicalize("language", language),
     }
 
 
