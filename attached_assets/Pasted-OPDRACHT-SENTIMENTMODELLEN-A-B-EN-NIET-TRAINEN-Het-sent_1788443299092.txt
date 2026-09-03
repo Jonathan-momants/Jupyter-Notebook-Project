@@ -1,0 +1,51 @@
+OPDRACHT — SENTIMENTMODELLEN A/B'EN, NIET TRAINEN
+
+Het sentimentsysteem staat op macro-recall 49,5% met de klasse Angry (panic) op 0/4.
+Besluit: Angry (panic) wordt GESCHRAPT van de sentiment-as. Urgentie komt uitsluitend van
+de intentie-as (Report Emergency, 4/4 correct). Sentiment heeft voortaan drie klassen:
+Positive, Neutral (task-oriented), Negative (frustrated).
+
+Dit is een MEETRONDE. Train niets, tune niets, wijzig geen drempels en wijzig het
+bestaande momants_sentiment.py niet. Schrijf een los vergelijkingsscript.
+
+Nieuwe sleutel: data/tests/answer_key_sentiment_v2.csv met kolommen
+text, sentiment, certainty, language. 195 zinnen: Neutral 154, Negative 28, Positive 13.
+Gebruik text, sentiment en language. Negeer certainty (dat is een nakijkkolom voor mensen).
+
+Vergelijk deze vier modellen, alle vier via directe per-berichtclassificatie:
+
+  1. tabularisai/multilingual-sentiment-analysis          (het huidige model)
+  2. cardiffnlp/twitter-xlm-roberta-base-sentiment        (3 klassen, korte informele tekst)
+  3. lxyuan/distilbert-base-multilingual-cased-sentiments-student  (3 klassen, klein)
+  4. nlptown/bert-base-multilingual-uncased-sentiment     (5 sterren, reviews)
+
+LABELMAPPING IS EEN CONFOUND. Elk model heeft een eigen labelset. Print voor ELK model
+expliciet de ruwe labels die het teruggeeft en de mapping die je naar de drie
+Momants-klassen gebruikt. Een slechte mapping laat een goed model zakken, en dan meten we
+de mapping in plaats van het model.
+
+Rapporteer per model:
+  - accuracy
+  - MACRO-RECALL over de drie klassen  <-- dit is het cijfer dat telt
+  - recall per klasse apart
+  - de confusiematrix, rij = waar, kolom = voorspeld
+  - accuratesse en macro-recall UITGESPLITST PER TAAL (nl n=151, en n=34, de n=9)
+  - de tijd per bericht in milliseconden
+
+Rapporteer daarnaast de naïeve baseline: altijd "Neutral (task-oriented)" geeft 79,0%.
+Een model dat niet ruim boven die 79% uitkomt op accuratesse EN een macro-recall boven
+ongeveer 70% haalt, is geen verbetering. Accuratesse alleen is hier misleidend omdat
+Neutral 79% van de set is.
+
+SPECIFIEKE CONTROLE. Het huidige model scoort drie Nederlandse noodgeval-zinnen als
+Positive ("Er ligt iemand bewusteloos...", "Mijn dochter is zoek...", "Er breekt brand
+uit..."), terwijl de Engelse variant wel Negative krijgt. Dat wijst op een
+Nederlands-specifieke zwakte. Print voor alle vier modellen expliciet wat ze op die vier
+noodgeval-zinnen voorspellen, naast elkaar in één tabel. Dat is de kern van het probleem
+en ik wil het per model zien.
+
+Zet Duits (n=9) met een kanttekening neer: te klein voor een betrouwbaar percentage, groot
+genoeg om een mislukking te zien.
+
+STOP en rapporteer. Kies zelf geen winnaar en pas niets toe; dat besluit ik op basis van
+de cijfers.
