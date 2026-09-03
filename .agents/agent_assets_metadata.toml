@@ -84,3 +84,17 @@ mtime_ms = 1788439799486
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/c6abda64-8060-4e0c-ac16-fe7c432f39e3/d0735c38-2317-4c32-af49-96e6bf13a68f"
 storage_version_token = "1788439817821471"
 content_type = "text/csv"
+
+[[outputs]]
+id = "UELVrsf5C7lUiut-WACDo"
+uri = "file://data/tests/answer_check_to_label.csv"
+type = "table"
+title = "Antwoordcheck — 31 regels om te labelen"
+description = "Blinde labelsleutel met pair_id, question, agent_reply, agent_reply_next, occurrences en een lege answered-kolom."
+logical_id = "38eca11f-f1f3-4345-9339-bff6bf07723f"
+content_hash = "sha256:a4c286a3573c9e6ed9dda727b0bf732eb795b73d6d8932438f248b3e236c27f5"
+size = 4537
+mtime_ms = 1788444454948
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/38eca11f-f1f3-4345-9339-bff6bf07723f/8bb5ef44-c361-4728-a742-2dc85759fc36"
+storage_version_token = "1788444734851572"
+content_type = "text/csv"
