@@ -2,3 +2,4 @@
 - [Jupyter artifact-routing](jupyter-artifact-routing.md) — host Jupyter als root-artifact op de geïnjecteerde poort en houd `/api` vrij voor Jupyter zelf.
 - [Topic classification strategy](topic-classification-strategy.md) — classify bottom-up with normalized subtopic embeddings; do not restore hierarchical NLI zero-shot.
 - [Answer-key wording parity](answer-key-wording-parity.md) — keep canonical key wording literally present in the test export, even when normalized scoring would hide punctuation drift.
+- [Local intent tokenizer warning](local-intent-tokenizer-warning.md) — current Transformers warns about the saved tokenizer regex; do not alter intent inference without revalidation.

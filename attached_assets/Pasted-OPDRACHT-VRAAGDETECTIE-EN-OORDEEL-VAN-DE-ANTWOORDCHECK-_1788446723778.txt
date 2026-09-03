@@ -1,0 +1,156 @@
+OPDRACHT — VRAAGDETECTIE EN OORDEEL VAN DE ANTWOORDCHECK REPAREREN
+
+De antwoordcheck is op de echte export gedraaid (419 gesprekken) en de uitkomst is niet
+valide. Twee dingen moeten anders. Het oordeel "beantwoord of niet" lijkt op zichzelf
+redelijk (84,8%, wat aansluit op een onafhankelijke schatting van circa 82%), dus daar
+hoeft niet aan gesleuteld te worden behalve op de punten die hieronder expliciet staan.
+
+
+=== PROBLEEM 1: DE VRAAGDETECTIE HANGT AAN HET VRAAGTEKEN ===
+
+Gemeten op de echte export:
+
+    bezoekersbericht MET vraagteken   -> gedetecteerd  124 van 124  (100%)
+    bezoekersbericht ZONDER vraagteken -> gedetecteerd  22 van  88  ( 25%)
+
+66 gesprekken met een echte informatiebehoefte kregen "Geen vragen gevonden". Alle 66
+kregen wel een LLM_RESPONSE van de agent, dus de agent begreep ze prima. Voorbeelden die
+nu worden gemist:
+
+    "Where is the lost and found"
+    "Geluidsoverlast melden"
+    "Dimensions lockers"
+    "ik heb een tattoo afspraak staan maar wil hem graag wat later"
+    "Hallo, mijn vrouw is gister haar iphone 13 verloren bij de mainstage"
+    "Where should we get a taxi to pick us up from on Monday morning"
+    "Ons huisje gaat niet open met de code. Hebben het meerdere keren geprobeerd"
+
+DE FIX. Verwijder de detectie op interpunctie en vraagwoorden volledig. Gebruik in plaats
+daarvan de BESTAANDE intentie-classifier uit momants_intentie.py als vraagdetector:
+
+    intentie != None  ->  dit bericht is een informatiebehoefte en telt mee
+    intentie == None  ->  bedankje, begroeting of smalltalk, telt niet mee
+
+Die classifier staat al op 88,2% accuratesse, kijkt naar betekenis in plaats van naar
+een vraagteken, en is al meertalig. Er is dus geen nieuw model en geen nieuwe training
+nodig. Herbruik hem; bouw geen tweede.
+
+
+=== PROBLEEM 2: percentage_beantwoord IS 0.0 BIJ NUL VRAGEN ===
+
+Nu staat er bij "Geen vragen gevonden" een percentage_beantwoord van 0.0. Dat is geen 0%
+beantwoord, dat is ONBEPAALD. Het gevolg:
+
+    gemiddelde over alle 419 gesprekken   29,8%
+    gemiddelde over de 146 mét vragen     85,7%
+
+Wie dat eerste getal in een klantrapport zet, meldt 29,8% waar het 85,7% is.
+
+DE FIX. Laat percentage_beantwoord LEEG als aantal_vragen 0 is. Nooit 0.0. Voeg
+daarnaast een kolom telt_mee (true/false) toe, zodat een latere rapportagestap
+ondubbelzinnig kan filteren en niemand per ongeluk over alle gesprekken gemiddelt.
+
+
+=== HET OORDEEL: WANNEER IS EEN VRAAG BEANTWOORD ===
+
+Leg dit expliciet vast in de code, met deze regels in deze volgorde:
+
+1. Is er een REPLY_TAKEOVER binnen de episode -> BEANTWOORD.
+   Dat is altijd een geldig antwoord op de bijbehorende knopdruk.
+
+2. Geeft een LLM_RESPONSE een antwoord op basis van de kennis van de agent -> BEANTWOORD.
+
+3. Bevat het antwoord een FALLBACK-formulering -> NIET BEANTWOORD. De agent wist het niet.
+   Deze formuleringen komen letterlijk uit de echte data (13,4% van de 494 antwoorden):
+
+       "ik heb helaas geen informatie over"
+       "ik heb hier geen specifieke informatie over"
+       "heb ik geen specifieke locatie in mijn informatie staan"
+       "oeps, ik kan zo snel geen specifiek adres vinden"
+       "unfortunately, i don't have the exact ... in my current information"
+       "non ho informazioni specifiche"
+
+4. Bevat het antwoord een BELOFTE en geen inhoudelijk antwoord -> NIET BEANTWOORD.
+   Een belofte is geen antwoord (4,7% van de 494 antwoorden):
+
+       "ik ga meteen voor je kijken of..."
+       "ik zoek het even op"
+       "ik kom er bij je op terug"
+       "let me check that for you"
+
+BELANGRIJK ONDERSCHEID. Een doorverwijzing naar een PLEK of ACTIE op locatie is WEL
+beantwoord, want de agent wist waar je moet zijn:
+
+    "Ga naar het Lost & Found-punt bij de hoofdingang"        -> BEANTWOORD
+    "Bij de lockerdesk op het festivalterrein"                -> BEANTWOORD
+
+Een doorverwijzing naar een KANAAL buiten het gesprek is NIET beantwoord, want de agent
+wist het antwoord niet:
+
+    "Dat staat niet in mijn info, mail naar [e-mailadres]"    -> NIET BEANTWOORD
+    "Neem contact op met ons servicenummer"                   -> NIET BEANTWOORD
+
+
+=== RUISFILTER ===
+
+Meld eerst of momants_conversation_filter.py uit de vorige opdracht al bestaat. Zo ja,
+gebruik die. Zo nee, bouw deze regels hier in:
+
+AGENT-KANT: alleen message_type LLM_RESPONSE (494) en REPLY_TAKEOVER (100) zijn mogelijke
+antwoorden. Negeer message_type leeg (687) volledig: dat is uitgaande marketing, slechts
+3 unieke teksten, 54% van al het agent-verkeer. Zonder dit filter wordt een
+marketingbericht als antwoord op een vraag gekoppeld.
+
+BEZOEKERS-KANT: filter exact-matchende knop-payloads, case-insensitive, na strippen:
+
+    "Yes! (opt in)"   "See Saturday's recap"   "See Sunday's recap"
+    "Stop messaging"  "OPT-IN AGAIN"
+
+Dat is 102 van de 598 bezoekersberichten. Maak dit een constante met een comment dat de
+lijst per klant verschilt.
+
+
+=== CONTROLE 1: DE HELE EXPORT ===
+
+Draai opnieuw op de echte export en vergelijk met deze verwachting:
+
+                                        NU (fout)    VERWACHT NA FIX
+    gesprekken met >=1 vraag                146            ~212
+    gesprekken "geen vragen gevonden"       273            ~207
+    bezoekersberichten met informatiebehoefte  237         duidelijk hoger dan 237
+
+De 212 is mijn referentie: het aantal gesprekken met minstens één echt bezoekersbericht
+nadat de knop-payloads eruit zijn. Kom je nog steeds rond de 146, dan werkt de
+intentie-poort niet.
+
+
+=== CONTROLE 2: DE 25 GESPREKKEN, DIT IS DE BELANGRIJKSTE ===
+
+Draai ook op data/tests/conversations_real25.csv. Die 25 gesprekken zijn met de hand
+nagelopen, dus hier is de verwachting exact:
+
+    21 van de 25 gesprekken hebben minstens één vraag.
+    Precies 4 gesprekken hebben GEEN vraag.
+
+Die vier zijn de gesprekken die alleen uit recap-knopdrukken bestaan. In de huidige
+output staan er 12 op "Geen vragen gevonden", waarvan 8 fout. Print per gesprek het
+aantal gevonden vragen, zodat we kunnen zien welke vier het zijn.
+
+
+=== EXPORT VOOR HANDMATIG LABELEN ===
+
+Exporteer data/tests/answer_check_real25_to_label.csv met één rij per gevonden
+informatiebehoefte uit die 25 gesprekken:
+
+    episode_id, gesprek_nr, question, followups, agent_replies, answered (LEEG)
+
+Meerdere agent-antwoorden gescheiden door ' ||| '. Zet de VOORSPELLING van het systeem er
+NIET in; bewaar die apart in answer_check_real25_predictions.csv met episode_id. Ik label
+blind, anders stuurt de voorspelling mijn oordeel.
+
+
+=== STOP ===
+
+Rapporteer: of het filtermodule al bestond, de cijfers van controle 1 naast de
+verwachting, de per-gesprek uitkomst van controle 2, en het aantal rijen in het
+labelbestand. Verander niets aan de intentie-, sentiment-, onderwerp- of taal-as.

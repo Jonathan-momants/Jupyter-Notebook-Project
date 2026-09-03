@@ -26,7 +26,6 @@ import pandas as pd
 
 from momants_answer_check import (
     classify_question_answer_pairs,
-    is_question,
     pair_questions_with_answers,
 )
 from momants_sentiment import load_momants_csv
@@ -50,59 +49,15 @@ def _pair_instances_with_next_reply(
     data: pd.DataFrame,
     pairs: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Attach every next agent reply while preserving production pair order."""
-    contexts: list[dict[str, object]] = []
-    sorted_data = data.sort_values(
-        ["conversation_id", "created_at"], kind="stable"
-    )
-
-    for conversation_id, conversation in sorted_data.groupby(
-        "conversation_id", sort=False
-    ):
-        messages = list(conversation.itertuples(index=False))
-        for position, message in enumerate(messages):
-            if message.from_agent is not False or not is_question(message.text):
-                continue
-
-            first_agent_position: int | None = None
-            next_agent_reply = ""
-            for following_position in range(position + 1, len(messages)):
-                following = messages[following_position]
-                if following.created_at <= message.created_at:
-                    continue
-                if following.from_agent is not True:
-                    continue
-                if first_agent_position is None:
-                    first_agent_position = following_position
-                    continue
-                if pd.notna(following.text) and str(following.text).strip():
-                    next_agent_reply = str(following.text).strip()
-                break
-
-            contexts.append(
-                {
-                    "conversation_id": conversation_id,
-                    "question_text": str(message.text).strip(),
-                    "agent_reply_next": next_agent_reply,
-                }
-            )
-
-    if len(contexts) != len(pairs):
-        raise RuntimeError("Question context count differs from production pairs.")
-
-    context_frame = pd.DataFrame(contexts)
-    if not (
-        context_frame["conversation_id"].reset_index(drop=True)
-        .eq(pairs["conversation_id"].reset_index(drop=True))
-        .all()
-        and context_frame["question_text"].reset_index(drop=True)
-        .eq(pairs["question_text"].reset_index(drop=True))
-        .all()
-    ):
-        raise RuntimeError("Question context order differs from production pairing.")
-
+    """Split the current episode's LLM replies into first and following replies."""
     result = pairs.copy()
-    result["agent_reply_next"] = context_frame["agent_reply_next"]
+    result["agent_reply_next"] = result["llm_responses"].apply(
+        lambda replies: NEXT_VARIANT_SEPARATOR.join(replies[1:])
+    )
+    has_llm_reply = result["llm_responses"].apply(bool)
+    result.loc[has_llm_reply, "answer_text"] = result.loc[
+        has_llm_reply, "llm_responses"
+    ].apply(lambda replies: replies[0])
     return result
 
 

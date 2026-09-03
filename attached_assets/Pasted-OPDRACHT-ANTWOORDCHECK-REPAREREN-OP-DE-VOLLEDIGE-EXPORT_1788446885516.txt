@@ -1,0 +1,153 @@
+OPDRACHT — ANTWOORDCHECK REPAREREN, OP DE VOLLEDIGE EXPORT
+
+De antwoordcheck is op de echte export gedraaid (419 gesprekken) en is niet valide. Drie
+dingen moeten anders. Draai alles op de volledige export; er is geen steekproefstap.
+
+
+=== FIX 1: VRAAGDETECTIE HANGT AAN HET VRAAGTEKEN ===
+
+Gemeten op de echte export:
+
+    bezoekersbericht MET vraagteken    -> gedetecteerd  124 van 124  (100%)
+    bezoekersbericht ZONDER vraagteken -> gedetecteerd   22 van  88  ( 25%)
+
+66 gesprekken met een echte informatiebehoefte kregen "Geen vragen gevonden", terwijl
+alle 66 wel een LLM_RESPONSE van de agent kregen. De agent begreep ze dus prima. Wat er
+nu wordt gemist:
+
+    "Where is the lost and found"
+    "Geluidsoverlast melden"
+    "Dimensions lockers"
+    "ik heb een tattoo afspraak staan maar wil hem graag wat later"
+    "Hallo, mijn vrouw is gister haar iphone 13 verloren bij de mainstage"
+    "Ons huisje gaat niet open met de code. Hebben het meerdere keren geprobeerd"
+
+DE FIX. Verwijder de detectie op interpunctie en vraagwoorden VOLLEDIG. Gebruik de
+BESTAANDE intentie-classifier uit momants_intentie.py als vraagdetector:
+
+    intentie != None  ->  informatiebehoefte, telt mee
+    intentie == None  ->  bedankje, begroeting, smalltalk, telt niet mee
+
+Die staat al op 88,2%, is meertalig en kijkt naar betekenis in plaats van naar een
+vraagteken. Herbruik hem; bouw geen tweede model en train niets.
+
+
+=== FIX 2: percentage_beantwoord IS 0.0 BIJ NUL VRAGEN ===
+
+Nu levert "Geen vragen gevonden" een percentage_beantwoord van 0.0. Dat is niet 0%
+beantwoord, dat is ONBEPAALD. Gevolg:
+
+    gemiddelde over alle 419 gesprekken   29,8%
+    gemiddelde over de 146 mét vragen     85,7%
+
+Laat percentage_beantwoord LEEG als aantal_vragen 0 is. Nooit 0.0. Voeg een kolom
+telt_mee (true/false) toe zodat een rapportagestap ondubbelzinnig kan filteren.
+
+
+=== FIX 3: RUISFILTER ===
+
+Meld eerst of momants_conversation_filter.py uit een eerdere opdracht bestaat; zo ja,
+gebruik die. Zo nee, bouw deze regels hier in.
+
+AGENT-KANT: alleen message_type LLM_RESPONSE (494) en REPLY_TAKEOVER (100) zijn mogelijke
+antwoorden. Negeer message_type leeg (687) volledig — dat is uitgaande marketing, slechts
+3 unieke teksten, 54% van al het agent-verkeer. Zonder dit filter wordt een
+marketingbericht als antwoord op een vraag gekoppeld.
+
+BEZOEKERS-KANT: filter exact-matchende knop-payloads, case-insensitive, na strippen:
+
+    "Yes! (opt in)"  "See Saturday's recap"  "See Sunday's recap"
+    "Stop messaging" "OPT-IN AGAIN"
+
+Dat is 102 van de 598 bezoekersberichten. Maak dit een constante met een comment dat de
+lijst per klant verschilt.
+
+
+=== HET OORDEEL: WANNEER IS EEN VRAAG BEANTWOORD ===
+
+In deze volgorde:
+
+1. REPLY_TAKEOVER binnen de episode -> BEANTWOORD (altijd geldig antwoord op een knopdruk)
+2. LLM_RESPONSE die antwoord geeft op basis van de kennis van de agent -> BEANTWOORD
+3. FALLBACK-formulering -> NIET BEANTWOORD (de agent wist het niet)
+4. BELOFTE zonder inhoudelijk antwoord -> NIET BEANTWOORD
+
+FALLBACK-PATRONEN. Eerste persoon plus een informatie-zelfstandignaamwoord. Deze komen
+letterlijk uit de echte data:
+
+    (ik )?heb (ik )?(helaas )?geen (specifieke |exacte |gedetailleerde )?
+        (informatie|locatie|details|gegevens|openingstijden|tijden|update)
+    staat niet in mijn (informatie|kennis)
+    geen specifieke locatie in mijn informatie
+    kan ik (je )?(helaas )?niet (precies )?(vertellen|vinden|zeggen)
+    kan ik zo snel geen
+    weet ik (helaas )?niet
+    I (don't|do not) have (the )?(exact |specific |any )?
+        (information|details|data|times|update|departure times)
+    (looks like )?I don't have specific
+    non ho informazioni specifiche
+
+LET OP, DIT IS BELANGRIJK. Sluit deze expliciet UIT, want het zijn juist wél antwoorden:
+
+    "you don't have to worry about fixed departure times"
+    "an air mattress if you don't have one yet"
+
+Eis dus een eerste persoon (ik / I) als subject, en sluit "you don't have" en
+"don't have to" uit met een negatieve lookahead. Zonder die uitsluiting markeer je echte
+antwoorden als niet beantwoord.
+
+BELOFTE-PATRONEN (4,7% van de 494 antwoorden):
+
+    ik ga (meteen |even )?(voor je )?(kijken|zoeken)
+    zoek ik (even )?op
+    kom er(op)? (bij je )?terug
+    let me check | I'll check
+
+ONDERSCHEID DAT JE MOET AANHOUDEN. Een doorverwijzing naar een PLEK of ACTIE op locatie
+is WEL beantwoord — de agent wist waar je moet zijn:
+
+    "Ga naar het Lost & Found-punt bij de hoofdingang"   -> BEANTWOORD
+    "Bij de lockerdesk op het festivalterrein"           -> BEANTWOORD
+
+Een doorverwijzing naar een KANAAL buiten het gesprek is NIET beantwoord:
+
+    "Dat staat niet in mijn info, mail naar <adres>"     -> NIET BEANTWOORD
+    "Neem contact op met ons servicenummer"              -> NIET BEANTWOORD
+
+
+=== CONTROLE ===
+
+Draai op de volledige echte export en vergelijk met deze verwachting:
+
+                                        NU (fout)   VERWACHT NA FIX
+    gesprekken met >=1 vraag                146           ~212
+    gesprekken "geen vragen gevonden"       273           ~207
+    informatiebehoeften totaal              237      duidelijk hoger dan 237
+
+De 212 is een onafhankelijke referentie: het aantal gesprekken met minstens één echt
+bezoekersbericht nadat de knop-payloads eruit zijn. Blijf je rond de 146 hangen, dan
+werkt de intentie-poort niet en moet je dat melden in plaats van de verwachting bij te
+stellen.
+
+Rapporteer ook het percentage beantwoord over ALLEEN de gesprekken met minstens één
+vraag. De huidige waarde is 84,8% en een onafhankelijke schatting op basis van
+fallback- en beloftetaal komt op circa 82%, dus iets tussen 80% en 88% is plausibel.
+Wijk je daar sterk van af, meld dat.
+
+
+=== EXPORT VOOR CONTROLE VAN DE PATRONEN ===
+
+Schrijf results/fallback_zinnen.csv weg met elke zin uit een LLM_RESPONSE die een
+fallback- of belofte-patroon raakt, met kolommen: zin, patroon_dat_matchte, type
+(fallback of belofte), aantal_keer_voorgekomen. Ik loop die lijst na om te controleren of
+er geen echte antwoorden ten onrechte als "niet beantwoord" zijn gemarkeerd.
+
+Dat is de kwaliteitscontrole in plaats van handmatig labelen: als de patroonlijst klopt,
+klopt het oordeel over alle 494 antwoorden.
+
+
+=== STOP ===
+
+Rapporteer: of het filtermodule bestond, de cijfers naast de verwachting hierboven, het
+percentage beantwoord over gesprekken met vragen, en het aantal regels in
+fallback_zinnen.csv. Verander niets aan de intentie-, sentiment-, onderwerp- of taal-as.
