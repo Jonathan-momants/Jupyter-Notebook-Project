@@ -5,11 +5,11 @@ tags:
 - text-classification
 - generated_from_setfit_trainer
 widget:
-- text: Ik zie brand bij de foodtrucks.
-- text: hoeveel kost een parkeerplek
-- text: Wat kost een consumptie gemiddeld?
-- text: De steward bij ingang B duwde me zomaar opzij zonder uitleg.
-- text: het toilet bij vak 3 is verstopt
+- text: Mijn tent is beschadigd geraakt door de storm.
+- text: Kan ik met de trein naar het festival komen?
+- text: Stop met berichten sturen.
+- text: Waar sta ik nu precies op de plattegrond?
+- text: Hoe kom ik van de camping naar het hoofdpodium?
 metrics:
 - accuracy
 pipeline_tag: text-classification
@@ -34,7 +34,7 @@ The model has been trained using an efficient few-shot learning technique that i
 - **Sentence Transformer body:** [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2)
 - **Classification head:** a [LogisticRegression](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html) instance
 - **Maximum Sequence Length:** 128 tokens
-- **Number of Classes:** 6 classes
+- **Number of Classes:** 7 classes
 <!-- - **Training Dataset:** [Unknown](https://huggingface.co/datasets/unknown) -->
 <!-- - **Language:** Unknown -->
 <!-- - **License:** Unknown -->
@@ -54,6 +54,7 @@ The model has been trained using an efficient few-shot learning technique that i
 | Active Navigation Help       | <ul><li>'Hoe kom ik van de camping naar het hoofdpodium?'</li><li>'Waar vind ik het dichtstbijzijnde toilet vanaf hier?'</li><li>'Kun je me de route naar de parkeerplaats laten zien?'</li></ul> |
 | Operate System               | <ul><li>'Kun je me doorverbinden met een medewerker?'</li><li>'Stop met berichten sturen.'</li><li>'Kan ik dit gesprek opnieuw beginnen?'</li></ul>                                               |
 | Report Emergency             | <ul><li>'Er ligt iemand bewusteloos bij podium 2, help!'</li><li>'Ik zie brand bij de foodtrucks.'</li><li>'Er is een vechtpartij aan de gang bij de ingang.'</li></ul>                           |
+| None                         | <ul><li>'Dankjewel, dat helpt!'</li><li>'Oke duidelijk, dank je'</li><li>'Top, bedankt!'</li></ul>                                                                                                |
 
 ## Uses
 
@@ -73,7 +74,7 @@ from setfit import SetFitModel
 # Download from the 🤗 Hub
 model = SetFitModel.from_pretrained("setfit_model_id")
 # Run inference
-preds = model("hoeveel kost een parkeerplek")
+preds = model("Stop met berichten sturen.")
 ```
 
 <!--
@@ -105,7 +106,7 @@ preds = model("hoeveel kost een parkeerplek")
 ### Training Set Metrics
 | Training set | Min | Median | Max |
 |:-------------|:----|:-------|:----|
-| Word count   | 3   | 7.8934 | 14  |
+| Word count   | 1   | 7.1972 | 14  |
 
 | Label                        | Training Sample Count |
 |:-----------------------------|:----------------------|
@@ -115,6 +116,7 @@ preds = model("hoeveel kost een parkeerplek")
 | Active Navigation Help       | 20                    |
 | Operate System               | 19                    |
 | Report Emergency             | 12                    |
+| None                         | 20                    |
 
 ### Training Hyperparameters
 - batch_size: (16, 16)
@@ -138,7 +140,7 @@ preds = model("hoeveel kost een parkeerplek")
 ### Training Results
 | Epoch  | Step | Training Loss | Validation Loss |
 |:------:|:----:|:-------------:|:---------------:|
-| 0.0323 | 1    | 0.3595        | -               |
+| 0.0278 | 1    | 0.3485        | -               |
 
 ### Framework Versions
 - Python: 3.11.14

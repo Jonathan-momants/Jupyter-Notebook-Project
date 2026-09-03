@@ -1,11 +1,12 @@
 {
+  "normalize_embeddings": false,
   "labels": [
     "Request Information",
     "Resolve Problem or Incident",
     "Perform Transaction / Change",
     "Active Navigation Help",
     "Operate System",
-    "Report Emergency"
-  ],
-  "normalize_embeddings": false
+    "Report Emergency",
+    "None"
+  ]
 }

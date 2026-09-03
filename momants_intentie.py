@@ -17,7 +17,7 @@ from momants_sentiment import load_momants_csv
 
 
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-TRAINING_DATA_PATH = Path("intent_training.csv")
+TRAINING_DATA_PATH = Path("notebooks/intent_training.csv")
 LOCAL_MODEL_PATH = Path("model/momants-intentie")
 CONFIDENCE_THRESHOLD = 0.60
 
@@ -28,6 +28,7 @@ INTENT_CATEGORIES = [
     "Active Navigation Help",
     "Operate System",
     "Report Emergency",
+    "None",
 ]
 
 OUTPUT_COLUMNS = [
@@ -87,7 +88,9 @@ def train_model(
     if not bron.is_file():
         raise FileNotFoundError(f"Training file not found: {bron}")
 
-    training = _valideer_trainingsdata(pd.read_csv(bron))
+    training = _valideer_trainingsdata(
+        pd.read_csv(bron, keep_default_na=False)
+    )
     label_naar_index = {
         label: index for index, label in enumerate(INTENT_CATEGORIES)
     }
@@ -225,7 +228,8 @@ def maak_intentieoverzicht(
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     boven_drempel = geclassificeerd.loc[
-        geclassificeerd["confidence"].gt(zekerheidsdrempel)
+        geclassificeerd["intent"].ne("None")
+        & geclassificeerd["confidence"].gt(zekerheidsdrempel)
     ].copy()
     if boven_drempel.empty:
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
