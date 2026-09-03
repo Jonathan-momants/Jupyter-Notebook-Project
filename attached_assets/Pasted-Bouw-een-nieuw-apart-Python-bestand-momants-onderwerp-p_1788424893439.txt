@@ -1,0 +1,19 @@
+Bouw een nieuw, apart Python-bestand momants_onderwerp.py plus een bijbehorende notebook momants_onderwerp.ipynb, naast de drie bestaande systemen (momants_sentiment.py, momants_antwoordcheck.py, momants_intentie.py). Dit systeem bepaalt per gesprek over welk(e) hoofdonderwerp(en) en subonderwerp(en) een bezoeker het heeft. Werkt met dezelfde Momants CSV-export als de andere drie. Scope is ALLEEN dit — geen sentiment, intentie of antwoord-check.
+
+Model: de standaard zero-shot-classification-pipeline uit transformers, met MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli als model (let op: dit IS de bedoelde toepassing van dit model — anders dan bij de antwoordcheck, waar we het bewust hebben afgeschaft voor een andere taak). Zet het model-ID geïsoleerd bovenaan als constante.
+
+Labelbron: momants_topics_seed_en.csv (kolommen: id, event_id, main_topic, subtopic, active, description). Filter deze lijst op een EVENT_ID-constante die je net als CSV_PAD bovenaan instelbaar maakt (er is nog geen koppeltabel agent→event, dus dit gebeurt nu handmatig — zie eerdere afspraak). Gebruik alleen rijen met active == true.
+
+Verplichte eisen:
+
+Data-inladen zit achter één functie, mag laad_momants_csv hergebruiken uit momants_sentiment.py. Privacy-eis blijft hard staan: alleen created_at, text, from_agent, message_type, conversation_id, agent_id gebruiken; raw_json, chat_sender, media, media_url, file nergens.
+Hiërarchische classificatie, twee stappen, per bezoekersbericht:
+Stap 1 — hoofdonderwerp: classificeer het bericht tegen de 7 hoofdonderwerpen (Tickets, Transport, Camping, Venue, Payments, Program, Feedback) PLUS één extra, ingebouwde afwijs-optie: "None" met als omschrijving "This message is small talk, a greeting, or not about any specific festival topic (e.g. thanks, chit-chat)". Gebruik multi_label=False (dus een gewone argmax, geen drempel nodig — we hebben net gezien bij de intentieclassificatie dat een expliciete afwijscategorie beter werkt dan een losse confidence-drempel). Komt "None" als winnaar uit de bus? Dan draagt dit bericht niets bij en ga je door naar het volgende bericht.
+Stap 2 — subonderwerp: alleen als stap 1 een echt hoofdonderwerp opleverde: classificeer hetzelfde bericht opnieuw, nu tegen alléén de subonderwerpen die bij dat hoofdonderwerp horen (incl. "Other" als vangnet), met de description-kolom als vergelijkingstekst in plaats van het kale woord. Ook hier multi_label=False, geen aparte drempel.
+"None" mag zelf nooit in de output verschijnen.
+Aggregatie per gesprek: een gesprek kan meerdere (hoofdonderwerp, subonderwerp)-combinaties bevatten, uit verschillende bezoekersberichten. Verzamel de unieke combinaties per gesprek, elk met de zekerheid en het tijdstip van het EERSTE bezoekersbericht waarin die combinatie voorkwam.
+Output is één tabel met exact deze kolommen: conversation_id, main_topic, subtopic, confidence, first_detected_at. Eén rij per gesprek-onderwerp-combinatie. Een gesprek waar alles op "None" uitkomt levert 0 rijen op (niet crashen).
+Command-line-ingang zoals de andere drie: python momants_onderwerp.py jouw-bestand.csv --event-id decibel_2026, met een --alleen-controleren-vlag die alleen het inladen en de labellijst-filtering test, zonder het model te starten.
+Niet aanwezig mag zijn: sentiment, intentie, antwoord-check, wegschrijven naar de Momants-database, of gebruik van echte bezoekersdata (alleen nep-/testdata).
+Geef na afloop het volledige momants_onderwerp.py bestand en de notebookcellen terug.
+
