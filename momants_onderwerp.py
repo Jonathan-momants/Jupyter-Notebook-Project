@@ -20,9 +20,8 @@ TOPICS_SEED_PATH = Path("momants_topics_seed_en.csv")
 EVENT_ID = "decibel_2026"
 
 MAIN_TOPICS = [
-    "Tickets",
+    "Access",
     "Transport",
-    "Camping",
     "Venue",
     "Payments",
     "Program",
@@ -98,8 +97,6 @@ def laad_onderwerpen(
         onderwerpen["event_id"].astype(str).str.strip().eq(str(event_id).strip())
         & onderwerpen["active"]
     ].copy()
-    if onderwerpen.empty:
-        raise ValueError(f"No active topic labels found for event_id {event_id!r}.")
 
     for kolom in ["main_topic", "subtopic", "description"]:
         onderwerpen[kolom] = onderwerpen[kolom].astype(str).str.strip()
@@ -113,15 +110,6 @@ def laad_onderwerpen(
             f"{', '.join(sorted(onbekende_hoofdonderwerpen))}."
         )
 
-    ontbrekende_hoofdonderwerpen = set(MAIN_TOPICS) - set(
-        onderwerpen["main_topic"]
-    )
-    if ontbrekende_hoofdonderwerpen:
-        raise ValueError(
-            "The event is missing active labels for: "
-            f"{', '.join(sorted(ontbrekende_hoofdonderwerpen))}."
-        )
-
     dubbelen = onderwerpen.duplicated(["main_topic", "subtopic"], keep=False)
     if dubbelen.any():
         combinaties = onderwerpen.loc[
@@ -132,22 +120,6 @@ def laad_onderwerpen(
             for rij in combinaties.itertuples(index=False)
         )
         raise ValueError(f"Duplicate active topic combinations: {weergegeven}.")
-
-    zonder_other = [
-        hoofdonderwerp
-        for hoofdonderwerp in MAIN_TOPICS
-        if "Other"
-        not in set(
-            onderwerpen.loc[
-                onderwerpen["main_topic"].eq(hoofdonderwerp), "subtopic"
-            ]
-        )
-    ]
-    if zonder_other:
-        raise ValueError(
-            "Every main topic needs an active Other subtopic; missing for: "
-            f"{', '.join(zonder_other)}."
-        )
 
     return onderwerpen[SEED_COLUMNS].reset_index(drop=True)
 
@@ -244,8 +216,14 @@ def classificeer_berichten(
             onderwerpen["main_topic"].eq(hoofdonderwerp),
             ["subtopic", "description"],
         ]
-        kandidaat_naar_subtopic: dict[str, str] = {}
+        other_candidate = (
+            f"Other: General {hoofdonderwerp.lower()} question that doesn't "
+            "fit a more specific subtopic"
+        )
+        kandidaat_naar_subtopic: dict[str, str] = {other_candidate: "Other"}
         for rij in labels.itertuples(index=False):
+            if rij.subtopic == "Other":
+                continue
             kandidaat = f"{rij.subtopic}: {rij.description}"
             if kandidaat in kandidaat_naar_subtopic:
                 raise ValueError(
