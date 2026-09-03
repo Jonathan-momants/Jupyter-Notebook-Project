@@ -42,3 +42,17 @@ mtime_ms = 1788427793624
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/58dd8c00-42f5-4a09-83ac-056b9425ddd9/25825918-50df-414c-b6c6-580e6f24297f"
 storage_version_token = "1788427806396201"
 content_type = "text/csv"
+
+[[outputs]]
+id = "7DjOnA6NbYYso1msovHI3"
+uri = "file://results/topics_per_conversation_20260903_093818_150851.csv"
+type = "table"
+title = "Onderwerpclassificatie met rijke hoofdbeschrijvingen"
+description = "Nieuwe volledige uitvoer voor decibel_2026 met beschrijvende zero-shotkandidaten voor de zes hoofdonderwerpen."
+logical_id = "cd884898-b7bd-4e3e-b835-21d4b61106eb"
+content_hash = "sha256:4ec720259623dbfc29222c8ffe240ce98377d8ae9b02aa63b23eb87eed9a2de3"
+size = 10842
+mtime_ms = 1788428305510
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/cd884898-b7bd-4e3e-b835-21d4b61106eb/f506356f-34bb-4fc9-89d6-a81051af315c"
+storage_version_token = "1788428319710102"
+content_type = "text/csv"

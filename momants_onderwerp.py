@@ -27,6 +27,28 @@ MAIN_TOPICS = [
     "Program",
     "Feedback",
 ]
+MAIN_TOPIC_DESCRIPTIONS = {
+    "Access": (
+        "Getting in or having a valid ticket, wristband, or reservation to attend"
+    ),
+    "Transport": (
+        "Getting to the venue by car, bike, public transport, or shuttle, "
+        "and parking"
+    ),
+    "Venue": (
+        "The physical site itself: camping, cabins, lockers, charging points, "
+        "shops, the map, or on-site emergencies"
+    ),
+    "Payments": (
+        "Cashless balance, refunds, deposits, or paying for food and drinks"
+    ),
+    "Program": (
+        "The schedule of acts and activities, or general festival information"
+    ),
+    "Feedback": (
+        "A complaint or negative experience about noise, facilities, or staff"
+    ),
+}
 NONE_LABEL = "None"
 NONE_DESCRIPTION = (
     "This message is small talk, a greeting, or not about any specific "
@@ -182,7 +204,11 @@ def classificeer_berichten(
 
     classifier = classifier or _maak_classifier()
     none_candidate = f"{NONE_LABEL}: {NONE_DESCRIPTION}"
-    hoofd_candidates = MAIN_TOPICS + [none_candidate]
+    hoofd_kandidaat_naar_label = {
+        f"{topic}: {MAIN_TOPIC_DESCRIPTIONS[topic]}": topic
+        for topic in MAIN_TOPICS
+    }
+    hoofd_candidates = list(hoofd_kandidaat_naar_label) + [none_candidate]
     hoofd_resultaten = _normaliseer_resultaten(
         classifier(
             bezoekersberichten["text"].tolist(),
@@ -199,7 +225,14 @@ def classificeer_berichten(
     hoofdscores: list[float] = []
     for resultaat in hoofd_resultaten:
         label, score = _beste_label(resultaat)
-        hoofdlabels.append(NONE_LABEL if label == none_candidate else label)
+        if label == none_candidate:
+            hoofdlabels.append(NONE_LABEL)
+        elif label in hoofd_kandidaat_naar_label:
+            hoofdlabels.append(hoofd_kandidaat_naar_label[label])
+        else:
+            raise ValueError(
+                f"The model returned an unknown main-topic label: {label!r}."
+            )
         hoofdscores.append(score)
     werk["main_topic"] = hoofdlabels
     werk["_main_confidence"] = hoofdscores
