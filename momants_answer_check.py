@@ -60,6 +60,9 @@ def is_question(text: object) -> bool:
 
 def detect_questions(data: pd.DataFrame) -> pd.DataFrame:
     """Select usable visitor questions in chronological order."""
+    readable_from_agent = data["from_agent"].eq(True) | data["from_agent"].eq(False)
+    unreadable_count = int((~readable_from_agent).sum())
+    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
     visitors = data.loc[data["from_agent"].eq(False)].copy()
     visitors = visitors.loc[visitors["text"].apply(is_question)].copy()
     visitors["text"] = visitors["text"].astype(str).str.strip()
@@ -70,6 +73,9 @@ def detect_questions(data: pd.DataFrame) -> pd.DataFrame:
 
 def pair_questions_with_answers(data: pd.DataFrame) -> pd.DataFrame:
     """Pair each visitor question with the following agent message."""
+    readable_from_agent = data["from_agent"].eq(True) | data["from_agent"].eq(False)
+    unreadable_count = int((~readable_from_agent).sum())
+    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
     columns = [
         "conversation_id",
         "question_text",
@@ -86,14 +92,14 @@ def pair_questions_with_answers(data: pd.DataFrame) -> pd.DataFrame:
     ):
         messages = list(conversation.itertuples(index=False))
         for position, message in enumerate(messages):
-            if bool(message.from_agent) or not is_question(message.text):
+            if message.from_agent is not False or not is_question(message.text):
                 continue
 
             answer_text: str | None = None
             for following_message in messages[position + 1 :]:
                 if following_message.created_at <= message.created_at:
                     continue
-                if bool(following_message.from_agent):
+                if following_message.from_agent is True:
                     if pd.notna(following_message.text) and str(following_message.text).strip():
                         answer_text = str(following_message.text).strip()
                     break

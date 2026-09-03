@@ -1,0 +1,127 @@
+OPDRACHT — KLAARMAKEN VOOR ECHTE DATA
+
+Twee samenhangende klussen voordat we een echte Momants-export durven te verwerken:
+PII maskeren in het vrije tekstveld, en dezelfde bool(nan)-fout repareren die in het
+onderwerp-systeem al is opgelost maar in de andere drie nog zit.
+
+Beide raken alle vier systemen, dus de validatie aan het eind is niet optioneel.
+
+
+=== DEEL A — PII MASKEREN IN text ===
+
+Het probleem: de bestaande privacyregels dekken alleen KOLOMMEN (raw_json, chat_sender,
+media, media_url, file worden nooit ingelezen). Maar het text-veld wordt wél ingelezen,
+want daar draait alle classificatie op. Een bezoeker die "bel me op 06-12345678" typt,
+zet zijn telefoonnummer daarmee midden in de data die wij verwerken, printen en
+exporteren.
+
+A1. Nieuwe module momants_privacy.py
+
+Maak een aparte, los testbare module met een functie:
+
+    mask_pii(text: str) -> tuple[str, int]
+
+Die geeft de gemaskeerde tekst terug plus het aantal maskeringen. Maskeer:
+
+  - telefoonnummers -> [PHONE]
+  - e-mailadressen  -> [EMAIL]
+
+Nederlandse formaten die moeten worden gedekt, inclusief varianten met spaties,
+streepjes en punten als scheidingsteken:
+
+    06-12345678       0612345678        06 12 34 56 78
+    +31 6 12345678    0031612345678     +31(0)612345678
+    010-1234567       020 1234567       0越6 is geen nummer, negeer rare tekens
+
+Dek ook Duitse (+49) en Belgische (+32) nummers, want je bezoekers zijn meertalig.
+
+A2. Waar het wordt toegepast
+
+Pas de maskering toe in de gedeelde loader load_momants_csv in momants_sentiment.py,
+direct nadat text is ingelezen. Zo kan GEEN ENKEL systeem ooit ruwe PII zien, en hoeft
+het niet in vier systemen apart te worden geregeld.
+
+Print per run het totaal aantal gemaskeerde berichten en het totaal aantal maskeringen.
+Print NOOIT de gevonden PII zelf, ook niet in een debugregel of foutmelding.
+
+A3. Buiten scope, expliciet
+
+Namen van personen worden NIET gemaskeerd. Dat vraagt NER, is foutgevoelig, en zou
+bezoekersvragen als "mag Sanne mijn ticket gebruiken" onbruikbaar maken. Idem voor
+IBAN's, ticketnummers en ordernummers. Noem dit in een comment in momants_privacy.py,
+zodat later duidelijk is dat het een keuze was en geen vergeten geval.
+
+
+=== DEEL B — bool(nan) FIXEN IN DE DRIE ANDERE SYSTEMEN ===
+
+In Python is bool(nan) gelijk aan True. Waar from_agent via bool() wordt gelezen, wordt
+een bericht met een leeg from_agent-veld dus als agentbericht behandeld. In het
+onderwerp-systeem is dit al opgelost; in de andere drie niet:
+
+  - momants_sentiment: gebruikt bool(from_agent) -> gooit zo'n bericht stil weg
+  - momants_intentie:  gebruikt bool(from_agent) -> gooit zo'n bericht stil weg
+  - momants_antwoordcheck: vraagdetectie gebruikt al .eq(False), maar de
+    antwoordparing gebruikt nog bool(...) -> kan een bezoekersbericht als antwoord
+    koppelen. Dit is de ergste van de drie.
+
+Vergelijk in alle drie expliciet op is True / is False, net als in het onderwerp-systeem.
+Tel per systeem hoeveel rijen zijn overgeslagen wegens een onleesbare from_agent, en
+print die telling zichtbaar. Verwacht 0 op de testdata.
+
+
+=== DEEL C — VALIDATIE, VERPLICHT ===
+
+C1. Nul-fout-test voor de maskering
+
+De testset conversations_100.csv bevat GEEN telefoonnummers of e-mailadressen. De
+maskering moet daar dus exact NUL keer aanslaan. Slaat hij wel aan, dan is dat per
+definitie een valse positieve en moet het patroon strakker.
+
+Rapporteer expliciet: "Maskeringen op conversations_100.csv: 0".
+
+C2. Positieve test met verzonnen PII
+
+Maak een losse unittest met verzonnen voorbeelden. Test zowel dat echte nummers WEL
+worden gemaskeerd, als dat deze dingen NIET worden gemaskeerd:
+
+    "de rij was 10-12 personen lang"
+    "we zijn open van 10-18 uur"
+    "vak 4"
+    "podium 2"
+    "ik wacht al 40 minuten"
+    "1 juli 2026"
+    "24,50 euro"
+
+Valse positieven zijn hier het echte risico: een te gretige regex vreet tijden, datums,
+bedragen en huisnummers op en verminkt daarmee de tekst waar alle classificatie op rust.
+
+C3. URL-interactie
+
+De maskering loopt VOOR de kale-URL-detectie. Controleer dat de vier URL-only berichten
+in de testset na maskering nog steeds exact als kale URL worden herkend en dus nog steeds
+main_topic = None krijgen. Als de e-mailregex een stuk uit een URL hapt, breekt de
+None-afwijzing stil.
+
+C4. Regressie op alle vier systemen
+
+Draai voor elk van de vier systemen de bestaande validatie opnieuw en rapporteer de
+cijfers voor en na.
+
+Voor onderwerp zijn dat beide sleutels, en de twaalf cijfers moeten exact gelijk blijven:
+answer_key_v2 (100 / 100 / 97,2 / 97,2 / 100 / 61,3) en answer_key_extra158
+(89,9 / 87,1 / 80,4 / 89,5 / 90,0 / 48,6).
+
+Voor sentiment, antwoordcheck en intentie: inventariseer EERST welke validatie er per
+systeem nog daadwerkelijk aanwezig en herhaalbaar is, en meld dat. Als een antwoordsleutel
+ontbreekt, zeg dat dan in plaats van een cijfer te verzinnen of een nieuwe sleutel te
+genereren.
+
+Rapporteer per systeem apart of DEEL A of DEEL B het verschil veroorzaakte, mocht er iets
+veranderen. Werk een verschil niet weg; meld het.
+
+
+=== STOP ===
+
+Rapporteer: het aantal maskeringen op de testset (moet 0 zijn), de uitkomst van de
+positieve unittest, de URL-controle, de overgeslagen-rijen-tellingen, en de
+voor-en-na-cijfers per systeem. Begin daarna niets nieuws.

@@ -11,6 +11,8 @@ from typing import Iterable
 import pandas as pd
 from transformers import pipeline
 
+from momants_privacy import mask_pii
+
 
 MODEL_ID = "tabularisai/multilingual-sentiment-analysis"
 
@@ -148,6 +150,21 @@ def load_momants_csv(source: str | Path) -> pd.DataFrame:
         dataframe[optional_column] = pd.NA
 
     dataframe = dataframe[SAFE_COLUMNS].copy()
+    masked_message_count = 0
+    masking_count = 0
+    masked_texts: list[object] = []
+    for value in dataframe["text"]:
+        if pd.isna(value):
+            masked_texts.append(value)
+            continue
+        masked_text, count = mask_pii(str(value))
+        masked_texts.append(masked_text)
+        masked_message_count += int(count > 0)
+        masking_count += count
+    dataframe["text"] = masked_texts
+    print(f"Messages with masked PII: {masked_message_count}")
+    print(f"PII values masked: {masking_count}")
+
     dataframe["created_at"] = pd.to_datetime(dataframe["created_at"], errors="coerce", utc=True)
     dataframe["from_agent"] = (
         dataframe["from_agent"]
@@ -165,18 +182,17 @@ def load_momants_csv(source: str | Path) -> pd.DataFrame:
     return dataframe.sort_values(["conversation_id", "created_at"]).reset_index(drop=True)
 
 
-def _is_usable_customer_text(row: pd.Series) -> bool:
-    """Select free customer text; skip agent text, blank values, and bare URLs."""
-    if bool(row["from_agent"]) or pd.isna(row["text"]):
-        return False
-    text = str(row["text"]).strip()
-    return bool(text) and BARE_URL.fullmatch(text) is None
-
-
 def select_customer_messages(dataframe: pd.DataFrame) -> pd.DataFrame:
     """Keep chronologically sorted, usable customer messages."""
-    selection = dataframe.loc[dataframe.apply(_is_usable_customer_text, axis=1)].copy()
-    selection["text"] = selection["text"].astype(str).str.strip()
+    from_agent = dataframe["from_agent"]
+    readable_from_agent = from_agent.eq(True) | from_agent.eq(False)
+    unreadable_count = int((~readable_from_agent).sum())
+    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
+    stripped_text = dataframe["text"].fillna("").astype(str).str.strip()
+    bare_url = stripped_text.str.fullmatch(BARE_URL)
+    selection_mask = from_agent.eq(False) & stripped_text.ne("") & ~bare_url
+    selection = dataframe.loc[selection_mask].copy()
+    selection["text"] = stripped_text.loc[selection_mask]
     return selection.sort_values(["conversation_id", "created_at"]).reset_index(drop=True)
 
 

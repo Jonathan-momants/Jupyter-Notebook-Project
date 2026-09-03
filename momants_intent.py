@@ -147,19 +147,17 @@ def train_model(
     return doel
 
 
-def _is_bruikbaar_bezoekersbericht(rij: pd.Series) -> bool:
-    if bool(rij["from_agent"]) or pd.isna(rij["text"]):
-        return False
-    tekst = str(rij["text"]).strip()
-    return bool(tekst) and BARE_URL.fullmatch(tekst) is None
-
-
 def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
     """Select only usable visitor messages in chronological order."""
-    selectie = data.loc[
-        data.apply(_is_bruikbaar_bezoekersbericht, axis=1)
-    ].copy()
-    selectie["text"] = selectie["text"].astype(str).str.strip()
+    from_agent = data["from_agent"]
+    readable_from_agent = from_agent.eq(True) | from_agent.eq(False)
+    unreadable_count = int((~readable_from_agent).sum())
+    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
+    stripped_text = data["text"].fillna("").astype(str).str.strip()
+    bare_url = stripped_text.str.fullmatch(BARE_URL)
+    selection_mask = from_agent.eq(False) & stripped_text.ne("") & ~bare_url
+    selectie = data.loc[selection_mask].copy()
+    selectie["text"] = stripped_text.loc[selection_mask]
     return selectie.sort_values(
         ["conversation_id", "created_at"], kind="stable"
     ).reset_index(drop=True)
