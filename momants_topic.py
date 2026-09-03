@@ -16,8 +16,8 @@ from momants_sentiment import load_momants_csv
 
 
 MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-CSV_PAD = Path("attached_assets/test_gesprekken_100.csv")
-TOPICS_SEED_PATH = Path("notebooks/momants_topics_seed_en_v2.csv")
+CSV_PAD = Path("data/tests/conversations_100.csv")
+TOPICS_SEED_PATH = Path("data/seeds/topics_en_v2.csv")
 EVENT_ID = "decibel_2026"
 
 MAIN_TOPICS = [

@@ -205,7 +205,7 @@ def create_conversation_summary(
 
 def process_csv(
     csv_path: str | Path,
-    output_dir: str | Path = "resultaten",
+    output_dir: str | Path = "results",
     batch_size: int = 32,
 ) -> pd.DataFrame:
     """Process a local export and write one safe conversation table."""
@@ -230,7 +230,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--uitvoermap",
         dest="output_dir",
         type=Path,
-        default=Path("resultaten"),
+        default=Path("results"),
         help="Map voor antwoordcheck_per_gesprek_<tijdstempel>.csv.",
     )
     parser.add_argument(

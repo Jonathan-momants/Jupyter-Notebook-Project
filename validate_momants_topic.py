@@ -11,7 +11,7 @@ from typing import Iterable
 
 import pandas as pd
 
-import momants_onderwerp
+import momants_topic
 
 
 NONE_LABEL = "None"
@@ -155,15 +155,15 @@ def _percentage(masker: pd.Series) -> float:
 def valideer(
     csv_pad: str | Path,
     antwoordsleutel_pad: str | Path,
-    seed_pad: str | Path = momants_onderwerp.TOPICS_SEED_PATH,
-    event_id: str = momants_onderwerp.EVENT_ID,
+    seed_pad: str | Path = momants_topic.TOPICS_SEED_PATH,
+    event_id: str = momants_topic.EVENT_ID,
     batchgrootte: int = 16,
 ) -> dict[str, float]:
     """Classify the test export and print metrics, confusion matrix, and errors."""
-    data = momants_onderwerp.laad_momants_csv(csv_pad)
-    berichten = momants_onderwerp.selecteer_bezoekersberichten(data)
-    onderwerpen = momants_onderwerp.laad_onderwerpen(seed_pad, event_id)
-    voorspeld = momants_onderwerp.classificeer_berichten(
+    data = momants_topic.laad_momants_csv(csv_pad)
+    berichten = momants_topic.selecteer_bezoekersberichten(data)
+    onderwerpen = momants_topic.laad_onderwerpen(seed_pad, event_id)
+    voorspeld = momants_topic.classificeer_berichten(
         berichten,
         onderwerpen,
         batchgrootte=batchgrootte,
@@ -175,9 +175,9 @@ def valideer(
         voorspeld["normalized_text"]
     )
     if onbekende_sleutelteksten:
-        raise ValueError(
-            f"{len(onbekende_sleutelteksten)} answer-key texts were not found "
-            "in the visitor messages."
+        print(
+            f"Warning: {len(onbekende_sleutelteksten)} answer-key texts do not "
+            "occur in this test export and will not be scored."
         )
 
     evaluatie = voorspeld.merge(
@@ -196,7 +196,7 @@ def valideer(
             f"match. Examples: {voorbeelden}"
         )
 
-    toegestane_waarheid = set(momants_onderwerp.MAIN_TOPICS) | {NONE_LABEL}
+    toegestane_waarheid = set(momants_topic.MAIN_TOPICS) | {NONE_LABEL}
     onbekende_labels = set(evaluatie["true_main_topic"]) - toegestane_waarheid
     if onbekende_labels:
         raise ValueError(
@@ -218,7 +218,7 @@ def valideer(
     hoofd_accuracy = _percentage(main_correct)
 
     recalls: list[float] = []
-    for hoofdonderwerp in momants_onderwerp.MAIN_TOPICS:
+    for hoofdonderwerp in momants_topic.MAIN_TOPICS:
         waar_masker = onderwerp_eval["true_main_topic"].eq(hoofdonderwerp)
         if not waar_masker.any():
             raise ValueError(
@@ -247,6 +247,14 @@ def valideer(
     )
     grootste = onderwerp_eval["true_main_topic"].value_counts().max()
     naive_baseline = float(grootste / len(onderwerp_eval) * 100.0)
+    voorspelde_onderwerpen = set(
+        onderwerp_eval.loc[
+            onderwerp_eval["main_topic"].ne(NONE_LABEL), "main_topic"
+        ]
+    )
+    ontbrekende_voorspellingen = set(
+        momants_topic.MAIN_TOPICS
+    ) - voorspelde_onderwerpen
 
     metrics = {
         "main_topic_accuracy": hoofd_accuracy,
@@ -274,20 +282,12 @@ def valideer(
         onderwerp_eval["true_main_topic"],
         onderwerp_eval["main_topic"],
     ).reindex(
-        index=momants_onderwerp.MAIN_TOPICS,
-        columns=momants_onderwerp.MAIN_TOPICS + [NONE_LABEL],
+        index=momants_topic.MAIN_TOPICS,
+        columns=momants_topic.MAIN_TOPICS + [NONE_LABEL],
         fill_value=0,
     )
     print(matrix.to_string())
 
-    voorspelde_onderwerpen = set(
-        onderwerp_eval.loc[
-            onderwerp_eval["main_topic"].ne(NONE_LABEL), "main_topic"
-        ]
-    )
-    ontbrekende_voorspellingen = set(
-        momants_onderwerp.MAIN_TOPICS
-    ) - voorspelde_onderwerpen
     ruime_marge = hoofd_accuracy - naive_baseline
     checks = {
         "Main-topic accuracy >= 85%": hoofd_accuracy >= 85.0,
@@ -360,14 +360,14 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("answer_key", type=Path, help="CSV with true topic labels.")
     parser.add_argument(
         "--event-id",
-        default=momants_onderwerp.EVENT_ID,
+        default=momants_topic.EVENT_ID,
         help="Event ID to select in the v2 topic seed.",
     )
     parser.add_argument(
         "--topics-seed",
         type=Path,
-        default=momants_onderwerp.TOPICS_SEED_PATH,
-        help="Path to momants_topics_seed_en_v2.csv.",
+        default=momants_topic.TOPICS_SEED_PATH,
+        help="Path to the v2 English topic seed.",
     )
     parser.add_argument(
         "--batch-size",

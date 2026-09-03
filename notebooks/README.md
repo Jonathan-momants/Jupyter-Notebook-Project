@@ -1,31 +1,33 @@
-# Momants CSV-sentimentprocessor
+# Momants classification notebooks
 
-Er wordt geen voorbeeld- of nep-CSV meegeleverd.
+Synthetic test data is stored in `data/tests/`.
 
 ## Notebook
 
-Open `momants_sentiment.ipynb`, vul `CSV_PAD` in en voer de cellen van boven
-naar beneden uit.
+Open the relevant English-named notebook and run its cells from top to bottom:
+
+- `momants_sentiment.ipynb`
+- `momants_answer_check.ipynb`
+- `momants_intent.ipynb`
+- `momants_topic.ipynb`
 
 ## Commandoregel
 
-Controleer eerst of een export goed wordt herkend:
+First check whether an export is recognized:
 
 ```bash
-python momants_sentiment.py pad/naar/export.csv --alleen-controleren
+python momants_sentiment.py path/to/export.csv --check-only
 ```
 
-Voer daarna de sentimentclassificatie uit:
+Then run sentiment classification:
 
 ```bash
-python momants_sentiment.py pad/naar/export.csv --uitvoermap resultaten
+python momants_sentiment.py path/to/export.csv --output-directory results
 ```
 
-Dit schrijft één tabel: `resultaten/sentiment_per_gesprek.csv`. Per gesprek
-bevat die het sentiment en de zekerheid van zowel het eerste als het laatste
-bruikbare bezoekersbericht. De oorspronkelijke berichttekst staat niet in de
-uitvoer.
+Results from all classifiers are written beneath `results/`. Historical files
+with translated names are retained in `results/archive/`.
 
-De processor ondersteunt Momants-CSV's met kolomkoppen en het headerloze
-22-veldenformaat uit de aangeleverde structuur. Privacyvelden zoals `raw_json`
-en `chat_sender` worden niet geselecteerd.
+The processors support Momants CSV files with headers and the headerless
+22-field format. Privacy fields such as `raw_json` and `chat_sender` are never
+selected.

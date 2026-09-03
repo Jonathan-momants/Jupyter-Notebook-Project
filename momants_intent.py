@@ -17,7 +17,7 @@ from momants_sentiment import load_momants_csv
 
 
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-TRAINING_DATA_PATH = Path("notebooks/intent_training.csv")
+TRAINING_DATA_PATH = Path("data/training/intent_training.csv")
 LOCAL_MODEL_PATH = Path("model/momants-intentie")
 
 INTENT_CATEGORIES = [
@@ -195,7 +195,7 @@ def classificeer_berichten(
         if not pad.is_dir():
             raise FileNotFoundError(
                 f"Trained intent model not found in {pad}. "
-                "Run first: python momants_intentie.py --train"
+                "Run first: python momants_intent.py --train"
             )
         model = SetFitModel.from_pretrained(pad, local_files_only=True)
 
