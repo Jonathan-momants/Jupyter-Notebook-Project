@@ -1,0 +1,42 @@
+Ik werk aan een classificatiesysteem voor Momants (AI-agents voor festivals/events/andere klanten) dat gesprekken automatisch labelt op 4 assen, gebouwd in Replit met kleine HuggingFace-modellen (bewust GEEN LLM — die hallucineert cijfers). Check eerst mijn geheugenbestand momants-classificatie-systeem.md voor de volledige achtergrond. Hieronder een uitgebreide samenvatting, want ik wil dat je zelf een plan van aanpak bedenkt voor het probleem waar ik nu vastzit, niet alleen mijn eigen voorlopige idee uitvoert.
+
+Status van de 3 systemen die al werken:
+
+Sentiment (momants_sentiment.py) — afgerond. Bekende, niet-opgeloste bug: 3 specifieke Nederlandse noodgeval-zinnen scoren onterecht "Positive" (waarschijnlijk een modelgrens, geen codefout).
+Antwoordcheck (momants_antwoordcheck.py) — afgerond, 82,9% recall na overstap van een NLI-model naar cross-encoder/mmarco-mMiniLMv2-L12-H384-v1 (een relevantie-cross-encoder — dat was hier de juiste toolkeuze, waar het NLI-model de verkeerde taak deed).
+Intentie (momants_intentie.py) — afgerond, 85,3% op een bewust moeilijke testset. Gebruikt SetFit (few-shot getraind classificatiemodel op sentence-transformers/paraphrase-multilingual-mpnet-base-v2), met 6 vaste Engelse categorieën plus een 7e interne "None"-categorie (bedankjes/smalltalk) die nooit in de output verschijnt maar wel meedingt bij de classificatie, zodat filler-berichten geen fout label krijgen. Geen losse confidence-drempel — die filterde eerder terechte, laagscorende noodgevallen onterecht weg.
+
+Het probleem waar ik vastzit: onderwerp-classificatie (momants_onderwerp.py)
+
+Doel: elk gesprek labelen met een hoofdonderwerp + subonderwerp (bv. "Venue → Camping-voorzieningen"), zodat je kunt rapporteren waar bezoekers het meest over vragen.
+
+Ontwerpgeschiedenis: Eerst hadden we 7 hoofdonderwerpen (Tickets, Transport, Camping, Venue, Payments, Program, Feedback), elk met eigen subonderwerpen, allemaal per event_id gefilterd — zodat elke klant zijn eigen lijst kon hebben. Toen realiseerden we ons uit de échte exportdata dat Momants sterk uiteenlopende klanten bedient (Decibel/Hullabaloo-festivals, maar ook MADAM-restaurant en City Sightseeing-bustours) — "Camping" betekent niks voor een restaurant. We hebben daarom het ontwerp bijgesteld naar: 6 universele hoofdonderwerpen die voor ELKE klant hetzelfde zijn (samengevoegd/hernoemd: Access, Transport, Venue, Payments, Program, Feedback — Tickets werd Access, Camping ging op in Venue), hardcoded in de code, met alleen de subonderwerpen nog per event_id in een los CSV-bestand (momants_topics_seed_en.csv). Aanpak: hiërarchische zero-shot classification (transformers pipeline zero-shot-classification) met MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli — eerst het hoofdonderwerp bepalen tegen de 6 opties (+ een interne "None"-afwijsoptie voor smalltalk, zoals ook bij intentie), dan het subonderwerp bepalen binnen het gekozen hoofdonderwerp. Zero-shot is bewust gekozen (i.p.v. SetFit zoals bij intentie) omdat subonderwerpen per klant verschillen en dus geen stabiele trainingsset hebben.
+
+Wat er misging, met harde cijfers: Ik heb een validatiesleutel (test_gesprekken_100_antwoordsleutel.csv, staat in Downloads) met de juiste hoofdonderwerp/subonderwerp per testzin. Twee rondes:
+
+Ronde 1 (kale hoofdonderwerp-woorden als kandidaten, bv. gewoon "Venue"): 20,8% van de gesprekken kreeg het juiste hoofdonderwerp. Extreme scheve verdeling: "Payments" en "Feedback" kregen bijna alles, "Venue" en "Program" kregen NUL treffers — terwijl Venue eigenlijk 45% van alle onderwerp-instanties in de testdata is.
+Ronde 2 (hoofdonderwerpen ook voorzien van rijke beschrijvingen, zoals de subonderwerpen al hadden — bv. "Venue: The physical site itself: camping, cabins, lockers, charging points, shops, the map, or on-site emergencies"): verbeterde maar naar 26,0%. Venue kreeg nog steeds vrijwel nul juiste treffers (31x fout naar Feedback, 15x fout naar Access, 5x naar Program).
+De doorslaggevende observatie: een naïeve baseline die simpelweg ALTIJD "Venue" zou raden (de grootste categorie, 45% van de data) zou al 45% score halen — beter dan onze 26%. Het model presteert dus slechter dan gewoon altijd hetzelfde antwoord geven.
+
+Mijn voorlopige, ongeteste eigen idee was: het model vervangen door MoritzLaurer/mDeBERTa-v3-base-mnli-xnli (dezelfde auteur, expliciet aanbevolen voor hogere nauwkeurigheid dan de kleine MiniLM-L6-variant die we nu gebruiken), verder niks aan de code veranderen, en opnieuw valideren.
+
+Maar ik wil dat je dit zelf helemaal doordenkt in plaats van blind mijn idee uit te voeren. Overweeg in elk geval ook:
+
+Is een groter zero-shot-model (mDeBERTa) genoeg, of is zero-shot classificatie fundamenteel de verkeerde aanpak voor 6-weg-onderscheid op korte berichten?
+Nu de 6 hoofdonderwerpen universeel/stabiel zijn (in tegenstelling tot de subonderwerpen, die nog per klant verschillen) — is SetFit (het few-shot getrainde model dat bij intentie zo goed werkte) nu ineens wél een optie voor ALLEEN de hoofdonderwerp-stap, terwijl de subonderwerp-stap zero-shot blijft? Dat was eerder afgewezen omdat we dachten dat het HELE onderwerpsysteem per event zou verschillen, maar dat geldt nu alleen nog voor de subonderwerpen.
+Is er een tussenweg met embedding-gebaseerde vergelijking (cosine similarity tussen berichttekst en onderwerp-beschrijving via sentence-transformers) in plaats van NLI-gebaseerde zero-shot?
+Zijn er andere, kleinere aanpassingen aan hoe de hoofdonderwerp-beschrijvingen zijn geformuleerd die ik nog niet geprobeerd heb, voordat je naar een heel ander model/aanpak grijpt?
+
+Belangrijke bestanden (in ~/Downloads):
+
+test_gesprekken_100.csv — synthetische testset (100 gesprekken/265 berichten), exact Momants-exportformaat (headerloos, 22 kolommen).
+test_gesprekken_100_antwoordsleutel.csv — de bekende juiste antwoorden per unieke testzin (oud/nieuw hoofdonderwerp, subonderwerp, Engelse intentie, sentiment-toon) — gebruik dit om nieuwe Replit-output te valideren door op exacte tekst te matchen (dezelfde testzin komt in meerdere gesprekken voor met identieke scores, dat is geen bug maar verwacht).
+momants_topics_seed_en.csv — de huidige subonderwerpenlijst per event_id (nu decibel_2026), 6 hoofdonderwerpen, geen expliciete "Other"-rijen (die worden automatisch door de code toegevoegd).
+
+Werkafspraken:
+
+Wij praten Nederlands, en de prompts die ik naar Replit stuur blijven ook Nederlands. Alleen de output/labels/code van de systemen zelf is Engels — bezoekersberichten zelf worden nooit vertaald.
+Ik kopieer prompts zelf naar Replit en plak de resultaten hier terug — probeer niet de Replit-browser-UI direct te besturen, dat ging in een eerdere sessie mis (een verkeerde klik in de bestandsboom werd als sneltoetsen opgevat en maakte een ongewenste map aan).
+Valideer elk voorstel altijd tegen de antwoordsleutel met harde cijfers (recall, verwarringspatronen, vergelijking met de naïeve baseline), nooit alleen op het oog.
+
+Denk na over de beste plannen van aanpak voor dit onderwerp-classificatieprobleem, leg de afwegingen uit, en kom met een aanbeveling voordat je een Replit-prompt opstelt.

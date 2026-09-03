@@ -8,15 +8,16 @@ from pathlib import Path
 import re
 from typing import Any, Iterable
 
+import numpy as np
 import pandas as pd
-from transformers import pipeline
+from sentence_transformers import SentenceTransformer
 
 from momants_sentiment import load_momants_csv
 
 
-MODEL_ID = "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli"
+MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
 CSV_PAD = Path("attached_assets/test_gesprekken_100.csv")
-TOPICS_SEED_PATH = Path("momants_topics_seed_en.csv")
+TOPICS_SEED_PATH = Path("notebooks/momants_topics_seed_en_v2.csv")
 EVENT_ID = "decibel_2026"
 
 MAIN_TOPICS = [
@@ -25,35 +26,15 @@ MAIN_TOPICS = [
     "Venue",
     "Payments",
     "Program",
-    "Feedback",
 ]
-MAIN_TOPIC_DESCRIPTIONS = {
-    "Access": (
-        "Getting in or having a valid ticket, wristband, or reservation to attend"
-    ),
-    "Transport": (
-        "Getting to the venue by car, bike, public transport, or shuttle, "
-        "and parking"
-    ),
-    "Venue": (
-        "The physical site itself: camping, cabins, lockers, charging points, "
-        "shops, the map, or on-site emergencies"
-    ),
-    "Payments": (
-        "Cashless balance, refunds, deposits, or paying for food and drinks"
-    ),
-    "Program": (
-        "The schedule of acts and activities, or general festival information"
-    ),
-    "Feedback": (
-        "A complaint or negative experience about noise, facilities, or staff"
-    ),
-}
 NONE_LABEL = "None"
-NONE_DESCRIPTION = (
-    "This message is small talk, a greeting, or not about any specific "
-    "festival topic (e.g. thanks, chit-chat)"
-)
+NONE_PROTOTYPES = [
+    "A thank you or a compliment, with no question in it",
+    "A greeting or a goodbye, with no question in it",
+    "A short confirmation that the answer was understood, such as ok, clear, fine",
+    "Just a bare web address with no question",
+    "A complaint that the previous answer did not help, without naming a new subject",
+]
 SEED_COLUMNS = [
     "id",
     "event_id",
@@ -66,10 +47,13 @@ OUTPUT_COLUMNS = [
     "conversation_id",
     "main_topic",
     "subtopic",
-    "confidence",
+    "similarity",
     "first_detected_at",
 ]
-BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
+BARE_URL = re.compile(
+    r"^\s*(?:https?://|www\.)\S+\s*$",
+    flags=re.IGNORECASE,
+)
 
 
 def laad_momants_csv(bron: str | Path) -> pd.DataFrame:
@@ -119,6 +103,8 @@ def laad_onderwerpen(
         onderwerpen["event_id"].astype(str).str.strip().eq(str(event_id).strip())
         & onderwerpen["active"]
     ].copy()
+    if onderwerpen.empty:
+        raise ValueError(f"No active topic labels found for event_id {event_id!r}.")
 
     for kolom in ["main_topic", "subtopic", "description"]:
         onderwerpen[kolom] = onderwerpen[kolom].astype(str).str.strip()
@@ -150,7 +136,7 @@ def _is_bruikbaar_bezoekersbericht(rij: pd.Series) -> bool:
     if bool(rij["from_agent"]) or pd.isna(rij["text"]):
         return False
     tekst = str(rij["text"]).strip()
-    return bool(tekst) and BARE_URL.fullmatch(tekst) is None
+    return bool(tekst)
 
 
 def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
@@ -164,32 +150,37 @@ def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
     ).reset_index(drop=True)
 
 
-def _maak_classifier() -> Any:
-    """Create the requested standard Transformers zero-shot pipeline."""
-    return pipeline("zero-shot-classification", model=MODEL_ID)
+def _maak_embeddingmodel() -> SentenceTransformer:
+    """Load the multilingual embedding model once for one processing run."""
+    return SentenceTransformer(MODEL_ID)
 
 
-def _normaliseer_resultaten(
-    resultaten: dict[str, Any] | list[dict[str, Any]],
-) -> list[dict[str, Any]]:
-    return [resultaten] if isinstance(resultaten, dict) else resultaten
-
-
-def _beste_label(resultaat: dict[str, Any]) -> tuple[str, float]:
-    labels = resultaat.get("labels", [])
-    scores = resultaat.get("scores", [])
-    if not labels or not scores or len(labels) != len(scores):
-        raise ValueError("The zero-shot model returned an invalid result.")
-    return str(labels[0]), float(scores[0])
+def _encodeer(
+    model: Any,
+    teksten: list[str],
+    batchgrootte: int,
+) -> np.ndarray:
+    """Create normalized embeddings so their dot product is cosine similarity."""
+    embeddings = model.encode(
+        teksten,
+        batch_size=batchgrootte,
+        normalize_embeddings=True,
+        convert_to_numpy=True,
+        show_progress_bar=True,
+    )
+    matrix = np.asarray(embeddings, dtype=np.float32)
+    if matrix.ndim != 2 or matrix.shape[0] != len(teksten):
+        raise ValueError("The embedding model returned an invalid result.")
+    return matrix
 
 
 def classificeer_berichten(
     bezoekersberichten: pd.DataFrame,
     onderwerpen: pd.DataFrame,
     batchgrootte: int = 16,
-    classifier: Any | None = None,
+    model: Any | None = None,
 ) -> pd.DataFrame:
-    """Classify each visitor message hierarchically in two zero-shot steps."""
+    """Choose the closest subtopic, then derive its main topic from the seed."""
     if batchgrootte < 1:
         raise ValueError("batchgrootte must be at least 1.")
     if bezoekersberichten.empty:
@@ -197,117 +188,70 @@ def classificeer_berichten(
         for kolom, dtype in [
             ("main_topic", "object"),
             ("subtopic", "object"),
-            ("confidence", "float64"),
+            ("similarity", "float64"),
         ]:
             leeg[kolom] = pd.Series(dtype=dtype)
         return leeg
 
-    classifier = classifier or _maak_classifier()
-    none_candidate = f"{NONE_LABEL}: {NONE_DESCRIPTION}"
-    hoofd_kandidaat_naar_label = {
-        f"{topic}: {MAIN_TOPIC_DESCRIPTIONS[topic]}": topic
-        for topic in MAIN_TOPICS
-    }
-    hoofd_candidates = list(hoofd_kandidaat_naar_label) + [none_candidate]
-    hoofd_resultaten = _normaliseer_resultaten(
-        classifier(
-            bezoekersberichten["text"].tolist(),
-            candidate_labels=hoofd_candidates,
-            multi_label=False,
-            batch_size=batchgrootte,
-        )
-    )
-    if len(hoofd_resultaten) != len(bezoekersberichten):
-        raise ValueError("The model returned the wrong number of main-topic results.")
-
+    model = model or _maak_embeddingmodel()
     werk = bezoekersberichten.copy()
-    hoofdlabels: list[str] = []
-    hoofdscores: list[float] = []
-    for resultaat in hoofd_resultaten:
-        label, score = _beste_label(resultaat)
-        if label == none_candidate:
-            hoofdlabels.append(NONE_LABEL)
-        elif label in hoofd_kandidaat_naar_label:
-            hoofdlabels.append(hoofd_kandidaat_naar_label[label])
-        else:
-            raise ValueError(
-                f"The model returned an unknown main-topic label: {label!r}."
-            )
-        hoofdscores.append(score)
-    werk["main_topic"] = hoofdlabels
-    werk["_main_confidence"] = hoofdscores
-    werk = werk.loc[werk["main_topic"].ne(NONE_LABEL)].copy()
+    werk["main_topic"] = NONE_LABEL
+    werk["subtopic"] = NONE_LABEL
+    werk["similarity"] = np.nan
 
-    if werk.empty:
-        werk["subtopic"] = pd.Series(dtype="object")
-        werk["confidence"] = pd.Series(dtype="float64")
-        return werk.drop(columns=["_main_confidence"])
+    url_masker = werk["text"].str.match(BARE_URL)
+    te_embedden = werk.index[~url_masker]
+    if len(te_embedden) == 0:
+        return werk
 
-    delen: list[pd.DataFrame] = []
-    for hoofdonderwerp, groep in werk.groupby("main_topic", sort=False):
-        labels = onderwerpen.loc[
-            onderwerpen["main_topic"].eq(hoofdonderwerp),
-            ["subtopic", "description"],
-        ]
-        other_candidate = (
-            f"Other: General {hoofdonderwerp.lower()} question that doesn't "
-            "fit a more specific subtopic"
-        )
-        kandidaat_naar_subtopic: dict[str, str] = {other_candidate: "Other"}
-        for rij in labels.itertuples(index=False):
-            if rij.subtopic == "Other":
-                continue
-            kandidaat = f"{rij.subtopic}: {rij.description}"
-            if kandidaat in kandidaat_naar_subtopic:
-                raise ValueError(
-                    f"Duplicate subtopic candidate text for {hoofdonderwerp}: "
-                    f"{kandidaat!r}."
-                )
-            kandidaat_naar_subtopic[kandidaat] = rij.subtopic
-
-        sub_resultaten = _normaliseer_resultaten(
-            classifier(
-                groep["text"].tolist(),
-                candidate_labels=list(kandidaat_naar_subtopic),
-                multi_label=False,
-                batch_size=batchgrootte,
-            )
-        )
-        if len(sub_resultaten) != len(groep):
-            raise ValueError(
-                f"The model returned the wrong number of subtopic results for "
-                f"{hoofdonderwerp}."
-            )
-
-        groep = groep.copy()
-        subtopics: list[str] = []
-        gecombineerde_scores: list[float] = []
-        for (_, rij), resultaat in zip(groep.iterrows(), sub_resultaten):
-            kandidaat, subscore = _beste_label(resultaat)
-            if kandidaat not in kandidaat_naar_subtopic:
-                raise ValueError(f"The model returned an unknown label: {kandidaat!r}.")
-            subtopics.append(kandidaat_naar_subtopic[kandidaat])
-            gecombineerde_scores.append(float(rij["_main_confidence"]) * subscore)
-        groep["subtopic"] = subtopics
-        groep["confidence"] = gecombineerde_scores
-        delen.append(groep)
-
-    return (
-        pd.concat(delen)
-        .sort_index(kind="stable")
-        .drop(columns=["_main_confidence"])
+    onderwerp_embeddings = _encodeer(
+        model,
+        onderwerpen["description"].tolist(),
+        batchgrootte,
     )
+    none_embeddings = _encodeer(model, NONE_PROTOTYPES, batchgrootte)
+    bericht_embeddings = _encodeer(
+        model,
+        werk.loc[te_embedden, "text"].tolist(),
+        batchgrootte,
+    )
+    onderwerp_scores = bericht_embeddings @ onderwerp_embeddings.T
+    none_scores = bericht_embeddings @ none_embeddings.T
+
+    beste_onderwerp_indices = onderwerp_scores.argmax(axis=1)
+    beste_onderwerp_scores = onderwerp_scores.max(axis=1)
+    beste_none_scores = none_scores.max(axis=1)
+
+    for positie, dataframe_index in enumerate(te_embedden):
+        if beste_none_scores[positie] > beste_onderwerp_scores[positie]:
+            werk.at[dataframe_index, "similarity"] = float(
+                beste_none_scores[positie]
+            )
+            continue
+
+        onderwerp = onderwerpen.iloc[int(beste_onderwerp_indices[positie])]
+        werk.at[dataframe_index, "main_topic"] = onderwerp["main_topic"]
+        werk.at[dataframe_index, "subtopic"] = onderwerp["subtopic"]
+        # This is cosine similarity, not a probability or calibrated confidence.
+        werk.at[dataframe_index, "similarity"] = float(
+            beste_onderwerp_scores[positie]
+        )
+
+    return werk
 
 
 def maak_onderwerpoverzicht(geclassificeerd: pd.DataFrame) -> pd.DataFrame:
     """Keep the first detection of each unique conversation-topic combination."""
     if geclassificeerd.empty:
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
-    if geclassificeerd["main_topic"].eq(NONE_LABEL).any():
-        raise ValueError("None may not appear in topic output.")
+    echte_onderwerpen = geclassificeerd.loc[
+        geclassificeerd["main_topic"].ne(NONE_LABEL)
+    ].copy()
+    if echte_onderwerpen.empty:
+        return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     eerste = (
-        geclassificeerd.sort_values(
+        echte_onderwerpen.sort_values(
             ["conversation_id", "created_at"], kind="stable"
         )
         .drop_duplicates(
@@ -318,7 +262,7 @@ def maak_onderwerpoverzicht(geclassificeerd: pd.DataFrame) -> pd.DataFrame:
     eerste["first_detected_at"] = eerste["first_detected_at"].apply(
         lambda waarde: waarde.isoformat()
     )
-    eerste["confidence"] = eerste["confidence"].round(4)
+    eerste["similarity"] = eerste["similarity"].round(4)
     return eerste[OUTPUT_COLUMNS].reset_index(drop=True)
 
 
@@ -328,7 +272,7 @@ def process_csv(
     event_id: str = EVENT_ID,
     output_directory: str | Path = "results",
     batch_size: int = 16,
-    classifier: Any | None = None,
+    model: Any | None = None,
 ) -> pd.DataFrame:
     """Classify topics and write one privacy-safe conversation-topic table."""
     gestart_op = datetime.now().astimezone()
@@ -339,7 +283,7 @@ def process_csv(
         bezoekers,
         onderwerpen,
         batchgrootte=batch_size,
-        classifier=classifier,
+        model=model,
     )
     overzicht = maak_onderwerpoverzicht(geclassificeerd)
 

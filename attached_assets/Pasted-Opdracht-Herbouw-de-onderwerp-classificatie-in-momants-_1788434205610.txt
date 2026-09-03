@@ -1,0 +1,75 @@
+Opdracht
+Herbouw de onderwerp-classificatie in momants_onderwerp.py. De huidige aanpak (transformers pipeline zero-shot-classification met een NLI-model) haalt 25% en presteert daarmee slechter dan altijd de grootste categorie raden. We stappen over op embedding-similarity. Lokaal gevalideerd haalt de nieuwe aanpak 89-91% op het hoofdonderwerp. Verander alleen de classificatiekern; de bestaande in- en uitlees-logica per gesprek blijft.
+
+1. Verwijder de oude aanpak volledig
+Geen zero-shot-classification pipeline meer.
+Geen MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli en geen mDeBERTa. Beide zijn getest en werken niet voor deze taak.
+Geen tweetrapsopzet meer waarbij eerst het hoofdonderwerp en daarna het subonderwerp wordt gekozen. Die hiërarchie is de oorzaak van het probleem: als het hoofdonderwerp fout is, is het juiste subonderwerp onbereikbaar.
+2. Nieuw model, één keer laden
+Gebruik sentence-transformers met sentence-transformers/paraphrase-multilingual-mpnet-base-v2. Dat is hetzelfde model dat het intentiesysteem al als SetFit-body gebruikt, dus er komt geen extra model in het geheugen.
+
+3. Nieuwe classificatielogica: bottom-up
+Bepaal het subonderwerp eerst en leid het hoofdonderwerp daaruit af via de CSV. Dus niet meer van grof naar fijn, maar van fijn naar grof.
+
+Per event_id, eenmalig bij het opstarten:
+
+Lees momants_topics_seed_en_v2.csv, filter op event_id en active == true.
+
+Embed de kolom description van alle subonderwerpen met normalize_embeddings=True. Cache die embeddings; ze veranderen niet per bericht.
+
+Embed ook deze vijf None-prototypes met dezelfde instelling:
+
+"A thank you or a compliment, with no question in it"
+"A greeting or a goodbye, with no question in it"
+"A short confirmation that the answer was understood, such as ok, clear, fine"
+"Just a bare web address with no question"
+"A complaint that the previous answer did not help, without naming a new subject"
+Per bezoekersbericht:
+
+Als de tekst alleen een URL is (regex ^\s*(https?://|www\.)\S+\s*$, case-insensitive): label None, klaar.
+Embed het bericht (normalize_embeddings=True).
+Bereken cosine similarity tegen alle subonderwerp-beschrijvingen en tegen de vijf None-prototypes.
+Smalltalk-poort: als max(none_similarity) > max(subtopic_similarity) dan label None, klaar.
+Anders: neem het subonderwerp met de hoogste similarity. Het hoofdonderwerp is de main_topic die in de CSV bij dat subonderwerp staat.
+Gebruik géén vaste similarity-drempel bovenop deze regels. Dat is dezelfde les als bij het intentiesysteem, waar een drempel terechte noodgevallen met een lage score wegfilterde.
+
+4. Berichten met label None verschijnen niet in de output
+None is een interne afwijscategorie, precies zoals bij intentie. Berichten met None leveren geen rij in de output op. Ze mogen ook geen Other-label krijgen: in de huidige versie kregen 44 smalltalk-instanties alsnog een onderwerp toegekend ("Thanks, that's helpful!" werd Access/Scanning), en dat vervuilt elke rapportage.
+
+5. Taxonomie: 5 hoofdonderwerpen, niet 6
+Het hoofdonderwerp Feedback verdwijnt. Reden: het onderscheid tussen Feedback en Venue zat niet in het onderwerp maar in de toon, waardoor 83% van de boze Venue-berichten naar Feedback ging. Of iets een klacht is, hoort op de sentiment- en intentie-as, niet op de onderwerp-as.
+
+De vijf hoofdonderwerpen zijn hardcoded en universeel voor elke klant: Access, Transport, Venue, Payments, Program.
+
+De drie oude Feedback-subonderwerpen verhuizen naar Venue: Noise en Staff blijven bestaan, FacilityIssue gaat op in Venue/Amenities. Dit is al doorgevoerd in momants_topics_seed_en_v2.csv — gebruik dat bestand en niet meer momants_topics_seed_en.csv.
+
+6. Confidence-kolom
+De huidige export bevat een confidence-kolom met waarden tussen 0,057 en 0,147, wat ongeveer gelijk is aan willekeur bij 7 keuzes. Die waarde is misleidend en mag zo niet in een klantrapport belanden. Vervang hem door de gekozen cosine similarity en noem de kolom similarity. Documenteer in een comment dat dit een similarity is en geen kans.
+
+7. Privacy — ongewijzigd en hard
+Lees en gebruik uitsluitend deze kolommen: created_at, text, from_agent, message_type, conversation_id, agent_id. raw_json, chat_sender, media, media_url en file mogen nergens worden ingelezen, gebruikt of geprint. Classificeer alleen berichten met from_agent == false.
+
+8. Output
+Behoud het bestaande formaat: per gesprek meerdere onderwerpen mogelijk, met conversation_id, main_topic, subtopic, similarity, first_detected_at. Alle labels en kolomnamen in het Engels. Berichttekst nooit vertalen.
+
+9. Validatiescript
+Schrijf de validatie als apart, herhaalbaar script en print de uitkomst. Match op genormaliseerde tekst (lowercase, interpunctie eruit, dubbele spaties samenvoegen) tegen de antwoordsleutel. Let op: dezelfde testzin komt in meerdere gesprekken voor met identieke labels, dat is verwacht en geen bug. Let ook op dat er in de antwoordsleutel één regel staat met een ongequote komma in de tekst, die moet je repareren bij het inlezen.
+
+Rapporteer deze zes cijfers:
+
+Hoofdonderwerp-accuratesse, instantiegewogen.
+Macro-recall over de vijf hoofdonderwerpen. Dit cijfer is verplicht. Zonder dit cijfer is niet te zien of een model echt onderscheid maakt of alleen de grootste categorie gokt — mDeBERTa haalde 56% accuratesse maar voorspelde "Venue" voor 89 van 103 instanties.
+Subonderwerp-accuratesse end-to-end.
+Subonderwerp-accuratesse gegeven een juist hoofdonderwerp.
+Percentage smalltalk dat correct None kreeg.
+De naïeve baseline: het percentage dat je haalt door altijd het grootste hoofdonderwerp te raden.
+Print daarnaast de volledige confusiematrix (rij = waar, kolom = voorspeld) en een lijst van alle foute berichten met waar-label, voorspeld label en similarity.
+
+10. Acceptatiecriteria
+Hoofdonderwerp-accuratesse minimaal 85%.
+Macro-recall minimaal 75%.
+Smalltalk correct afgewezen minimaal 85%.
+Elk van de vijf hoofdonderwerpen wordt minstens één keer voorspeld. Wordt een hoofdonderwerp nooit gekozen, dan is er iets stuk, ongeacht de accuratesse.
+De naïeve baseline moet met een ruime marge verslagen worden, niet net.
+Rapporteer de zes cijfers terug voordat je verdergaat met andere wijzigingen.
+
