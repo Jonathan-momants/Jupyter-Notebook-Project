@@ -1,29 +1,29 @@
 id,event_id,main_topic,subtopic,active,description
 1,decibel_2026,Access,AgeCheck,true,"ID checks, passport or driving licence, minimum age to enter"
-2,decibel_2026,Access,Lost,true,An entry ticket or booking confirmation that was lost or never arrived by email
+2,decibel_2026,Access,Lost,true,"An admission ticket, e-ticket or booking confirmation that was lost or never arrived by email; not a personal belonging lost at the venue"
 3,decibel_2026,Access,Rename,true,Putting a ticket or booking in someone else's name
 4,decibel_2026,Access,Scanning,true,"A ticket, barcode or QR code that is refused or will not work at the entrance gate"
 5,decibel_2026,Access,Upgrade,true,"Buying extra tickets, upgrading a booking, or reselling a ticket"
 6,decibel_2026,Access,Wristband,true,"A wristband that is lost, broken or needs collecting"
-7,decibel_2026,Transport,Parking,true,"Arriving by car, the address to navigate to, drop-off, and the car park"
+7,decibel_2026,Transport,Parking,true,"Driving to the event by car: the road address, drop-off point, car park and electric-car charging at the parking area; not walking directions between places inside the venue"
 8,decibel_2026,Transport,Shuttle,true,"Shuttle bus times, stops and tickets between the station and the location"
 9,decibel_2026,Transport,Transit,true,"Bicycle and scooter storage, trains and public transport times"
-10,decibel_2026,Venue,Amenities,true,"Toilets, showers, running water and cooking facilities, including complaints about their cleanliness or queues"
-11,decibel_2026,Venue,CabinAccess,true,"A door code, key or lock of a cabin or lodge that does not work"
-12,decibel_2026,Venue,Charging,true,Charging a phone or renting a power bank at a charging point for visitors
-13,decibel_2026,Venue,CheckIn,true,"Arrival: check-in and check-out times, where to report, and waiting at the entrance of the accommodation or campsite"
-14,decibel_2026,Venue,Emergency,true,"An urgent emergency needing help right now: someone collapsed, injured or unresponsive, a fire, a fight, or a missing child or person"
+10,decibel_2026,Venue,Amenities,true,"Facilities available at the campsite or venue: toilets, showers, running water, shared cooking facilities and electrical sockets or power outlets, including cleanliness and queues; not permission to bring or use cooking equipment"
+11,decibel_2026,Venue,CabinAccess,true,"Getting access to the campsite, cabin or lodge: waiting at the camping entrance, or a door code, key or lock that does not work"
+12,decibel_2026,Venue,Charging,true,"A visitor service specifically for charging a phone or renting a portable power bank at a phone charging point; not electrical sockets or charging an electric car in the parking area"
+13,decibel_2026,Venue,CheckIn,true,"Accommodation administration: check-in and check-out times and where to report on arrival; not a blocked door, lock or camping entrance"
+14,decibel_2026,Venue,Emergency,true,"An urgent emergency involving a person who needs help right now: a missing child, daughter, friend or other person, someone collapsed, injured or unresponsive, a fire or a fight"
 15,decibel_2026,Venue,Lockers,true,Renting or reserving a locker and where to store luggage or a coat during the visit
-16,decibel_2026,Venue,LostFound,true,"A personal belonging left behind or lost somewhere on the location, such as a phone, coat, bag or wallet, and where to collect it"
-17,decibel_2026,Venue,Map,true,"Finding your way on foot inside the location: how to walk from one spot to another, and where a stage, hall, exit, info point or first aid post is"
+16,decibel_2026,Venue,LostFound,true,"A physical personal belonging lost at the venue, such as a phone, coat, bag or wallet, including when and near which stage it disappeared and where to collect it; not a missing person or admission ticket"
+17,decibel_2026,Venue,Map,true,"Walking directions inside the event location: how to get from one venue spot to another, such as from a stage to the food trucks, and where a hall, exit, info point or first aid post is; not driving or parking"
 18,decibel_2026,Venue,Noise,true,"Noise that is too loud: stage volume, bass, or noisy neighbours"
 19,decibel_2026,Venue,ReEntry,true,Leaving the site and coming back in again on the same ticket
-20,decibel_2026,Venue,Rules,true,"House rules: what you may bring in, pets, glass, smoking, own equipment"
+20,decibel_2026,Venue,Rules,true,"House rules and permission: what you may bring in or use, including gas cylinders and cooking equipment, pets, glass, smoking and own equipment"
 21,decibel_2026,Venue,Shops,true,"Buying goods at a shop on the location: supermarket, kiosk, medicine, merchandise and souvenirs"
 22,decibel_2026,Venue,Staff,true,"Being treated rudely, unfairly refused or badly handled by staff or security"
-23,decibel_2026,Payments,Balance,true,"Topping up a cashless card, failed or double charges, and checking the remaining credit"
+23,decibel_2026,Payments,Balance,true,"Managing a cashless card: topping it up, a failed or double charge, or checking how much credit remains; not requesting that remaining credit be paid back"
 24,decibel_2026,Payments,Deposit,true,Returning cups or glasses to get the deposit back
 25,decibel_2026,Payments,Diet,true,"Food that fits a diet or allergy: gluten-free, vegan, vegetarian, halal, own food"
-26,decibel_2026,Payments,Refund,true,"Getting money back: unused credit, a deposit or a cancelled booking"
+26,decibel_2026,Payments,Refund,true,"Requesting money back, especially a refund of the remaining or unused balance on a cashless card, a deposit or a cancelled booking"
 27,decibel_2026,Program,General,true,"Non-urgent programme news: when the next edition takes place or its tickets go on sale, and photos, recaps or aftermovies"
 28,decibel_2026,Program,Schedule,true,"What time something starts or ends, the timetable and side activities"
