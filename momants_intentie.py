@@ -19,7 +19,6 @@ from momants_sentiment import load_momants_csv
 BASIS_MODEL_ID = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
 TRAINING_DATA_PATH = Path("notebooks/intent_training.csv")
 LOCAL_MODEL_PATH = Path("model/momants-intentie")
-CONFIDENCE_THRESHOLD = 0.60
 
 INTENT_CATEGORIES = [
     "Request Information",
@@ -221,21 +220,19 @@ classify_messages = classificeer_berichten
 
 def maak_intentieoverzicht(
     geclassificeerd: pd.DataFrame,
-    zekerheidsdrempel: float = CONFIDENCE_THRESHOLD,
 ) -> pd.DataFrame:
     """Keep the first detection per unique conversation-intent combination."""
     if geclassificeerd.empty:
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
-    boven_drempel = geclassificeerd.loc[
+    echte_intenties = geclassificeerd.loc[
         geclassificeerd["intent"].ne("None")
-        & geclassificeerd["confidence"].gt(zekerheidsdrempel)
     ].copy()
-    if boven_drempel.empty:
+    if echte_intenties.empty:
         return pd.DataFrame(columns=OUTPUT_COLUMNS)
 
     eerste = (
-        boven_drempel.sort_values(
+        echte_intenties.sort_values(
             ["conversation_id", "created_at"], kind="stable"
         )
         .drop_duplicates(["conversation_id", "intent"], keep="first")
