@@ -1,0 +1,35 @@
+text,sentiment,tone_nl,subtopic
+"Ik heb mijn ticketmail niet ontvangen, kun je helpen?",Neutral (task-oriented),neutraal,Lost
+Kan ik de naam op mijn ticket nog wijzigen?,Neutral (task-oriented),neutraal,Rename
+"Mijn ticket scant niet bij de ingang, dit is al de derde keer dat ik het probeer!",Negative (frustrated),gefrustreerd,Scanning
+"Mijn polsbandje is kapot gegaan, wat moet ik nu doen?",Neutral (task-oriented),neutraal,Wristband
+Moet ik me kunnen legitimeren bij de leeftijdscontrole?,Neutral (task-oriented),neutraal,Age requirements
+Kan ik mijn dagticket omzetten naar een weekendticket?,Neutral (task-oriented),neutraal,Upgrade
+Hoe laat rijdt de laatste pendelbus terug naar het station?,Neutral (task-oriented),neutraal,Shuttle
+How much does parking cost for the whole weekend?,Neutral (task-oriented),neutraal,Parking
+Waar kan ik mijn fiets stallen dichtbij de ingang?,Neutral (task-oriented),neutraal,Bicycle
+Gibt es einen Ladepunkt für Elektroautos auf dem Parkplatz?,Neutral (task-oriented),neutraal,Parking
+Vanaf hoe laat kunnen we inchecken op de camping?,Neutral (task-oriented),neutraal,Camping
+"We staan al 40 minuten bij de camping-ingang en er gebeurt helemaal niets, dit is echt te gek voor woorden!",Negative (frustrated),boos,Camping
+Zijn er stopcontacten op de camping om mijn telefoon op te laden?,Neutral (task-oriented),neutraal,Camping
+Mogen we een gasfles gebruiken om te koken op de camping?,Neutral (task-oriented),neutraal,Camping
+Kan ik het terrein even verlaten en later weer terugkomen met hetzelfde bandje?,Neutral (task-oriented),neutraal,Re-entry
+Waar kan ik een kluisje huren op het terrein?,Neutral (task-oriented),neutraal,Lockers
+"Ik ben mijn telefoon kwijtgeraakt gisteravond bij het hoofdpodium, wat nu?",Negative (frustrated),gefrustreerd,Lost property
+Hoe kom ik van podium 2 naar de foodtrucks?,Neutral (task-oriented),neutraal,Directions
+Is er een plek waar ik mijn powerbank kan opladen?,Neutral (task-oriented),neutraal,Charging
+Zijn er ook merchandise-winkels op het terrein?,Neutral (task-oriented),neutraal,Merchandise
+"Er ligt iemand bewusteloos bij podium 2, we hebben nu hulp nodig!",Angry (panic),boos,Emergency
+"Er breekt brand uit bij de foodtrucks, help snel!",Angry (panic),boos,Emergency
+"Mijn dochter is zoek, ik kan haar nergens meer vinden op het terrein.",Angry (panic),boos,Emergency
+"There's a medical emergency near the main stage, someone collapsed!",Angry (panic),boos,Emergency
+"Er is geld van mijn cashcard afgeschreven maar mijn saldo is niet aangepast!",Negative (frustrated),gefrustreerd,Cashcard
+Ik wil graag het resterende saldo op mijn cashcard terugvragen.,Neutral (task-oriented),neutraal,Refund
+Krijg ik statiegeld terug voor mijn plastic bekers?,Neutral (task-oriented),neutraal,Cups
+Are there vegan food options available on site?,Neutral (task-oriented),neutraal,Food
+Hoe laat begint de hoofdact vanavond?,Neutral (task-oriented),neutraal,Timetable
+"Is er ook randprogrammering overdag, of alleen muziek?",Neutral (task-oriented),neutraal,Activities
+Wanneer gaan de tickets voor volgend jaar in de verkoop?,Neutral (task-oriented),neutraal,Next edition
+"Het geluid bij podium 3 staat zo hard dat het pijn doet aan mijn oren dit kan echt niet!",Negative (frustrated),boos,Sound
+"De toiletten bij vak 4 zijn al uren niet schoongemaakt het is echt niet meer te doen.",Negative (frustrated),gefrustreerd,Toilets
+"Een van de beveiligers sprak me heel onvriendelijk aan zonder reden dat vind ik echt niet kunnen.",Negative (frustrated),boos,Security

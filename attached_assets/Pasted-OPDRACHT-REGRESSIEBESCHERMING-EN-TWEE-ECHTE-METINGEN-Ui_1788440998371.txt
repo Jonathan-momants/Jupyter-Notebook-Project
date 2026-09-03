@@ -1,0 +1,93 @@
+OPDRACHT — REGRESSIEBESCHERMING EN TWEE ECHTE METINGEN
+
+Uit de vorige taak bleek dat drie van de vier systemen geen herhaalbare metrische
+validatie hebben. De cijfers 82,9% (antwoordcheck) en 85,3% (intentie) komen uit eerdere
+sessies en zijn nu niet reproduceerbaar. De gedeelde loader is inmiddels twee keer
+gewijzigd (from_agent-behandeling, PII-maskering) zonder dat er iets aantoont dat die
+drie systemen nog dezelfde labels geven. Dat repareren we, in twee stappen.
+
+
+=== DEEL A — GOLDEN-OUTPUT-TESTS VOOR ALLE VIER SYSTEMEN ===
+
+Doel is regressiebescherming, niet correctheid: onmiddellijk zien dat er iets VERANDERT,
+ook als we niet weten of het goed is.
+
+Voor elk van de vier systemen (sentiment, antwoordcheck, intentie, onderwerp):
+
+1. Draai het systeem op data/tests/conversations_100.csv.
+2. Sla de volledige output op als referentiebestand onder data/golden/, met een vaste
+   naam zonder tijdstempel, bijvoorbeeld data/golden/sentiment_golden.csv.
+3. Sorteer de rijen deterministisch voor het opslaan (bijvoorbeeld op conversation_id en
+   daarna created_at), zodat de vergelijking niet struikelt over rij-volgorde.
+4. Laat tijdstempels van de RUN zelf buiten het referentiebestand; alleen data uit de
+   input mag erin.
+5. Schrijf één script, bijvoorbeeld check_golden.py, dat alle vier systemen opnieuw
+   draait en de output byte-voor-byte of veld-voor-veld vergelijkt met de
+   referentiebestanden. Print per systeem OK of CHANGED, en bij CHANGED een diff van de
+   eerste tien afwijkende rijen.
+
+Belangrijk: als een referentiebestand nog niet bestaat, moet het script dat MELDEN en
+aanmaken, niet stil overschrijven. Een golden-test die zichzelf bijwerkt bij een
+afwijking is waardeloos.
+
+Bevestig dat check_golden.py twee keer achter elkaar draaien voor alle vier OK geeft.
+
+
+=== DEEL B — INTENTIEVALIDATIE ===
+
+data/tests/answer_key_v2.csv heeft al een kolom `intent`. Die is nog nooit gebruikt.
+
+Bouw een validator die de 41 teksten uit dat bestand direct door de intentieclassificatie
+haalt — dus rechtstreeks classificeren zoals bij de 158-zinnenmeting van het
+onderwerp-systeem, geen nepgesprekken eromheen bouwen.
+
+De 7 regels met intent = "None" zijn smalltalk: daar is de juiste uitkomst dat er geen
+intentie wordt teruggegeven.
+
+Rapporteer:
+  - intent_accuracy over de 34 echte zinnen
+  - macro_recall over de zes echte intentiecategorieën
+  - none_rejected: percentage van de 7 smalltalk-zinnen dat correct is afgewezen
+  - de volledige confusiematrix, rij = waar, kolom = voorspeld, inclusief None-kolom
+  - een tabel met alle foute zinnen: tekst, waar-intentie, voorspelde intentie
+
+De zes echte categorieën zijn: Request Information, Resolve Problem or Incident,
+Perform Transaction / Change, Active Navigation Help, Operate System, Report Emergency.
+Let op dat "Operate System" in deze sleutel mogelijk niet voorkomt; meld dat dan in
+plaats van er een 0%-recall van te maken die het macro-gemiddelde vertekent.
+
+
+=== DEEL C — SENTIMENTVALIDATIE ===
+
+Nieuw bestand: data/tests/answer_key_sentiment.csv met kolommen
+text, sentiment, tone_nl, subtopic. 34 zinnen. Gebruik alleen `text` en `sentiment`;
+de andere twee kolommen zijn context voor mensen.
+
+Classificeer die 34 teksten direct met de per-bericht-sentimentfunctie. Let op: het
+sentimentsysteem levert normaal sentiment_start en sentiment_end per gesprek. Voor deze
+meting moet je de onderliggende per-bericht-functie aanroepen, niet de
+gesprek-aggregatie.
+
+Rapporteer sentiment_accuracy, macro_recall over de voorkomende klassen, de
+confusiematrix en alle foute zinnen.
+
+De sleutel bevat drie klassen: Neutral (task-oriented) 23x, Negative (frustrated) 7x,
+Angry (panic) 4x. "Positive" komt niet voor en blijft dus ongetest; meld dat als bekende
+beperking in plaats van Positive als 0%-recall mee te rekenen.
+
+VERWACHTING: dit systeem heeft een bekende, onopgeloste bug waarbij drie Nederlandse
+noodgeval-zinnen als Positief worden gescoord — "Er ligt iemand bewusteloos...",
+"Mijn dochter is zoek..." en "Er breekt brand uit...". Die staan alle drie in deze
+sleutel als Angry (panic). Verwacht dus dat die drie fout gaan.
+
+REPAREER DIE BUG NIET. Het doel van deze taak is die bekende anekdote omzetten in een
+getal dat we voortaan kunnen volgen. Meld het cijfer; ga niet tunen, niet van model
+wisselen en geen drempels toevoegen.
+
+
+=== STOP ===
+
+Rapporteer: de golden-testuitkomst voor alle vier systemen, de intentiecijfers met
+confusiematrix, en de sentimentcijfers met confusiematrix. Bevestig dat de
+onderwerp-validaties op beide sleutels nog steeds onveranderd zijn. Begin daarna niets
+nieuws.
