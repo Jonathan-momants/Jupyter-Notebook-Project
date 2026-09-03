@@ -1,37 +1,30 @@
 id,event_id,main_topic,subtopic,active,description
-1,decibel_2026,Tickets,Lost,true,"Lost ticket or ticket never received, e.g. due to a lost phone or missing email"
-2,decibel_2026,Tickets,Rename,true,Questions about putting a ticket in someone else's name
-3,decibel_2026,Tickets,Scanning,true,"Problems at the gates, entrance North/South scanning issues"
-4,decibel_2026,Tickets,Wristband,true,Wristband lost or broken
-5,decibel_2026,Tickets,AgeCheck,true,"ID checks, passport vs. driver's license, minimum age"
-6,decibel_2026,Tickets,Upgrade,true,"Buying extra tickets, upgrading, or reselling via TicketSwap"
-7,decibel_2026,Tickets,Other,true,Other questions about tickets and entry
-8,decibel_2026,Transport,Shuttle,true,"Shuttle bus times and stops, e.g. from Tilburg central station, buying shuttle tickets"
-9,decibel_2026,Transport,Parking,true,"Getting there by car (exact address, Kiss & Ride drop-off) and parking (tickets, entry/exit, distance to the lot)"
-10,decibel_2026,Transport,Transit,true,"Bike storage, scooters, public transport times"
-11,decibel_2026,Transport,Other,true,Other questions about transport and logistics
-12,decibel_2026,Camping,CheckIn,true,Check-in and check-out rules and times for the campsite
-13,decibel_2026,Camping,Access,true,Broken door codes or locks for cabins (Comfort/Luxury)
-14,decibel_2026,Camping,ReEntry,true,"Leaving the site and coming back, e.g. bringing things to the car"
-15,decibel_2026,Camping,Amenities,true,"Power, showers, toilets, cooking on the campsite"
-16,decibel_2026,Camping,Rules,true,"Noise from camping neighbors, what you're allowed to bring, house rules"
-17,decibel_2026,Camping,Other,true,Other camping and accommodation questions
-18,decibel_2026,Venue,Lockers,true,"Locker sizes, reservations, locations"
-19,decibel_2026,Venue,LostFound,true,Lost and found location on site or handling after the festival
-20,decibel_2026,Venue,Charging,true,"Renting powerbanks, phone charging points"
-21,decibel_2026,Venue,Map,true,"Where is stage X, info point, first aid"
-22,decibel_2026,Venue,Shops,true,"Convenience store, supermarket, medicine, merchandise"
-23,decibel_2026,Venue,Emergency,true,"Calling security, first aid, emergencies"
-24,decibel_2026,Venue,Other,true,Other venue and facilities questions
-25,decibel_2026,Payments,Balance,true,"Topping up, payment failures, checking cashless balance"
-26,decibel_2026,Payments,Refund,true,Refunds for cashless balance or tokens after the festival
-27,decibel_2026,Payments,Deposit,true,Returning cups for deposit refund
-28,decibel_2026,Payments,Diet,true,"Gluten-free, vegan, bringing your own food onto the campsite"
-29,decibel_2026,Payments,Other,true,"Other questions about food, drinks and payments"
-30,decibel_2026,Program,Schedule,true,"When something happens on site, whether the main stage act or a side activity like a tattoo shop appointment or fairground ride"
-31,decibel_2026,Program,General,true,"Non-urgent info such as when the next edition is, or requesting recaps, aftermovies, photos"
-32,decibel_2026,Program,Other,true,Other questions about the program
-33,decibel_2026,Feedback,Noise,true,"Noise complaints, e.g. from local residents"
-34,decibel_2026,Feedback,FacilityIssue,true,"Complaints about queues, toilet hygiene, crowding"
-35,decibel_2026,Feedback,Staff,true,Treated unfriendly or wrongly turned away by staff or security
-36,decibel_2026,Feedback,Other,true,Other complaints
+1,decibel_2026,Access,Lost,true,"Lost ticket or ticket never received, e.g. due to a lost phone or missing email"
+2,decibel_2026,Access,Rename,true,Questions about putting a ticket in someone else's name
+3,decibel_2026,Access,Scanning,true,"Problems at the gates, entrance North/South scanning issues"
+4,decibel_2026,Access,Wristband,true,Wristband lost or broken
+5,decibel_2026,Access,AgeCheck,true,"ID checks, passport vs. driver's license, minimum age"
+6,decibel_2026,Access,Upgrade,true,"Buying extra tickets, upgrading, or reselling via TicketSwap"
+7,decibel_2026,Transport,Shuttle,true,"Shuttle bus times and stops, e.g. from Tilburg central station, buying shuttle tickets"
+8,decibel_2026,Transport,Parking,true,"Getting there by car (exact address, Kiss & Ride drop-off) and parking (tickets, entry/exit, distance to the lot)"
+9,decibel_2026,Transport,Transit,true,"Bike storage, scooters, public transport times"
+10,decibel_2026,Venue,CheckIn,true,Check-in and check-out rules and times for the campsite
+11,decibel_2026,Venue,CabinAccess,true,Broken door codes or locks for cabins (Comfort/Luxury)
+12,decibel_2026,Venue,ReEntry,true,"Leaving the site and coming back, e.g. bringing things to the car"
+13,decibel_2026,Venue,Amenities,true,"Power, showers, toilets, cooking on the campsite"
+14,decibel_2026,Venue,Rules,true,"Noise from camping neighbors, what you're allowed to bring, house rules"
+15,decibel_2026,Venue,Lockers,true,"Locker sizes, reservations, locations"
+16,decibel_2026,Venue,LostFound,true,Lost and found location on site or handling after the festival
+17,decibel_2026,Venue,Charging,true,"Renting powerbanks, phone charging points"
+18,decibel_2026,Venue,Map,true,"Where is stage X, info point, first aid"
+19,decibel_2026,Venue,Shops,true,"Convenience store, supermarket, medicine, merchandise"
+20,decibel_2026,Venue,Emergency,true,"Calling security, first aid, emergencies"
+21,decibel_2026,Payments,Balance,true,"Topping up, payment failures, checking cashless balance"
+22,decibel_2026,Payments,Refund,true,Refunds for cashless balance or tokens after the festival
+23,decibel_2026,Payments,Deposit,true,Returning cups for deposit refund
+24,decibel_2026,Payments,Diet,true,"Gluten-free, vegan, bringing your own food onto the campsite"
+25,decibel_2026,Program,Schedule,true,"When something happens on site, whether the main stage act or a side activity like a tattoo shop appointment or fairground ride"
+26,decibel_2026,Program,General,true,"Non-urgent info such as when the next edition is, or requesting recaps, aftermovies, photos"
+27,decibel_2026,Feedback,Noise,true,"Noise complaints, e.g. from local residents"
+28,decibel_2026,Feedback,FacilityIssue,true,"Complaints about queues, toilet hygiene, crowding"
+29,decibel_2026,Feedback,Staff,true,Treated unfriendly or wrongly turned away by staff or security

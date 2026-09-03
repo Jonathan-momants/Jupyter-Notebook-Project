@@ -28,3 +28,17 @@ mtime_ms = 1788260340882
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/563acd5f-f217-4e3f-aa96-abb9018a531b/d6ebedc7-d0c9-4247-8175-82d432dc13a3"
 storage_version_token = "1788260436405960"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "SED5I8dg-RaYU4_X_igVU"
+uri = "file://results/topics_per_conversation_20260903_092940_962119.csv"
+type = "table"
+title = "Onderwerpclassificatie decibel_2026"
+description = "Volledige uitvoer met 143 unieke gesprek-onderwerpcombinaties volgens de gemigreerde seed met zes universele hoofdonderwerpen."
+logical_id = "58dd8c00-42f5-4a09-83ac-056b9425ddd9"
+content_hash = "sha256:7079c738f2bfe59f134913ded4f304f33ba9ea3578345fc737a34660f99e5530"
+size = 12388
+mtime_ms = 1788427793624
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/58dd8c00-42f5-4a09-83ac-056b9425ddd9/25825918-50df-414c-b6c6-580e6f24297f"
+storage_version_token = "1788427806396201"
+content_type = "text/csv"
