@@ -70,3 +70,17 @@ mtime_ms = 1788439401862
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/e75d177c-cf5f-4c9d-9c8b-11fa37bcfb58/6c56fca5-ab0e-4399-8f66-c38fcfa0a526"
 storage_version_token = "1788439522074974"
 content_type = "text/csv"
+
+[[outputs]]
+id = "a2QuGstjeKriLKdX0QzL6"
+uri = "file://results/lowest_similarity_assignments_20260903_124940_675681.csv"
+type = "table"
+title = "Unique lowest-similarity assignments"
+description = "De 11 laagst scorende unieke Momants-topiczinnen, oplopend gesorteerd op similarity."
+logical_id = "c6abda64-8060-4e0c-ac16-fe7c432f39e3"
+content_hash = "sha256:82e7347fbb0b092ed71dc5a47cff83506c3b2cdb9fd8fdfad7a3cc77d5b04871"
+size = 1177
+mtime_ms = 1788439799486
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/c6abda64-8060-4e0c-ac16-fe7c432f39e3/d0735c38-2317-4c32-af49-96e6bf13a68f"
+storage_version_token = "1788439817821471"
+content_type = "text/csv"

@@ -311,7 +311,11 @@ def process_csv(
         ["text", "main_topic", "subtopic", "similarity"],
     ]
     lowest_count = max(1, int(np.ceil(len(assignments) * 0.10)))
-    lowest_similarity = assignments.nsmallest(lowest_count, "similarity")
+    unique_assignments = (
+        assignments.sort_values("similarity", kind="stable")
+        .drop_duplicates("text", keep="first")
+    )
+    lowest_similarity = unique_assignments.head(lowest_count)
     lowest_similarity.to_csv(low_similarity_path, index=False)
 
     overview.attrs["output_path"] = output_path.resolve()
