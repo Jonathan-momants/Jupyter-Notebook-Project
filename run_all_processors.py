@@ -138,6 +138,10 @@ def run_all_processors(
     for list_column in ("intent_intents", "topic_topics"):
         combined[list_column] = combined[list_column].fillna("")
 
+    combined = combined.sort_values(
+        "conversation_id",
+        kind="stable",
+    ).reset_index(drop=True)
     combined.to_csv(destination, index=False)
     combined.attrs["output_path"] = destination.resolve()
     combined.attrs["source_conversation_count"] = len(conversation_ids)
