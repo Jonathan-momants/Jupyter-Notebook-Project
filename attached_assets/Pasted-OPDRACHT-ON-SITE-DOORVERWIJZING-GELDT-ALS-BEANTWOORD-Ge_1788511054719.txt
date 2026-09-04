@@ -1,0 +1,59 @@
+OPDRACHT — ON-SITE DOORVERWIJZING GELDT ALS BEANTWOORD
+
+Gevalideerd op decibel_50_conversations.csv tegen decibel_50_answerkey.csv:
+answered staat op 33/44 = 75,0%. Alle 11 fouten wijzen dezelfde kant op: waar = yes,
+voorspeld = no. Nul valse "beantwoord".
+
+Alle elf zijn ON-SITE DOORVERWIJZINGEN:
+
+    "Lost & Found stand bij de lockers"        (jas kwijt)
+    "ticketpunt bij de hoofdingang"            (polsbandje doorgeknipt)
+    "cashless-balie bij ingang Zuid"           (opwaardering mislukt)
+    "ticket desk at the main entrance"         (scanner rejects barcode)
+    "Ticketpunkt am Haupteingang"              (Armband gerissen)
+    "bel 112, EHBO-punt bij de foodcourt"      (iemand reageert niet)
+    "geef ik door aan de schoonmaakcrew"       (toiletten niet schoon)
+    "melden bij het informatiepunt"            (onvriendelijke beveiliger)
+
+De regel dat een doorverwijzing naar een plek of actie OP LOCATIE als beantwoord geldt, is
+niet geïmplementeerd. Alleen de fallback- en beloftepatronen zitten erin; voor al het
+andere wordt nog het relevantiemodel gebruikt, en dat geeft elke doorverwijzing een lage
+score.
+
+DE FIX. Voeg vóór het relevantiemodel een regel toe: bevat het antwoord een verwijzing
+naar een plek of actie OP LOCATIE, dan is de vraag BEANTWOORD.
+
+Indicatoren voor "op locatie" (de agent wist waar je moet zijn):
+
+    lost & found | lost and found | informatiepunt | info point | ticketpunt |
+    ticket desk | ticketpunkt | lockerdesk | kluisjespunt | cashless-balie |
+    statiegeldpunt | EHBO | first aid | crewlid | crew member | balie | desk |
+    hoofdingang | main entrance | haupteingang | ingang noord | ingang zuid |
+    entrance north | entrance south | bel 112 | bel de beveiliging
+
+Blijft NIET beantwoord (doorverwijzing naar een kanaal BUITEN het gesprek):
+
+    mail(en) naar | e-mailadres | @ in een adres | servicenummer | klantenservice |
+    neem contact op | contact us | reach out to | website in de gaten houden
+
+VOLGORDE VAN BEOORDELING, houd deze aan:
+
+    1. REPLY_TAKEOVER aanwezig            -> BEANTWOORD
+    2. fallback-formulering               -> NIET BEANTWOORD
+    3. belofte zonder inhoud              -> NIET BEANTWOORD
+    4. verwijzing naar plek/actie op locatie -> BEANTWOORD   <-- NIEUW
+    5. anders: bestaande logica
+
+Fallback gaat dus VOOR de locatieregel. "Dat staat niet in mijn info, ga naar het
+informatiepunt" blijft daardoor terecht niet beantwoord.
+
+CONTROLE. Draai op data/tests/decibel_50_conversations.csv en valideer tegen
+decibel_50_answerkey.csv (kolom answered, 44 gesprekken met yes of no).
+
+    nu:        33/44 = 75,0%
+    verwacht:  44/44 = 100%, of in elk geval boven 95%
+
+Ga NIET tunen als je daar niet komt. Rapporteer welke gesprekken nog fout gaan met de
+tekst van het agent-antwoord erbij.
+
+Verander niets aan de sentiment-, intentie-, onderwerp- of taal-as.

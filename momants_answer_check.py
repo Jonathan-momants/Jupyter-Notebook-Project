@@ -134,13 +134,18 @@ PROMISE_PATTERNS = (
 )
 
 EXTERNAL_CHANNEL_PATTERN = re.compile(
-    r"\b(?:mail|e-mail|email|bel|call|whatsapp|servicenummer|telefoonnummer|"
-    r"contact\s+op(?:nemen)?|neem\s+contact\s+op|website)\b",
+    r"(?:\b(?:mail(?:en)?\s+naar|e-?mailadres|servicenummer|klantenservice|"
+    r"neem\s+contact\s+op|contact\s+us|reach\s+out\s+to|"
+    r"website\s+in\s+de\s+gaten\s+houden)\b|"
+    r"(?<!\w)[\w.+-]+@[\w.-]+\.[a-z]{2,}(?!\w))",
     flags=re.IGNORECASE,
 )
 ON_SITE_ACTION_PATTERN = re.compile(
-    r"\b(?:lost\s*(?:&|and)\s*found|lockerdesk|hoofdingang|festivalterrein|"
-    r"balie|desk|punt|ingang|ter\s+plaatse|on[\s-]?site)\b",
+    r"\b(?:lost\s*(?:&|and)\s*found|informatiepunt|info\s+point|ticketpunt|"
+    r"ticket\s+desk|ticketpunkt|lockerdesk|kluisjespunt|cashless-balie|"
+    r"statiegeldpunt|ehbo|first\s+aid|crewlid|crew\s+member|balie|desk|"
+    r"hoofdingang|main\s+entrance|haupteingang|ingang\s+noord|ingang\s+zuid|"
+    r"entrance\s+north|entrance\s+south|bel\s+112|bel\s+de\s+beveiliging)\b",
     flags=re.IGNORECASE,
 )
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
@@ -377,10 +382,11 @@ def _is_promise_without_answer(responses: list[str]) -> bool:
 
 def _is_external_channel_only(responses: list[str]) -> bool:
     combined = " ".join(responses)
-    return bool(
-        EXTERNAL_CHANNEL_PATTERN.search(combined)
-        and not ON_SITE_ACTION_PATTERN.search(combined)
-    )
+    return bool(EXTERNAL_CHANNEL_PATTERN.search(combined))
+
+
+def _has_on_site_action(responses: list[str]) -> bool:
+    return bool(ON_SITE_ACTION_PATTERN.search(" ".join(responses)))
 
 
 def classify_question_answer_pairs(
@@ -424,12 +430,18 @@ def classify_question_answer_pairs(
             response = str(row["response"])
             fallback = _has_fallback([response])
             promise = _is_promise_without_answer([response])
+            on_site_action = _has_on_site_action([response])
             external_channel = _is_external_channel_only([response])
             response_answered = bool(
-                score >= RELEVANCE_THRESHOLD
-                and not fallback
+                not fallback
                 and not promise
-                and not external_channel
+                and (
+                    on_site_action
+                    or (
+                        not external_channel
+                        and score >= RELEVANCE_THRESHOLD
+                    )
+                )
             )
             assessments.setdefault(int(row["pair_index"]), []).append(
                 {
@@ -437,6 +449,7 @@ def classify_question_answer_pairs(
                     "answered": response_answered,
                     "fallback": fallback,
                     "promise": promise,
+                    "on_site_action": on_site_action,
                     "external_channel": external_channel,
                 }
             )
@@ -453,7 +466,15 @@ def classify_question_answer_pairs(
                 assessment["answered"] for assessment in response_assessments
             ):
                 result.at[pair_index, "answered"] = True
-                result.at[pair_index, "answer_rule"] = "llm_response"
+                result.at[pair_index, "answer_rule"] = (
+                    "on_site_doorverwijzing"
+                    if any(
+                        assessment["answered"]
+                        and assessment["on_site_action"]
+                        for assessment in response_assessments
+                    )
+                    else "llm_response"
+                )
             elif any(
                 assessment["fallback"] for assessment in response_assessments
             ):
@@ -611,6 +632,10 @@ def create_conversation_summary(
     output.attrs["episodes_without_agent_answer"] = int(
         (~pairs["has_agent_answer"]).sum()
     )
+    output.attrs["answer_rule_counts"] = {
+        str(rule): int(count)
+        for rule, count in assessed["answer_rule"].value_counts().items()
+    }
     return output
 
 
