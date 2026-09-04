@@ -25,7 +25,7 @@ LOCAL_MODEL_PATH = Path("model/momants-intentie")
 
 INTENT_CATEGORIES = [
     "Request Information",
-    "Resolve Problem or Incident",
+    "File Complaint",
     "Perform Transaction / Change",
     "Active Navigation Help",
     "Operate System",
@@ -44,7 +44,7 @@ BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
 
 
 def _valideer_trainingsdata(data: pd.DataFrame) -> pd.DataFrame:
-    """Validate the training schema and the six permitted intent labels."""
+    """Validate the training schema and the permitted intent labels."""
     vereiste_kolommen = {"text", "intent"}
     ontbrekend = vereiste_kolommen - set(data.columns)
     if ontbrekend:
@@ -162,7 +162,7 @@ def _modellabels(model: SetFitModel) -> list[str]:
     labels = [str(label) for label in model.labels]
     if set(labels) != set(INTENT_CATEGORIES):
         raise ValueError(
-            "The local model does not contain exactly the six required intent labels."
+            "The local model does not contain exactly the required intent labels."
         )
     return labels
 

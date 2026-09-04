@@ -21,26 +21,26 @@ mogen we eigen drinken meenemen op de camping,Request Information
 waar kan ik mijn fiets stallen,Request Information
 is er een minimumleeftijd voor het festival,Request Information
 wat is de line-up voor zaterdag,Request Information
-Mijn ticket scant niet bij de ingang.,Resolve Problem or Incident
-Ik heb mijn polsbandje kapot getrokken.,Resolve Problem or Incident
-Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.,Resolve Problem or Incident
-De douches op de camping werken niet.,Resolve Problem or Incident
-Ik krijg steeds een foutmelding bij het inloggen.,Resolve Problem or Incident
-Mijn naam staat verkeerd op het ticket.,Resolve Problem or Incident
-Mijn tent is beschadigd geraakt door de storm.,Resolve Problem or Incident
-De app crasht steeds als ik mijn ticket wil laten zien.,Resolve Problem or Incident
-mijn qr code doet het niet,Resolve Problem or Incident
-ik heb betaald maar geen bevestiging ontvangen,Resolve Problem or Incident
-"de kluisjes gaan niet meer open, mijn spullen zitten erin",Resolve Problem or Incident
-er zit geen stroom op mijn stopcontact bij de camperplek,Resolve Problem or Incident
-mijn e-ticket is niet aangekomen in mijn mail,Resolve Problem or Incident
-het toilet bij vak 3 is verstopt,Resolve Problem or Incident
-ik kan niet inloggen op mijn account,Resolve Problem or Incident
-my wristband broke and won't scan anymore,Resolve Problem or Incident
-de betaalpas-lezer bij de bar accepteert mijn kaart niet,Resolve Problem or Incident
-ik heb het verkeerde tickettype gekregen na aankoop,Resolve Problem or Incident
-mijn bagage is kwijtgeraakt bij de garderobe,Resolve Problem or Incident
-het water op de camping is bruin,Resolve Problem or Incident
+Mijn ticket scant niet bij de ingang.,Request Information
+Ik heb mijn polsbandje kapot getrokken.,Request Information
+Er is geld van mijn cashcard afgeschreven maar ik zie geen saldo.,Request Information
+De douches op de camping werken niet.,Request Information
+Ik krijg steeds een foutmelding bij het inloggen.,Request Information
+Mijn naam staat verkeerd op het ticket.,Perform Transaction / Change
+Mijn tent is beschadigd geraakt door de storm.,Request Information
+De app crasht steeds als ik mijn ticket wil laten zien.,Request Information
+mijn qr code doet het niet,Request Information
+ik heb betaald maar geen bevestiging ontvangen,Request Information
+"de kluisjes gaan niet meer open, mijn spullen zitten erin",Request Information
+er zit geen stroom op mijn stopcontact bij de camperplek,Request Information
+mijn e-ticket is niet aangekomen in mijn mail,Request Information
+het toilet bij vak 3 is verstopt,Request Information
+ik kan niet inloggen op mijn account,Request Information
+my wristband broke and won't scan anymore,Request Information
+de betaalpas-lezer bij de bar accepteert mijn kaart niet,Request Information
+ik heb het verkeerde tickettype gekregen na aankoop,Perform Transaction / Change
+mijn bagage is kwijtgeraakt bij de garderobe,Request Information
+het water op de camping is bruin,Request Information
 Ik wil een extra ticket bijkopen.,Perform Transaction / Change
 Kan ik mijn ticket omzetten naar een ander type?,Perform Transaction / Change
 Ik wil mijn parkeerplek annuleren.,Perform Transaction / Change
@@ -91,14 +91,14 @@ help iemand is flauwgevallen bij vak 4,Report Emergency
 "help snel, iemand verdrinkt bijna in de vijver",Report Emergency
 there's a medical emergency near the main stage,Report Emergency
 er ligt iemand op de grond en reageert niet,Report Emergency
-The security guard was incredibly rude to me for no reason.,Resolve Problem or Incident
-"One of your staff members yelled at my kid, that's unacceptable.",Resolve Problem or Incident
-De steward bij ingang B duwde me zomaar opzij zonder uitleg.,Resolve Problem or Incident
-I was treated very disrespectfully by one of your crew members.,Resolve Problem or Incident
-Een medewerker weigerde me te helpen en liep gewoon weg.,Resolve Problem or Incident
-Your bartender overcharged me and refused to fix it.,Resolve Problem or Incident
-De beveiliger schreeuwde tegen me terwijl ik niks verkeerd deed.,Resolve Problem or Incident
-One of your employees was extremely unhelpful and dismissive.,Resolve Problem or Incident
+The security guard was incredibly rude to me for no reason.,File Complaint
+"One of your staff members yelled at my kid, that's unacceptable.",File Complaint
+De steward bij ingang B duwde me zomaar opzij zonder uitleg.,File Complaint
+I was treated very disrespectfully by one of your crew members.,File Complaint
+Een medewerker weigerde me te helpen en liep gewoon weg.,File Complaint
+Your bartender overcharged me and refused to fix it.,File Complaint
+De beveiliger schreeuwde tegen me terwijl ik niks verkeerd deed.,File Complaint
+One of your employees was extremely unhelpful and dismissive.,File Complaint
 Can you transfer me to an actual person please.,Operate System
 I don't want any more automated messages.,Operate System
 Is this a bot or a real human replying?,Operate System
@@ -141,3 +141,43 @@ Prima,None
 "Alright then, bye.",None
 "Dank je, tot de volgende keer.",None
 Helemaal goed zo.,None
+"We wachten hier al drie kwartier en er gebeurt gewoon niks, belachelijk.",File Complaint
+"De rij bij de ingang staat al een uur stil, dit is toch geen organisatie.",File Complaint
+"De toiletten zijn de hele dag niet schoongemaakt, dit is echt onacceptabel.",File Complaint
+"Het is hier smerig en er wordt niks aan gedaan, ik vind dit echt schandalig.",File Complaint
+"Het geluid staat zo hard dat het pijn doet aan mijn oren, dit kan echt niet.",File Complaint
+"Er is veel te weinig personeel, niemand die je kan helpen. Slechte organisatie.",File Complaint
+"Voor deze prijs verwacht ik echt wel wat meer, dit is het geld niet waard.",File Complaint
+"Het is hier veel te druk en gevaarlijk, dit had niemand zo mogen inrichten.",File Complaint
+"Ik heb een uur in de rij gestaan voor een biertje, dit is toch belachelijk.",File Complaint
+"De camping is een puinhoop en er wordt niks opgeruimd, ik wil dit melden.",File Complaint
+Ik wil officieel een klacht indienen over hoe dit geregeld is.,File Complaint
+Waar kan ik een klacht indienen over de gang van zaken hier?,File Complaint
+"We have been queuing for over an hour and nothing is moving, this is unacceptable.",File Complaint
+"The toilets have not been cleaned all weekend, that is absolutely disgraceful.",File Complaint
+"The sound is painfully loud, this really should not be allowed.",File Complaint
+"For this price I expected far better, honestly a waste of money.",File Complaint
+I would like to make a formal complaint about how this was handled.,File Complaint
+"Die Toiletten sind seit Stunden nicht gereinigt worden, das ist inakzeptabel.",File Complaint
+"Wir warten seit einer Stunde und niemand kümmert sich, eine Frechheit.",File Complaint
+Ich möchte mich offiziell über die Organisation beschweren.,File Complaint
+Geluidsoverlast camping,File Complaint
+Geluidsoverlast melden,File Complaint
+Ik wil geluidsoverlast melden,File Complaint
+Melding maken overlast,File Complaint
+Overlast melden camping,File Complaint
+Klacht melden,File Complaint
+"Klacht op de camping, waar melden?",File Complaint
+Waar meld ik geluidsoverlast?,File Complaint
+Waar kan ik overlast van buren melden?,File Complaint
+De buren op de camping maken de hele nacht herrie,File Complaint
+Er wordt hier nog steeds harde muziek gedraaid,File Complaint
+De muziek staat veel te hard op camping 4,File Complaint
+"Onze buren zijn veel te luidruchtig, kan daar iets aan gedaan worden?",File Complaint
+Ik wil een melding doen over de staat van de toiletten,File Complaint
+Report noise disturbance,File Complaint
+Noise complaint campsite,File Complaint
+I want to report a noise problem at the campsite,File Complaint
+"Our neighbours are far too loud, can something be done?",File Complaint
+Lärmbelästigung melden,File Complaint
+Ich möchte eine Beschwerde melden,File Complaint
