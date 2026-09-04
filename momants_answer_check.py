@@ -12,7 +12,13 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import CrossEncoder
 
-from momants_intent import classify_messages, select_visitor_messages
+from momants_conversation_filter import (
+    ANSWER_MESSAGE_TYPES,
+    is_visitor_button_payload,
+    normalize_message_type,
+    select_visitor_messages,
+)
+from momants_intent import classify_messages
 from momants_sentiment import load_momants_csv
 
 
@@ -28,18 +34,6 @@ OUTPUT_COLUMNS = [
     "eindoordeel",
     "uitleg",
 ]
-
-# Exact button payloads are customer-specific and must be reviewed for each client.
-VISITOR_BUTTON_PAYLOADS = frozenset(
-    {
-        "yes! (opt in)",
-        "see saturday's recap",
-        "see sunday's recap",
-        "stop messaging",
-        "opt-in again",
-    }
-)
-ANSWER_MESSAGE_TYPES = frozenset({"LLM_RESPONSE", "REPLY_TAKEOVER"})
 
 FALLBACK_PATTERNS = (
     (
@@ -151,12 +145,6 @@ ON_SITE_ACTION_PATTERN = re.compile(
 SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
 
 
-def _normalized_message_type(value: object) -> str:
-    if pd.isna(value):
-        return ""
-    return str(value).strip().upper()
-
-
 def _with_message_order(data: pd.DataFrame) -> pd.DataFrame:
     ordered = data.sort_values(
         ["conversation_id", "created_at"], kind="stable"
@@ -187,10 +175,6 @@ def _classify_visitor_messages(
     """Classify all usable non-button visitor messages once for episode grouping."""
     ordered = _with_message_order(data)
     visitors = select_visitor_messages(ordered)
-    normalized_text = visitors["text"].astype(str).str.strip().str.casefold()
-    visitors = visitors.loc[
-        ~normalized_text.isin(VISITOR_BUTTON_PAYLOADS)
-    ].reset_index(drop=True)
     classified = classify_messages(
         visitors,
         batchgrootte=batch_size,
@@ -254,6 +238,7 @@ def pair_questions_with_answers(
     ):
         current: dict[str, object] | None = None
         last_valid_agent_asked_followup = False
+        previous_was_button_payload = False
 
         def finish_current() -> None:
             nonlocal current
@@ -263,8 +248,16 @@ def pair_questions_with_answers(
 
         for message in conversation_messages.to_dict(orient="records"):
             message_order = int(message["_message_order"])
+            if (
+                message["from_agent"] is False
+                and is_visitor_button_payload(message["text"])
+            ):
+                last_valid_agent_asked_followup = False
+                previous_was_button_payload = True
+                continue
             visitor = visitor_by_order.get(message_order)
             if visitor is not None:
+                previous_was_button_payload = False
                 intent = str(visitor["intent"])
                 if current is None:
                     if intent != "None":
@@ -307,10 +300,17 @@ def pair_questions_with_answers(
                 last_valid_agent_asked_followup = False
                 continue
 
+            preceded_by_button_payload = previous_was_button_payload
+            previous_was_button_payload = False
             if message["from_agent"] is not True or current is None:
                 continue
-            message_type = _normalized_message_type(message["message_type"])
+            message_type = normalize_message_type(message["message_type"])
             if message_type not in ANSWER_MESSAGE_TYPES:
+                continue
+            if (
+                message_type == "REPLY_TAKEOVER"
+                and preceded_by_button_payload
+            ):
                 continue
             text = (
                 str(message["text"]).strip()
@@ -498,7 +498,7 @@ def classify_question_answer_pairs(
 def collect_pattern_sentences(data: pd.DataFrame) -> pd.DataFrame:
     """Collect and count LLM_RESPONSE sentences matching fallback/promise rules."""
     agent = data.loc[data["from_agent"].eq(True)].copy()
-    agent["_normalized_type"] = agent["message_type"].map(_normalized_message_type)
+    agent["_normalized_type"] = agent["message_type"].map(normalize_message_type)
     llm_responses = agent.loc[
         agent["_normalized_type"].eq("LLM_RESPONSE"), "text"
     ]

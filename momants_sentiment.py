@@ -11,6 +11,10 @@ from typing import Iterable
 import pandas as pd
 from transformers import pipeline
 
+from momants_conversation_filter import (
+    BARE_URL,
+    select_visitor_messages,
+)
 from momants_privacy import mask_pii
 
 
@@ -19,9 +23,9 @@ MODEL_ID = "tabularisai/multilingual-sentiment-analysis"
 LABEL_MAPPING = {
     "Very Positive": "Positive",
     "Positive": "Positive",
-    "Neutral": "Neutral (task-focused)",
+    "Neutral": "Neutral (task-oriented)",
     "Negative": "Negative (frustrated)",
-    "Very Negative": "Angry (panic)",
+    "Very Negative": "Negative (frustrated)",
 }
 
 SAFE_COLUMNS = [
@@ -75,9 +79,6 @@ COLUMN_ALIASES = {
     "conversation": "conversation_id",
     "agentid": "agent_id",
 }
-
-BARE_URL = re.compile(r"(?:https?://|www\.)\S+", flags=re.IGNORECASE)
-
 
 def _normalize_column_name(name: object) -> str:
     """Normalize a column name for comparison with known names."""
@@ -184,16 +185,7 @@ def load_momants_csv(source: str | Path) -> pd.DataFrame:
 
 def select_customer_messages(dataframe: pd.DataFrame) -> pd.DataFrame:
     """Keep chronologically sorted, usable customer messages."""
-    from_agent = dataframe["from_agent"]
-    readable_from_agent = from_agent.eq(True) | from_agent.eq(False)
-    unreadable_count = int((~readable_from_agent).sum())
-    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
-    stripped_text = dataframe["text"].fillna("").astype(str).str.strip()
-    bare_url = stripped_text.str.fullmatch(BARE_URL)
-    selection_mask = from_agent.eq(False) & stripped_text.ne("") & ~bare_url
-    selection = dataframe.loc[selection_mask].copy()
-    selection["text"] = stripped_text.loc[selection_mask]
-    return selection.sort_values(["conversation_id", "created_at"]).reset_index(drop=True)
+    return select_visitor_messages(dataframe)
 
 
 def _translate_model_result(result: dict[str, object]) -> tuple[str, float]:

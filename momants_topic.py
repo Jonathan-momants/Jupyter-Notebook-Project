@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 from sentence_transformers import SentenceTransformer
 
+from momants_conversation_filter import select_visitor_messages
 from momants_sentiment import load_momants_csv
 
 
@@ -133,23 +134,6 @@ def load_topics(
         raise ValueError(f"Duplicate active topic combinations: {displayed}.")
 
     return topics[SEED_COLUMNS].reset_index(drop=True)
-
-
-def select_visitor_messages(data: pd.DataFrame) -> pd.DataFrame:
-    """Select usable visitor messages in chronological order."""
-    from_agent = data["from_agent"]
-    readable_from_agent = from_agent.eq(True) | from_agent.eq(False)
-    unreadable_count = int((~readable_from_agent).sum())
-    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
-
-    stripped_text = data["text"].fillna("").astype(str).str.strip()
-    visitor_mask = from_agent.eq(False) & stripped_text.ne("")
-    selection = data.loc[visitor_mask].copy()
-    selection["text"] = stripped_text.loc[visitor_mask]
-    selection.attrs["unreadable_from_agent_count"] = unreadable_count
-    return selection.sort_values(
-        ["conversation_id", "created_at"], kind="stable"
-    ).reset_index(drop=True)
 
 
 def _build_embedding_model() -> SentenceTransformer:

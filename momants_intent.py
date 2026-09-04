@@ -13,6 +13,9 @@ from datasets import Dataset
 import pandas as pd
 from setfit import SetFitModel, Trainer, TrainingArguments
 
+from momants_conversation_filter import (
+    select_visitor_messages as select_filtered_visitor_messages,
+)
 from momants_sentiment import load_momants_csv
 
 
@@ -149,18 +152,7 @@ def train_model(
 
 def selecteer_bezoekersberichten(data: pd.DataFrame) -> pd.DataFrame:
     """Select only usable visitor messages in chronological order."""
-    from_agent = data["from_agent"]
-    readable_from_agent = from_agent.eq(True) | from_agent.eq(False)
-    unreadable_count = int((~readable_from_agent).sum())
-    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
-    stripped_text = data["text"].fillna("").astype(str).str.strip()
-    bare_url = stripped_text.str.fullmatch(BARE_URL)
-    selection_mask = from_agent.eq(False) & stripped_text.ne("") & ~bare_url
-    selectie = data.loc[selection_mask].copy()
-    selectie["text"] = stripped_text.loc[selection_mask]
-    return selectie.sort_values(
-        ["conversation_id", "created_at"], kind="stable"
-    ).reset_index(drop=True)
+    return select_filtered_visitor_messages(data)
 
 
 select_visitor_messages = selecteer_bezoekersberichten

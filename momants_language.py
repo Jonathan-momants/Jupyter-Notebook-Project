@@ -10,15 +10,19 @@ from typing import Iterable
 from lingua import Language, LanguageDetector, LanguageDetectorBuilder
 import pandas as pd
 
-from momants_sentiment import BARE_URL, load_momants_csv
+from momants_conversation_filter import BARE_URL, select_visitor_messages
+from momants_sentiment import load_momants_csv
 
 
 LANGUAGE_CODES = {
     Language.DUTCH: "nl",
     Language.ENGLISH: "en",
     Language.GERMAN: "de",
+    Language.ITALIAN: "overig",
+    Language.FRENCH: "overig",
+    Language.SPANISH: "overig",
 }
-LANGUAGES = ["nl", "en", "de", "und"]
+LANGUAGES = ["nl", "en", "de", "overig", "und"]
 MINIMUM_TEXT_LENGTH = 4
 MINIMUM_CONFIDENCE = 0.55
 MULTILINGUAL_SHARE = 0.25
@@ -33,27 +37,15 @@ MESSAGE_OUTPUT_COLUMNS = [
 
 
 def build_detector() -> LanguageDetector:
-    """Build the deliberately restricted three-language Lingua detector."""
+    """Build the detector for three primary and three grouped other languages."""
     return LanguageDetectorBuilder.from_languages(
         Language.DUTCH,
         Language.ENGLISH,
         Language.GERMAN,
+        Language.ITALIAN,
+        Language.FRENCH,
+        Language.SPANISH,
     ).build()
-
-
-def select_visitor_messages(data: pd.DataFrame) -> pd.DataFrame:
-    """Keep non-empty visitor messages, including URLs for explicit und output."""
-    from_agent = data["from_agent"]
-    readable = from_agent.eq(True) | from_agent.eq(False)
-    unreadable_count = int((~readable).sum())
-    print(f"Rows skipped with unreadable from_agent: {unreadable_count}")
-    text = data["text"].fillna("").astype(str).str.strip()
-    mask = from_agent.eq(False) & text.ne("")
-    selected = data.loc[mask].copy()
-    selected["text"] = text.loc[mask]
-    return selected.sort_values(
-        ["conversation_id", "created_at"], kind="stable"
-    ).reset_index(drop=True)
 
 
 def classify_messages(
@@ -75,11 +67,20 @@ def classify_messages(
         confidence_values = detector.compute_language_confidence_values(text)
         if not confidence_values:
             continue
-        best = confidence_values[0]
-        confidence = float(best.value)
+        category_confidences: dict[str, float] = {}
+        for language_confidence in confidence_values:
+            category = LANGUAGE_CODES[language_confidence.language]
+            category_confidences[category] = (
+                category_confidences.get(category, 0.0)
+                + float(language_confidence.value)
+            )
+        best_category, confidence = max(
+            category_confidences.items(),
+            key=lambda item: item[1],
+        )
         result.at[index, "confidence"] = round(confidence, 4)
         if confidence >= MINIMUM_CONFIDENCE:
-            result.at[index, "language"] = LANGUAGE_CODES[best.language]
+            result.at[index, "language"] = best_category
     return result
 
 
@@ -145,9 +146,21 @@ def process_csv(
     """Detect visitor-message languages and write one row per conversation."""
     started_at = datetime.now().astimezone()
     data = load_momants_csv(csv_path)
-    visitors = select_visitor_messages(data)
+    visitors = select_visitor_messages(data, include_bare_urls=True)
     classified = classify_messages(visitors)
     conversations = create_conversation_summary(classified)
+    all_conversations = data[["conversation_id"]].drop_duplicates(ignore_index=True)
+    conversations = all_conversations.merge(
+        conversations,
+        on="conversation_id",
+        how="left",
+        validate="one_to_one",
+    )
+    conversations["language"] = conversations["language"].fillna("und")
+    conversations["confidence"] = conversations["confidence"].fillna(0.0)
+    conversations["is_multilingual"] = (
+        conversations["is_multilingual"].fillna(False).astype(bool)
+    )
     print_customer_statistics(conversations)
 
     destination = Path(output_directory).expanduser()

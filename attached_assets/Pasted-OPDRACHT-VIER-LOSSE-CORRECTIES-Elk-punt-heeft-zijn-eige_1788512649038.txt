@@ -1,0 +1,89 @@
+OPDRACHT — VIER LOSSE CORRECTIES
+
+Elk punt heeft zijn eigen controle. Rapporteer ze apart, zodat zichtbaar blijft welke
+correctie welk effect had.
+
+
+=== 1. RUISFILTER NAAR EEN GEDEELDE MODULE ===
+
+Het knop-payload-filter en de scheiding op message_type zitten nu alleen in
+momants_answer_check.py. Gevolg: de taal-as classificeert "See Saturday's recap" als
+Engels, en sentiment, onderwerp en intentie zien de marketing-broadcasts nog.
+
+Maak momants_conversation_filter.py met:
+  - de knop-payload-lijst (constante, met comment dat die per klant verschilt):
+    "Yes! (opt in)" / "See Saturday's recap" / "See Sunday's recap" /
+    "Stop messaging" / "OPT-IN AGAIN"  -- exact, case-insensitive, na strippen
+  - de regel dat alleen message_type LLM_RESPONSE en REPLY_TAKEOVER agent-antwoorden zijn;
+    leeg message_type is uitgaande marketing en wordt genegeerd
+
+Laat ALLE VIJF assen die module gebruiken. Verwijder de gedupliceerde logica uit
+momants_answer_check.py.
+
+CONTROLE: op decibel_50_conversations.csv moeten gesprek 25 en 26 (alleen recap-knoppen)
+nu taal "und" krijgen in plaats van "en". Rapporteer de taalscore tegen
+decibel_50_answerkey.csv voor en na.
+
+
+=== 2. REPLY_TAKEOVER MAG FALLBACK NIET OVERSCHRIJVEN ===
+
+Op de echte export vuurt regel 1 (REPLY_TAKEOVER -> beantwoord) 33 keer. Dat kan niet:
+een REPLY_TAKEOVER volgt altijd op een knop-payload (100 van 100 gecontroleerd), en
+knop-payloads tellen niet mee als informatiebehoefte. In 10 gesprekken komen een echte
+vraag, een knopdruk en een fallback samen, en daar overschrijft regel 1 de fallback.
+
+FIX: sluit knop-payloads volledig uit van episodes -- ze starten er geen en worden er ook
+niet als vervolgbericht in opgenomen. Een REPLY_TAKEOVER die op een uitgesloten
+knop-payload volgt, valt daarmee buiten elke meetellende episode.
+
+CONTROLE op de echte export:
+  - episodes beantwoord via REPLY_TAKEOVER: verwacht 0 of vrijwel 0 (was 33)
+  - fallback-episodes: verwacht rond 32 (was 22)
+  - percentage beantwoord: verwacht tussen 75% en 79,6%, dus LAGER dan nu
+  - aantal episodes met zowel een fallback als een REPLY_TAKEOVER
+
+En op decibel_50_conversations.csv: answered moet 44/44 blijven. Zakt dat, dan heeft de
+fix iets anders gebroken.
+
+Meld ook waarom "Belofte" op 0 stond terwijl er 23 belofte-formuleringen in de 494 echte
+antwoorden zitten. Zitten die in episodes die daarnaast een echt antwoord kregen, of
+matchen de patronen niet op de echte bewoording?
+
+
+=== 3. ANGRY (PANIC) ERUIT, LABEL NAAR TASK-ORIENTED ===
+
+Besluit: Angry (panic) is geen sentiment maar urgentie, en urgentie komt van de
+intentie-as (Report Emergency). De sentiment-as heeft voortaan DRIE klassen:
+
+    Positive
+    Neutral (task-oriented)
+    Negative (frustrated)
+
+De processor geeft nu "Neutral (task-focused)". Dat moet "Neutral (task-oriented)" zijn,
+exact zoals in het schema -- anders faalt elke join op sentimentwaarde in de app.
+
+CONTROLE: op decibel_50_conversations.csv mag "Angry (panic)" niet meer voorkomen (was
+3x). Rapporteer sentiment_start en sentiment_end tegen decibel_50_answerkey.csv voor en na.
+
+
+=== 4. OVERIG-TAALCATEGORIE ===
+
+Besluit: Italiaans, Frans en Spaans vallen onder "overig". De taal-as wordt:
+
+    nl / en / de / overig / und
+
+Voeg die talen toe aan de kandidatenset van lingua en map alles wat niet nl, en of de is
+naar "overig". Blijf "und" gebruiken bij een kale URL, minder dan 4 tekens, of confidence
+onder 0,55.
+
+CONTROLE: op decibel_50_conversations.csv staan 4 gesprekken met waar-taal "overig"
+(Italiaans, Spaans en twee keer Frans). Die moeten alle vier "overig" krijgen. Nu zijn ze
+en / nl / und / und.
+
+
+=== STOP ===
+
+Rapporteer per punt de controle-uitkomst, en de volledige scores op
+decibel_50_answerkey.csv voor en na (taal, has_question, answered, sentiment_start,
+sentiment_end, main_topic, subtopic). Voer punt 5 uit een eerdere opdracht (CardiffNLP)
+NOG NIET uit -- dat verandert sentiment materieel en wil ik apart meten.
