@@ -1,0 +1,102 @@
+Conversation language distribution:
+- nl: 64.0% (32/50)
+- en: 14.0% (7/50)
+- de: 6.0% (3/50)
+- overig: 8.0% (4/50)
+- und: 8.0% (4/50)
+Multilingual conversations: 1
+Conversations combined: 50
+Columns: 20
+Combined output: /Users/jonathan/Downloads/Jupyter-Notebook-Project-main/results/decibel_50_all_processors.csv
+jonathan@Jonathans-MacBook-Air Jupyter-Notebook-Project-main % caffeinate -i uv run python run_all_processors.py \
+  notebooks/decibel_conversations.csv \
+  --output results/decibel_conversations_all_processors.csv \
+  --processor-output results/decibel_conversations_processors
+Traceback (most recent call last):
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 179, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 167, in main
+    combined = run_all_processors(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 94, in run_all_processors
+    safe_data = momants_sentiment.load_momants_csv(source)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_sentiment.py", line 135, in load_momants_csv
+    raise FileNotFoundError(f"CSV file not found: {path}")
+FileNotFoundError: CSV file not found: notebooks/decibel_conversations.csv
+jonathan@Jonathans-MacBook-Air Jupyter-Notebook-Project-main % caffeinate -i uv run python run_all_processors.py \
+  decibel_conversations.csv \
+  --output results/decibel_conversations_all_processors.csv \
+  --processor-output results/decibel_conversations_processors
+Traceback (most recent call last):
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 179, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 167, in main
+    combined = run_all_processors(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/run_all_processors.py", line 94, in run_all_processors
+    safe_data = momants_sentiment.load_momants_csv(source)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_sentiment.py", line 135, in load_momants_csv
+    raise FileNotFoundError(f"CSV file not found: {path}")
+FileNotFoundError: CSV file not found: decibel_conversations.csv
+jonathan@Jonathans-MacBook-Air Jupyter-Notebook-Project-main % find . -type f \( -iname '*decibel*' -o -iname '*conversation*' \) -print
+./decibel_messages_processors/sentiment_per_conversation_20260904_134348_351252.csv
+./decibel_messages.csv
+./__pycache__/momants_conversation_filter.cpython-311.pyc
+./results/intents_per_conversation_20260903_082048_246884.csv
+./results/language_per_conversation_20260903_133424_113417.csv
+./results/topics_per_conversation_20260903_124940_675681.csv
+./results/topics_per_conversation_20260903_093818_150851.csv
+./results/topics_per_conversation_20260903_084910_846083.csv
+./results/topics_per_conversation_20260903_085235_291194.csv
+./results/topics_per_conversation_20260903_130436_929021.csv
+./results/archive/intents_per_conversation_legacy.csv
+./results/archive/sentiment_per_conversation_legacy.csv
+./results/archive/answer_check_per_conversation_legacy.csv
+./results/archive/answer_check_per_conversation_20260901_144719_679747.csv
+./results/sentiment_per_conversation_20260901_143523_626453.csv
+./results/topics_per_conversation_20260903_122012_150941.csv
+./results/decibel_50_four_corrections_final/sentiment_per_conversation_20260904_091101_561183.csv
+./results/decibel_50_four_corrections_final/topics_per_conversation_20260904_091132_936600.csv
+./results/decibel_50_four_corrections_final/language_per_conversation_20260904_091149_308725.csv
+./results/decibel_50_four_corrections_final/intents_per_conversation_20260904_091131_156759.csv
+./results/conversations_200_all_processors.csv
+./results/topics_per_conversation_20260903_124142_917857.csv
+./results/decibel_50_four_corrections_processors/language_per_conversation_20260904_090749_465144.csv
+./results/decibel_50_four_corrections_processors/sentiment_per_conversation_20260904_090723_456765.csv
+./results/decibel_50_four_corrections_processors/intents_per_conversation_20260904_090729_905360.csv
+./results/decibel_50_four_corrections_processors/topics_per_conversation_20260904_090731_138732.csv
+./results/decibel_50_four_corrections_processors/sentiment_per_conversation_20260904_090644_468972.csv
+./results/decibel_50_four_corrections_processors/language_per_conversation_20260904_090849_998032.csv
+./results/conversations_200_processors/language_per_conversation_20260904_094158_419920.csv
+./results/conversations_200_processors/intents_per_conversation_20260904_094137_379393.csv
+./results/conversations_200_processors/topics_per_conversation_20260904_094139_916131.csv
+./results/conversations_200_processors/sentiment_per_conversation_20260904_094102_096986.csv
+./results/intents_per_conversation_20260901_143514_018516.csv
+./results/conversations_200_processors_latest/language_per_conversation_20260904_095152_941013.csv
+./results/conversations_200_processors_latest/intents_per_conversation_20260904_095134_467872.csv
+./results/conversations_200_processors_latest/topics_per_conversation_20260904_095137_148030.csv
+./results/conversations_200_processors_latest/sentiment_per_conversation_20260904_095100_139083.csv
+./results/decibel_50_processors/language_per_conversation_20260904_141127_285931.csv
+./results/decibel_50_processors/topics_per_conversation_20260904_141106_925145.csv
+./results/decibel_50_processors/topics_per_conversation_20260904_082238_241951.csv
+./results/decibel_50_processors/intents_per_conversation_20260904_082237_126202.csv
+./results/decibel_50_processors/language_per_conversation_20260904_082259_130213.csv
+./results/decibel_50_processors/intents_per_conversation_20260904_141106_068007.csv
+./results/decibel_50_processors/sentiment_per_conversation_20260904_141050_091794.csv
+./results/decibel_50_processors/sentiment_per_conversation_20260904_082210_729999.csv
+./results/topics_per_conversation_20260903_092940_962119.csv
+./results/answer_check_per_conversation_20260901_143540_644215.csv
+./results/topics_per_conversation_20260903_112307_899762.csv
+./results/topics_per_conversation_20260903_124315_938524.csv
+./results/decibel_50_all_processors.csv
+./results/decibel_50_four_corrections.csv
+./attached_assets/conversations_200_1788514819128.csv
+./attached_assets/0_decibel_50_answerkey_1788511548045.csv
+./data/tests/conversations_100.csv
+./notebooks/decibel_50_conversations.csv
+./momants_conversation_filter.py
+jonathan@Jonathans-MacBook-Air Jupyter-Notebook-Project-main % 

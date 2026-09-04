@@ -126,3 +126,24 @@ mtime_ms = 1788515514772
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/0e2c1167-aec0-44f7-b1ad-2c0435095ff1/2177d9e4-4382-4ba3-ae31-4c5d92e81a73"
 storage_version_token = "1788515524919624"
 content_type = "text/csv"
+
+[[outputs]]
+id = "bLgxCbP5Fzbom8OV7HOQa"
+uri = "file://results/decibel_messages_all_processors.csv"
+type = "table"
+title = "Decibel – alle processors"
+description = "Eén gecombineerde CSV met 50 unieke, op conversation_id gesorteerde gesprekken en resultaten van alle vijf processors."
+logical_id = "8d6424de-2cf7-4932-868c-963fe379aad2"
+content_hash = "sha256:b855c2c41d201617dbf00cb532ce76e397ba250187c5fedc64b5d8e2f0ac5777"
+size = 23357
+mtime_ms = 1788520506271
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/8d6424de-2cf7-4932-868c-963fe379aad2/cc5872cc-e6d0-435f-a35e-363d27e1e10c"
+storage_version_token = "1788520516206558"
+content_type = "text/csv"
+
+[[outputs]]
+id = "p9jKqfI8BQUSIja09GkCW"
+uri = "file://model/momants-intentie/model.safetensors"
+type = "unspecified"
+title = "Momants intentiemodel voor lokale Mac-run"
+description = "Het volledige geldige safetensors-bestand. Download dit bestand en vervang daarmee model/momants-intentie/model.safetensors in je lokale projectmap."

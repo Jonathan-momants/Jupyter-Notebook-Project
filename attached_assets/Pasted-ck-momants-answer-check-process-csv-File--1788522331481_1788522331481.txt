@@ -1,0 +1,63 @@
+ck = momants_answer_check.process_csv(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_answer_check.py", line 650, in process_csv
+    summary = create_conversation_summary(data, batch_size=batch_size)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_answer_check.py", line 570, in create_conversation_summary
+    classified_visitors = _classify_visitor_messages(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_answer_check.py", line 178, in _classify_visitor_messages
+    classified = classify_messages(
+                 ^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/momants_intent.py", line 190, in classificeer_berichten
+    model = SetFitModel.from_pretrained(pad, local_files_only=True)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/huggingface_hub/hub_mixin.py", line 568, in from_pretrained
+    instance = cls._from_pretrained(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/setfit/modeling.py", line 752, in _from_pretrained
+    model_body = SentenceTransformer(model_id, **sentence_transformers_kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/sentence_transformer/model.py", line 188, in __init__
+    super().__init__(
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/model.py", line 222, in __init__
+    modules, self.module_kwargs = self._load_modules(
+                                  ^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/model.py", line 1023, in _load_modules
+    return self._load_config_modules(model_name_or_path, **load_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/model.py", line 1229, in _load_config_modules
+    module = module_class.load(
+             ^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/modules/transformer.py", line 2130, in load
+    return cls(model_name_or_path=model_name_or_path, **init_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/util/decorators.py", line 87, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/modules/transformer.py", line 654, in __init__
+    self.model = self._load_model(
+                 ^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/sentence_transformers/base/modules/transformer.py", line 1836, in _load_model
+    return model_cls.from_pretrained(model_name_or_path, config=config, **model_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/transformers/models/auto/auto_factory.py", line 604, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/transformers/modeling_utils.py", line 277, in _wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jonathan/Downloads/Jupyter-Notebook-Project-main/.venv/lib/python3.11/site-packages/transformers/modeling_utils.py", line 4925, in from_pretrained
+    with safe_open(checkpoint_files[0], framework="pt") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+safetensors._safetensors_rust.SafetensorError: Error while deserializing header: header too large
+jonathan@Jonathans-MacBook-Air Jupyter-Notebook-Project-main % 
