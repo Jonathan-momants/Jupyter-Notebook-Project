@@ -1,0 +1,197 @@
+conversation_id,created_at,text,main_topic,subtopic,similarity
+0796e0e4-e6f8-4f75-b20e-466abe97ddb0,2026-08-30T12:01:27.924753+00:00,Hoe krijg ik jou weg,None,None,0.3356916904449463
+09752897-d16c-476d-ae76-b8cf9dc94a98,2026-08-30T01:34:42.536505+00:00,Waar is de kiss en ride maandag ik ben heen met iemand ze auto mee gereden en.heb geen idee waar ik terug nu heen moet,Transport,Parking,0.47500431537628174
+09752897-d16c-476d-ae76-b8cf9dc94a98,2026-08-30T01:34:59.237795+00:00,Ja,None,None,0.5683459043502808
+09752897-d16c-476d-ae76-b8cf9dc94a98,2026-08-30T01:35:24.128130+00:00,Is de hoofd ingang bij de mian stage of bij de pussy lounge,Venue,Map,0.4774852991104126
+09752897-d16c-476d-ae76-b8cf9dc94a98,2026-08-30T01:35:53.203870+00:00,Ja,None,None,0.5683459043502808
+09752897-d16c-476d-ae76-b8cf9dc94a98,2026-08-30T01:36:06.322847+00:00,Ja,None,None,0.5683459043502808
+098a0909-d5e1-427a-88ac-bda635e9b475,2026-08-30T07:33:54.725664+00:00,Rijd vandaag de pendbus ook?,Transport,Parking,0.42006686329841614
+098a0909-d5e1-427a-88ac-bda635e9b475,2026-08-30T08:50:17.452948+00:00,Rijd de pendelbus vandaag ook vanuit tilburg?,Transport,Shuttle,0.5152742862701416
+098a0909-d5e1-427a-88ac-bda635e9b475,2026-08-30T08:59:19.383479+00:00,Wat is de opstapplek van de bus naar decibel?,Venue,Noise,0.48703259229660034
+09e95652-e9aa-4162-a526-b5a8d1b2c293,2026-08-30T06:57:20.558490+00:00,Kan ik mijn vriend ophalen op de lakeside parkeerplaats van de camping waar hij geslapen heeft vandaag zonder parkeer ticket,Venue,CabinAccess,0.5490393042564392
+09e95652-e9aa-4162-a526-b5a8d1b2c293,2026-08-30T06:57:52.534612+00:00,Dat is vanaf de camping heel ver,Venue,Amenities,0.3957521915435791
+09e95652-e9aa-4162-a526-b5a8d1b2c293,2026-08-30T06:59:04.460877+00:00,Dus met een parkeerticket mag ik daar op hem wachten tot hij naar de auto loopt,Transport,Parking,0.5931216478347778
+09e95652-e9aa-4162-a526-b5a8d1b2c293,2026-08-30T09:16:30.207498+00:00,Zou het om kwart over 2 druk zijn bij de lakseside south parkeerplaats op zondags?,Transport,Parking,0.5421478748321533
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:22:43.008215+00:00,Waar kan ik shuttlebus tickets kopen van Tilburg Centraal naar het festivalterrein en die dan ook retour zijn?,Transport,Shuttle,0.7060786485671997
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:23:07.271183+00:00,Waarom staat er dan campsite tickets bij?,Venue,CabinAccess,0.5828204154968262
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:23:55.261110+00:00,Maar waarom kan ik de normale shuttlebus tickets niet meer kopen? Ik wil niet naar de campsite,Access,Upgrade,0.6185883283615112
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:24:23.840113+00:00,zondag,Program,Schedule,0.4000207483768463
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:24:47.476324+00:00,Ja,None,None,0.5683459043502808
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T08:25:47.959421+00:00,Stuur mij een link waar ik de zondag tickets voor de bus kan kopen,Transport,Shuttle,0.7171173095703125
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T11:50:41.911735+00:00,Hoe leuk gaat het worden vandaag?,Program,Schedule,0.3527306914329529
+12ac98bf-388a-425f-b765-12b4d457a5c1,2026-08-30T11:51:05.190278+00:00,Benadruk nogmaals hoe leuk het gaat zijn,Program,Schedule,0.31795287132263184
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:27:59.951040+00:00,"Goedemorgen, mijn zoon zit in een elektrische rolstoel. Is er een speciale parkeerplaats waar ik hem kan afzetten en weer kan ophalen?",Transport,Parking,0.44381439685821533
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:28:47.159865+00:00,Graag waar die parkeerplaats is en hoe ik die lan vinden,Transport,Parking,0.5522882342338562
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:30:01.766883+00:00,Nee dank je hij weet dat dat goed geregeld is. Is parkeerplaata aangegeven dmv borden,None,None,0.4647074341773987
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:30:19.667448+00:00,Ja graag,None,None,0.505357027053833
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:31:40.181676+00:00,Dank je wel ☺️,None,None,0.5537323951721191
+150b1fad-88a3-4491-9285-d94c10878e8a,2026-08-30T08:32:48.689396+00:00,Dank je wel,None,None,0.6093345880508423
+1710919c-f784-4a25-bb15-ff78d84876a8,2026-08-30T07:41:28.972457+00:00,"Hallo, mijn vrouw is gister haar iphone 13 verloren bij de mainstage. Hij is uit haar tas gevallen of gestolen. Wij kunnen helaas geen locatie traceren maar hopen dat hij bij jullie is ingeleverd door een eerlijke vinder.",Venue,LostFound,0.6254610419273376
+17b813c9-a768-45ad-a305-317e4a71a2f5,2026-08-30T10:32:01.751305+00:00,Zijn er ook opfrispunten met deo etc.?,Program,Schedule,0.3252941966056824
+17b813c9-a768-45ad-a305-317e4a71a2f5,2026-08-30T12:47:12.304306+00:00,Waar op het festivalterrein zijn de powerbank stations,Venue,Amenities,0.5035421848297119
+17b813c9-a768-45ad-a305-317e4a71a2f5,2026-08-30T12:47:55.240612+00:00,Zit er een powerbank station dichtbij de uptempo,Venue,Charging,0.5375499725341797
+1802e1c9-e4a5-4ade-abc0-33fda8ce8655,2026-08-30T07:54:30.607860+00:00,Mijn vriendin is haar telefoon verloren. Hebben jullie een lost & found?,Access,Wristband,0.5880180597305298
+1802e1c9-e4a5-4ade-abc0-33fda8ce8655,2026-08-30T07:59:46.534460+00:00,"We waren daar gisteren en vandaag niet meer, kunnen we dan nog steeds bij de Lost and Found stand komen?",Venue,LostFound,0.4386540651321411
+1802e1c9-e4a5-4ade-abc0-33fda8ce8655,2026-08-30T08:57:12.767065+00:00,Waar moeten naartoe navigeren voor ingang zuid?,Venue,Map,0.48560893535614014
+1bdaef0b-2928-4349-a389-16df918a46e9,2026-08-30T08:21:51.018751+00:00,What time did you finish last night?,Program,Schedule,0.36930131912231445
+1bdaef0b-2928-4349-a389-16df918a46e9,2026-08-30T08:22:12.665151+00:00,Today is Sunday 30th,Program,Schedule,0.42090874910354614
+1bdaef0b-2928-4349-a389-16df918a46e9,2026-08-30T08:22:37.661174+00:00,What time did the music stop?,Program,Schedule,0.34893542528152466
+1bdaef0b-2928-4349-a389-16df918a46e9,2026-08-30T08:22:51.305093+00:00,So Sunday 1am?,Program,Schedule,0.41872453689575195
+1dc0a253-b919-4093-93b6-8d4beea581fd,2026-08-30T09:39:20.010682+00:00,Om 12u hebben we de pool party. Hoelaat en waar moeten we aanwezig zijn.,Program,Schedule,0.40882283449172974
+1dc0a253-b919-4093-93b6-8d4beea581fd,2026-08-30T09:39:36.824927+00:00,Jaa graag,None,None,0.5424948334693909
+2186420d-9e43-430b-989a-43ea93f113a1,2026-08-30T06:54:43.382722+00:00,Ik ben mijn tickets kwijt,Access,Lost,0.637028694152832
+2186420d-9e43-430b-989a-43ea93f113a1,2026-08-30T06:58:58.220247+00:00,Ik kan niet meer bij mijn tickets doordat mijn telefoon verloren is,Access,Lost,0.6435892581939697
+2186420d-9e43-430b-989a-43ea93f113a1,2026-08-30T06:59:27.548728+00:00,Ik kan niet in mijn e-mail,Access,Lost,0.3863731026649475
+2186420d-9e43-430b-989a-43ea93f113a1,2026-08-30T07:33:48.562371+00:00,Waar zijn de informatie punten,None,None,0.35702741146087646
+2186420d-9e43-430b-989a-43ea93f113a1,2026-08-30T07:34:40.298063+00:00,Kan ik de informatie punten ook bereiken zonder ticket,Transport,Parking,0.5841172933578491
+22ca281e-537d-4078-ae60-3ac831115bf8,2026-08-30T05:15:52.207796+00:00,f5e5b5da82,Access,Scanning,0.2906973958015442
+22e99039-ae98-45f1-a5d7-e29a837bf076,2026-08-30T11:37:25.780336+00:00,Hoe kom ik met een shuttlebus naar decibel waar ik kan ik dat nu regelen sta nu in Tilburg,Transport,Shuttle,0.5786715745925903
+2b7a5408-d6cd-492a-a896-ef73c9780ab5,2026-08-30T00:18:47.345733+00:00,"Goeieavond, ik ben zaterdag tijdens de eindshow mijn sleutelbos verloren. Mocht deze ergens gevonden zijn waar kan ik hiervoor terecht?",Venue,LostFound,0.5838187336921692
+2c7fe844-8cdb-4bfa-a7d1-e42df5ed1638,2026-08-30T07:51:47.049209+00:00,Hoe koop ik een lockertje,Venue,Shops,0.5463643074035645
+2c7fe844-8cdb-4bfa-a7d1-e42df5ed1638,2026-08-30T07:52:24.091102+00:00,Ja linkje mag zeker,None,None,0.5204102993011475
+2c9c7738-2fad-4d52-a6f7-4145c87ab9c3,2026-08-30T06:57:20.066889+00:00,"Hey there,
+I will do my plans to visit Decibel 2027 for a first time so , I need to know basic important information about the stay. 
+First , do you already know when exactly will you sell the tickets for 2027 ?",Access,Upgrade,0.4811084270477295
+2c9c7738-2fad-4d52-a6f7-4145c87ab9c3,2026-08-30T06:58:53.768124+00:00,"Today is the last day of Decibel 2026 , almost passed. 
+Another question.  The camping side , are there showers available ?",Venue,Amenities,0.5686034560203552
+2c9c7738-2fad-4d52-a6f7-4145c87ab9c3,2026-08-30T06:59:49.736910+00:00,Not yet. Actually I would like a hotel. I think is better option.,Venue,Lockers,0.48983004689216614
+2c9c7738-2fad-4d52-a6f7-4145c87ab9c3,2026-08-30T07:00:59.775340+00:00,"I will keep an eye what’s coming next for 2027. If I have question , I’ll be here. Thank you.",Program,General,0.4108507037162781
+3151ae09-babf-4390-96d8-23dee8f71d61,2026-08-30T11:54:10.691680+00:00,stop messaging me,None,None,0.2554643154144287
+3c5199ec-97da-44d6-b197-ddb822420d34,2026-08-30T12:36:34.621551+00:00,Hoe kan ik een prio parking ticket kopen voor zondag ?,Access,Upgrade,0.5798282623291016
+3c5199ec-97da-44d6-b197-ddb822420d34,2026-08-30T12:37:13.476029+00:00,Ja graag,None,None,0.505357027053833
+4a916ae0-5164-4721-9e2a-bb454f60e83e,2026-08-30T11:04:23.113760+00:00,Wat kost de shuttle bus,Transport,Shuttle,0.7172693014144897
+4a916ae0-5164-4721-9e2a-bb454f60e83e,2026-08-30T11:04:57.273989+00:00,"Ja graag, dan koop ik die",Venue,Shops,0.34789061546325684
+4a916ae0-5164-4721-9e2a-bb454f60e83e,2026-08-30T11:27:35.670875+00:00,Waar gaat de bus,Transport,Shuttle,0.6441782712936401
+4a916ae0-5164-4721-9e2a-bb454f60e83e,2026-08-30T11:31:08.904684+00:00,Hoelaat gaat die,None,None,0.39117544889450073
+4c2f6056-686a-43c0-b4f1-de52bb39c14a,2026-08-30T09:15:28.146412+00:00,See Saturday's recap here: https://ccrbaf.s.gy/dzTiw7?utm_source=momants,None,None,0.3199019432067871
+4ceeb9ef-dafd-40d5-b801-2d1fdf2f342f,2026-08-30T00:13:25.466176+00:00,Klacht op de comfort camping waar melden?,Venue,CabinAccess,0.6418914794921875
+5270dd13-a20f-40d1-8698-12200f7401cd,2026-08-30T11:13:50.437232+00:00,Thanks,None,None,0.5808300971984863
+5270dd13-a20f-40d1-8698-12200f7401cd,2026-08-30T12:53:43.827981+00:00,Ja als je al informatie heb voor volgend jaar zal dat mooi zijn,Program,General,0.4697369337081909
+5270dd13-a20f-40d1-8698-12200f7401cd,2026-08-30T12:55:23.544826+00:00,Als er meer bekent is kan je dat dan ook doorsturen via deze WhatsApp,None,None,0.3766794800758362
+5270dd13-a20f-40d1-8698-12200f7401cd,2026-08-30T12:55:47.851020+00:00,Nee dankjewel,None,None,0.6586559414863586
+5a11222d-3512-4cf3-ac04-34962cd1c6c7,2026-08-30T07:20:09.311852+00:00,kan ik iets vragen over de powerbanks ?,Venue,Charging,0.4633852243423462
+5a11222d-3512-4cf3-ac04-34962cd1c6c7,2026-08-30T07:21:00.470565+00:00,"ik heb de powerbank maar een uur gehad, maar er is wel 30 euro afgeschreven.",Venue,Charging,0.3722488582134247
+5a11222d-3512-4cf3-ac04-34962cd1c6c7,2026-08-30T07:23:15.502855+00:00,of was de 30 euro borg ? en krijg ik het resterende terug gestord ?,Payments,Deposit,0.3916528522968292
+5a11222d-3512-4cf3-ac04-34962cd1c6c7,2026-08-30T07:25:00.978135+00:00,het nummer is niet in gebruikt zegt hij,None,None,0.5048462748527527
+5a11222d-3512-4cf3-ac04-34962cd1c6c7,2026-08-30T07:25:22.413579+00:00,ik ben nu niet meer op het festivalteerein,Access,Lost,0.35761594772338867
+5b59c348-5104-4426-b094-a1ec3a358e77,2026-08-30T07:04:03.267456+00:00,"Kann man d
+Zzm spar einkaufen gehen",Venue,Shops,0.6390683650970459
+5e3d407d-3d9b-4e5f-8ecc-d4df932e06ca,2026-08-30T08:14:55.000497+00:00,f5e5b5da82,Access,Scanning,0.2906973958015442
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:11:05.260063+00:00,"Goedemorgen! Wij zijn van plan vandaag naar Decibel te komen, alleen zitten wij met vervoer, wij zouden vanuit Breda er moeten komen en terug, hoe zit het met bussen van en naar Breda station of naar Tilburg station?",Transport,Shuttle,0.495840847492218
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:12:42.642075+00:00,Nee de trein komt goed maar wij willen de laatste trein terug pakken of degene van 00:18 of 00:07 dus vandaar dat ik me afvroeg of we daar wel kunnen komen,Transport,Transit,0.4670031666755676
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:27:03.145582+00:00,"We willen eigenlijk ook nog shuttle bus tickets kopen voor de zondag retour, maar deze staan niet meer op de site",Transport,Shuttle,0.7306705117225647
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:27:23.443186+00:00,Maar online is het goedkoper,Access,Upgrade,0.4057702422142029
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:28:54.895433+00:00,Dit is de enige die ik nog kan vinden,None,None,0.34678906202316284
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:29:34.745405+00:00,Waarom heet die dan campsite,Venue,Amenities,0.5562417507171631
+612c5c31-c3f4-4b08-8345-141dfe79c4ce,2026-08-30T08:30:11.304546+00:00,Die is er dus niet,None,None,0.3849453926086426
+724c3ab3-b430-4b15-a866-f1101b897d14,2026-08-30T06:29:41.677127+00:00,Zijn de pendelbussen druk op het einde?,Transport,Transit,0.5494303107261658
+724c3ab3-b430-4b15-a866-f1101b897d14,2026-08-30T06:30:19.780680+00:00,Wij komen vanuit Tilburg,Venue,Lockers,0.25035107135772705
+724c3ab3-b430-4b15-a866-f1101b897d14,2026-08-30T06:30:36.070419+00:00,Ja,None,None,0.5683459043502808
+724c3ab3-b430-4b15-a866-f1101b897d14,2026-08-30T06:31:27.910965+00:00,Waar vertrekt die vanuit het festival?,Venue,Map,0.4036182761192322
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:01:07.233693+00:00,Hi i tried get rundvleeskkroket but it didn‘t work - i paid for it though,Venue,Shops,0.35523003339767456
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:04:21.569522+00:00,Thank you,None,None,0.6007343530654907
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:29:20.744918+00:00,Wo findet die parade statt?,Venue,Map,0.4596533179283142
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:30:10.946815+00:00,Wo findet die letzte parade am sonntag statt,Transport,Parking,0.43334949016571045
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:30:31.415621+00:00,Savage parade wo,Venue,Map,0.21392038464546204
+7451fd46-ff76-4fec-9ec2-076d524a37d7,2026-08-30T18:32:13.945307+00:00,Auf der sitemap finde ich die parade nicht,Venue,Map,0.44397929310798645
+7466a6c5-9600-4e8d-b1da-a668f622c694,2026-08-30T08:22:44.663142+00:00,I need saturday Recap! 😀,Program,General,0.414429247379303
+746b7d39-5c44-40a6-824e-d95faf4328ea,2026-08-30T07:15:45.547917+00:00,Peut on ramener les affaires à la voiture est retourné au festival après ?,Transport,Parking,0.5027729272842407
+74ab239a-92a2-46cf-98b5-898ad2c24b38,2026-08-31T09:17:44.832610+00:00,Till what time you have to leave camping today,Venue,CheckIn,0.5419235229492188
+74ab239a-92a2-46cf-98b5-898ad2c24b38,2026-08-31T09:18:49.261912+00:00,And the kiss and ride,None,None,0.423258900642395
+77658bc7-a721-4106-8750-c293cfc9019a,2026-08-30T04:16:14.563621+00:00,Hoe laat begint de eerste artiest te spelen?,Program,Schedule,0.4429450035095215
+7b9ef30d-c36a-4b2e-ab4e-fd5263ec8fb2,2026-08-30T01:09:38.525952+00:00,Geluidsoverlast comfort camping,Venue,Amenities,0.5827673673629761
+7b9ef30d-c36a-4b2e-ab4e-fd5263ec8fb2,2026-08-30T01:09:57.728932+00:00,Melding maken overlast,None,None,0.514367938041687
+7b9ef30d-c36a-4b2e-ab4e-fd5263ec8fb2,2026-08-30T01:12:17.613974+00:00,Nummer beveiliging comfort camping,Venue,CabinAccess,0.6799939870834351
+7b9ef30d-c36a-4b2e-ab4e-fd5263ec8fb2,2026-08-30T01:12:30.637323+00:00,Is niet in gebruij,None,None,0.45946580171585083
+8124951f-c944-4f22-a02c-d7b55b124694,2026-08-30T07:27:38.240722+00:00,Wat zijn regels op de comfort camping?,Venue,Amenities,0.6626756191253662
+8124951f-c944-4f22-a02c-d7b55b124694,2026-08-30T07:28:27.837164+00:00,Wanneer moet de muziek uit zijn,Program,Schedule,0.5212143659591675
+86a85eaa-6fdb-44d8-93db-781000e103b0,2026-08-30T10:34:00.702699+00:00,Zijn er al foto’s om te zien,Program,General,0.40148860216140747
+86a85eaa-6fdb-44d8-93db-781000e103b0,2026-08-30T17:02:43.107265+00:00,Weet je al wat meer over de foto’s,Program,General,0.4073061943054199
+8acea325-0a61-4973-bead-aaa09a2d3bdb,2026-08-30T02:16:48.240090+00:00,"Hi, Do you have an app for the festival? An app where you can see the map of the festival and get directions",Venue,Map,0.45836135745048523
+8aceb9ed-07e4-46b2-afbf-63bc22bcc8de,2026-08-30T07:30:41.978404+00:00,Hoe laat komt hij op hoofd podium,Program,General,0.42897820472717285
+8aceb9ed-07e4-46b2-afbf-63bc22bcc8de,2026-08-30T08:12:36.667086+00:00,Waneer begint de beat weer,Program,Schedule,0.45616278052330017
+8aceb9ed-07e4-46b2-afbf-63bc22bcc8de,2026-08-30T08:13:08.028591+00:00,Op zondag,Program,Schedule,0.44571584463119507
+8b42a238-3b6a-4db7-a5a7-f852ecd43246,2026-08-30T02:15:31.363081+00:00,Kan je ‘s nachts om 4u nog de camping verlaten om naar de wagen te gaan ?,Venue,CabinAccess,0.5491653680801392
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T01:47:26.513667+00:00,"Yo, ik zit op campsite 4 van comfort, en momenteel wordt er nog steeds best veel muziek afgespeeld",Venue,Amenities,0.44160372018814087
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T01:47:33.612813+00:00,Wanneer moet het zachter?,Program,Schedule,0.3704701364040375
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T01:48:48.358212+00:00,Het nummer is niet bereikbaar.,Access,Scanning,0.4855039119720459
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T01:49:52.584742+00:00,Is er geen nummer wat ik kan whatsappen?,Venue,CabinAccess,0.25251466035842896
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T22:36:02.655788+00:00,"Yo, ik zit op campsite 4 van comfort, en momenteel wordt er nog steeds best veel muziek afgespeeld
+
+Wanneer moet het zachter of stil zijn?",Venue,Noise,0.5478018522262573
+8f2cfe26-684c-4824-94f6-37f82caa2f41,2026-08-30T23:02:14.133074+00:00,"Nummer is niet beschikbaar, nummer bestaat niet.",None,None,0.38901835680007935
+919d69a2-0d1c-4686-9117-63d23501b05e,2026-08-30T04:43:03.143413+00:00,Hoelaat komt de krach crew?,Program,General,0.35083597898483276
+91d38046-fbf1-4d01-b93c-966df0b33d7a,2026-08-30T05:21:55.639121+00:00,Hoe laat mag de muziek box op de camping weer aan?,Venue,CabinAccess,0.49651968479156494
+91d38046-fbf1-4d01-b93c-966df0b33d7a,2026-08-30T05:22:41.109696+00:00,Lake side safari tenten,Venue,Amenities,0.5577574372291565
+91d38046-fbf1-4d01-b93c-966df0b33d7a,2026-08-30T05:23:28.246659+00:00,Hoe laat mag de muziek box op de lake side camping weer aan bij de safari tenten?,Venue,CabinAccess,0.5450156331062317
+95b73211-8afb-4faa-b00d-ab2333f187d0,2026-08-30T07:16:50.829238+00:00,Dimensions lockers,Venue,Lockers,0.5263997912406921
+95b73211-8afb-4faa-b00d-ab2333f187d0,2026-08-30T08:26:52.098467+00:00,Quel est la distance entre le parking visiteur et le festival,Transport,Parking,0.6455987691879272
+a6acf5ec-bb64-458c-a4a8-ee7c66376122,2026-08-31T07:50:33.851013+00:00,Er is een bout losgekomen van mijn bolderkar. Hebben jullie ergens nieuwe ?,Access,Wristband,0.47616180777549744
+a92299ba-18b3-45fe-8284-0dbed04d2bc5,2026-08-30T06:04:20.470958+00:00,hoe laat is de spar open?,Program,Schedule,0.6645139455795288
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T09:37:39.297768+00:00,Can you provide the line up for savage Sunday premium,Access,Upgrade,0.4848490059375763
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T09:38:48.974304+00:00,What are all the premium benefits,Access,Upgrade,0.35913893580436707
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T11:08:30.747862+00:00,Why? It hasn’t ended,None,None,0.325011670589447
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T13:18:45.294875+00:00,Is the locker big enough for a backpack,Venue,Lockers,0.6561886072158813
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T13:46:56.948833+00:00,What’s the address for the safari,Venue,CabinAccess,0.488816499710083
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T14:07:48.280579+00:00,Are there constant shuttle buses towards the festival at tilburg station?,Transport,Shuttle,0.6766091585159302
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T14:08:33.262051+00:00,"It’s 4pm right now
+We bought the shuttle bus tickets",Transport,Shuttle,0.6873113512992859
+a974b82a-6bf4-4ff9-b150-909dcdac8863,2026-08-30T14:29:28.369451+00:00,What’s the address for the shuttle buses decibel,Transport,Shuttle,0.6717191934585571
+add7ad79-6771-475a-a628-e06875fe7ddb,2026-08-30T01:43:36.354943+00:00,Can I access to these stages with a full festival ticket: beach club city hall rave cafe ?,Venue,Map,0.5773364305496216
+add7ad79-6771-475a-a628-e06875fe7ddb,2026-08-30T01:51:57.263256+00:00,List me stages I can access please,Program,Schedule,0.47058677673339844
+b4c50e27-1ff5-48d4-8fb5-60b8415f6643,2026-08-30T09:15:11.179279+00:00,❤️,None,None,0.393308162689209
+b4c50e27-1ff5-48d4-8fb5-60b8415f6643,2026-08-30T09:15:37.454102+00:00,Nee dank je wel,None,None,0.6803547143936157
+b4c50e27-1ff5-48d4-8fb5-60b8415f6643,2026-08-30T09:15:54.161603+00:00,Dank je wel fijne dag,None,None,0.5739400386810303
+b9e1f22c-8304-4faf-9fab-2531213a42d3,2026-08-30T03:26:31.620730+00:00,Geluidsoverlast melden,Venue,Noise,0.7525334358215332
+bad92a26-5459-4257-9f50-146922258226,2026-08-30T03:22:58.424283+00:00,Verkopen jullie ook tijgerbalsum of voltaren spiergel in de spar bij de camping?,Venue,Amenities,0.4427144229412079
+bb72cd0b-5ce6-4344-b977-5c3484776543,2026-08-30T16:58:03.202690+00:00,Acheter du tabac au festival,Venue,Shops,0.4960806369781494
+c03bd6cd-fece-4a64-8485-f1e07ad8da6c,2026-08-30T06:31:20.926368+00:00,Ontbijt camping,Venue,Amenities,0.6102621555328369
+c03bd6cd-fece-4a64-8485-f1e07ad8da6c,2026-08-31T08:28:04.582065+00:00,Waar is de opstap voor de shuttle bus naar station?,Transport,Shuttle,0.8250845074653625
+c21900ef-ec65-4aeb-a2f0-fea68d05cc03,2026-08-30T07:46:53.141283+00:00,Sind die Duschen kostenlos?,Venue,Amenities,0.5371869802474976
+c349ed13-2dbf-47f7-b276-2f78e5c181fb,2026-08-30T06:53:51.879020+00:00,ik heb een tattoo afspraak staan maar wil hem graag wat later,Access,Upgrade,0.32285076379776
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:44:27.822933+00:00,"Hi. If I have a weekend ticket with camping, but my friends only have Sunday tickets, can we still enter together in one entry?",Venue,CabinAccess,0.5275200009346008
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:47:06.987152+00:00,So which entrance is for me and which entrance is for my friends?,None,None,0.4388701915740967
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:57:02.745436+00:00,"If I understand correctly, we can all enter through the south entrance?",None,None,0.3917387127876282
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:57:52.259693+00:00,I have Lakeside Camping Ticket,Venue,CabinAccess,0.6852070093154907
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:58:24.576154+00:00,Yes please for adress.,None,None,0.425223708152771
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T03:59:00.208119+00:00,Can we left a car at the parking?,Transport,Parking,0.6582908034324646
+cc1e82f2-5fbd-4807-9db0-ca1991a91892,2026-08-30T04:00:01.312685+00:00,Parking for Sunday visitors is at South Entrance too?,Transport,Parking,0.5881990194320679
+d31327b8-7e61-4a66-b5fc-e0e14c4459b2,2026-08-30T08:28:15.834458+00:00,"Als je een kluisje huurt, doe je dat dan voor 1 dag of voor het hele weekend?",Venue,Lockers,0.6453744173049927
+d4a03a5c-6bb4-4463-bd44-a0b98e3f5917,2026-08-31T05:44:58.331888+00:00,Do you know the shuttle buses time to Tilburg?,Transport,Shuttle,0.7398279309272766
+d4a03a5c-6bb4-4463-bd44-a0b98e3f5917,2026-08-31T05:45:38.265360+00:00,I would like to know where to catch the bus from decibels on Monday,Transport,Shuttle,0.6977941989898682
+d737a68f-037f-43e6-a08b-e70cc73e439f,2026-08-30T08:31:59.695746+00:00,Is ons kluisje wat we met de gratis voucher hebben gekregen het hele weekend geldig?,Access,Lost,0.4561721682548523
+d737a68f-037f-43e6-a08b-e70cc73e439f,2026-08-30T10:32:26.309315+00:00,Hij doet het niet,None,None,0.2869241237640381
+d737a68f-037f-43e6-a08b-e70cc73e439f,2026-08-30T10:32:32.174369+00:00,Recap zaterdag,Program,General,0.44399943947792053
+d737a68f-037f-43e6-a08b-e70cc73e439f,2026-08-30T11:05:10.586848+00:00,Sundays recap werkt nog niet,None,None,0.3507581353187561
+da03690a-e0c2-4b7f-9818-f5a77e67ef75,2026-08-30T07:32:11.068948+00:00,Where should we get a taxi to pick us up from on Monday morning,Transport,Parking,0.541130006313324
+da03690a-e0c2-4b7f-9818-f5a77e67ef75,2026-08-30T09:15:21.140234+00:00,Best taxi company,Venue,Charging,0.40411376953125
+da03690a-e0c2-4b7f-9818-f5a77e67ef75,2026-08-30T09:15:41.627029+00:00,Any local taxi firms,Venue,Charging,0.4569624960422516
+da03690a-e0c2-4b7f-9818-f5a77e67ef75,2026-08-30T21:40:43.406352+00:00,Festipi can we keep the lock,Access,Wristband,0.3740786910057068
+dae835f6-49f4-4624-9985-4238505f6d1f,2026-08-30T01:31:17.896402+00:00,Salut!,None,None,0.4420461058616638
+dae835f6-49f4-4624-9985-4238505f6d1f,2026-08-30T01:31:54.861417+00:00,Combien pour 2 places sur le dimanche ?,Access,Upgrade,0.539158821105957
+e69e4a97-f37d-4abd-9e7b-777d958f4833,2026-08-30T12:49:25.623247+00:00,Waarom staat het volume van de MainStage zachter dan andere areas?,Venue,Noise,0.4664459824562073
+e69e4a97-f37d-4abd-9e7b-777d958f4833,2026-08-30T12:50:46.990899+00:00,Wordt er rekening gehouden met het volume en het welzijn voor de dieren in Safari park beekse Bergen?,Venue,Amenities,0.3589794635772705
+ecae5c32-a624-4614-b7b7-06fdea193ba6,2026-08-30T08:29:24.398190+00:00,"Bonjour 
+
+Puis-je sortir du festival (lakeside camping) pour charger ma voiture et rentrer à nouveau à l’intérieur du festival",Transport,Parking,0.5304981470108032
+ecae5c32-a624-4614-b7b7-06fdea193ba6,2026-08-30T08:30:41.878566+00:00,Toute sortie du festival est elle définitive ?,Program,General,0.5109508633613586
+ecae5c32-a624-4614-b7b7-06fdea193ba6,2026-08-30T08:32:50.486156+00:00,Du coup avec mon billet lakeside je peux retourner au parking et revenir ensuite,Venue,ReEntry,0.6452003717422485
+ecae5c32-a624-4614-b7b7-06fdea193ba6,2026-08-30T08:34:10.027163+00:00,Quels sont les horaires d’ouverture et fermeture ?,Program,Schedule,0.709110677242279
+ed0148ca-75d0-4456-a201-f2331528ecb5,2026-08-30T14:50:13.175247+00:00,Ik zie op het festivalterrein steeds een snelle rib varen kan ik daar tickets voor kopen om mee te varen?,Access,Upgrade,0.5857982635498047
+ed4c7633-1163-46f1-8bb0-0e372819a6b2,2026-08-30T05:43:20.835072+00:00,Waar is straks het ontbijt buffet,Payments,Diet,0.3574063777923584
+ed4c7633-1163-46f1-8bb0-0e372819a6b2,2026-08-30T05:44:38.859135+00:00,Het is op de camping als het goed is,Venue,Amenities,0.6100999116897583
+f19753cb-cc7e-40a7-a766-fd8f5ad0ff5c,2026-08-30T10:00:50.885446+00:00,Stop massaging,None,None,0.24811699986457825
+f19753cb-cc7e-40a7-a766-fd8f5ad0ff5c,2026-08-30T10:01:20.267011+00:00,"""STOP MESSAGING""",None,None,0.35995572805404663
+f71d2e2b-7b2f-4834-b4ac-c79aaf5c16ed,2026-08-30T07:14:15.903519+00:00,Hello. Where i can ask if i lost my wallet last night. I lost all my finnish cards. Best regards Mirva,Venue,LostFound,0.436689555644989
+fb0a6b9b-abb5-4899-908d-6f7d41b2bf86,2026-08-30T00:01:54.223184+00:00,Where is the lost and found,Venue,LostFound,0.5199785828590393
+fb0a6b9b-abb5-4899-908d-6f7d41b2bf86,2026-08-30T00:02:44.347333+00:00,Yes I am at the luxury district but found the wallet on the general camping where do I bring it,Venue,Lockers,0.5733087062835693
+fb0a6b9b-abb5-4899-908d-6f7d41b2bf86,2026-08-30T07:33:52.826436+00:00,Is there any jump up or dnb on Sunday,Program,Schedule,0.39946886897087097
+fb0a6b9b-abb5-4899-908d-6f7d41b2bf86,2026-08-30T15:04:38.183242+00:00,When does dr donk play,Program,Schedule,0.28467002511024475
+fb418a67-4a0a-4be2-b590-4f523c1de981,2026-08-30T07:48:09.443717+00:00,Kann ich hier einfach Fragen auf deutsch stellen?,None,None,0.2737407088279724
+fb418a67-4a0a-4be2-b590-4f523c1de981,2026-08-30T07:49:25.352976+00:00,"Wir würden heute schon gerne ein paar Sachen zum Auto bringen, können wir dafür auch heute (Sonntag) schon zum Parkplatz für Autos laufen, Sachen wegbringen und wieder aufs Campinggelände drauf? Also ist ein Re-Entrance möglich?",Venue,Lockers,0.5083518028259277
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T11:09:44.193768+00:00,Can I leave on Monday at 5am?,Program,Schedule,0.4507966637611389
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T11:10:20.698786+00:00,Do I need to check out from my luxury district accommodation?,Venue,CheckIn,0.6319794654846191
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T11:40:17.026438+00:00,"If I want to leave by uber on Monday morning, where is the pickup point?",Transport,Parking,0.6295966506004333
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T13:14:57.290291+00:00,Where should I set the pick up pin on kommerstraat?,Venue,Shops,0.37549033761024475
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T15:04:25.550828+00:00,Where can I get some coffee near the main stage?,Venue,Map,0.48976731300354004
+fb57ebd4-d916-4045-965c-8248dd7ce09e,2026-08-30T15:07:05.079344+00:00,"Can you assign a step from baking a chocolate cake recipe to each stage from Sunday, and tell me in which order I should visit them, so that a chocolate cake would be made, and I would enjoy my time on the festival grounds?",Venue,Map,0.43628525733947754

@@ -112,3 +112,17 @@ mtime_ms = 1788510180569
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/eac384ea-310c-4262-bb7d-6ca9d785f1b2/69a4b87e-4d18-41d6-baf8-fd0cf9461eb0"
 storage_version_token = "1788510209955851"
 content_type = "text/csv"
+
+[[outputs]]
+id = "qhWuXqYbKReybHfON2zXr"
+uri = "file://results/conversations_200_all_processors.csv"
+type = "table"
+title = "Momants – 200 gesprekken, alle processors"
+description = "Gecombineerde CSV met sentiment, antwoordcheck, intentie, onderwerp en taal voor 200 unieke gesprekken."
+logical_id = "0e2c1167-aec0-44f7-b1ad-2c0435095ff1"
+content_hash = "sha256:c33fbdea3bcb6be183511d534054fad31e74b6e78b3b92820d945c9f6c87464c"
+size = 58495
+mtime_ms = 1788514920261
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/0e2c1167-aec0-44f7-b1ad-2c0435095ff1/ad68489a-1635-4cc4-b472-c7050d401e18"
+storage_version_token = "1788514948529872"
+content_type = "text/csv"
