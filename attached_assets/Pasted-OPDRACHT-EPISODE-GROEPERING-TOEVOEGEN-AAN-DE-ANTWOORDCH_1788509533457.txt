@@ -1,0 +1,79 @@
+OPDRACHT — EPISODE-GROEPERING TOEVOEGEN AAN DE ANTWOORDCHECK
+
+De reparatie van de vraagdetectie is gelukt (146 -> 201 gesprekken, 237 -> 413
+behoeften), en percentage_beantwoord en telt_mee zijn correct. Maar het percentage
+beantwoord kwam op 67,2% in plaats van de verwachte 80-88%, en de oorzaak is nu bekend:
+er ontbeert een groeperingsstap. Die stond in een eerdere opdracht en is bij het
+herschrijven weggevallen.
+
+DE DIAGNOSE, MET CIJFERS
+
+    niet beantwoord nu:                            413 - 278 = 135
+    regels in fallback_zinnen.csv:                             63
+    niet beantwoord ZONDER fallback of belofte:                72
+
+72 keer wordt "niet beantwoord" geconcludeerd terwijl er geen fallback in het antwoord
+staat. Dat betekent: er volgde geen agent-antwoord op dat bericht. Maar de agent
+antwoordt altijd. Die 72 zijn dus geen onbeantwoorde vragen maar VERVOLGBERICHTEN binnen
+een lopende vraag, die nu elk als aparte behoefte worden geteld.
+
+Voorbeeld uit de echte data:
+
+    V: "Hoe laat gaat de Shuttel naar Decibel van Tilburg?"
+    A: "...rijdt continu... Wil je ook weten wat de kosten zijn?"
+    V: "Ja"                  <- wordt nu een aparte behoefte
+    A: "EUR 15,00 retour..."
+    V: "Zeker"               <- wordt nu een aparte behoefte
+    A: "...Burgemeester Brokxlaan 6..."
+
+413 behoeften over 201 gesprekken is 2,05 per gesprek: vrijwel elk bezoekersbericht wordt
+apart geteld.
+
+
+DE FIX: VRAAG-EPISODES
+
+De meeteenheid wordt de EPISODE: één informatiebehoefte met alles wat erbij hoort.
+
+Een nieuw bezoekersbericht start alleen een NIEUWE episode als het een nieuwe
+informatiebehoefte is. Het hoort bij de LOPENDE episode als:
+
+  a) de intentie None is (bevestiging, bedankje, smalltalk), OF
+  b) het bericht direct volgt op een agent-antwoord dat zelf een tegenvraag stelt
+     (eindigt op een vraagteken, of bevat "wil je ook weten", "kan ik je ook",
+     "zal ik", "would you like", "shall I"), OF
+  c) het bericht bevat geen eigen informatiebehoefte maar vult de lopende aan
+     ("Ik word opgehaald met de auto", "Tot*", "Ja", "Zeker")
+
+Regel voor c: als de intentie van het bericht gelijk is aan de intentie van de lopende
+episode EN er binnen die episode al een agent-antwoord is geweest, behandel het dan als
+vervolg en niet als nieuwe episode.
+
+Een episode is BEANTWOORD als minstens één antwoord binnen die episode de vraag
+beantwoordt, volgens de regels die al zijn ingebouwd (REPLY_TAKEOVER, kennisantwoord,
+fallback, belofte). Eén fallback halverwege maakt de episode dus niet onbeantwoord als er
+daarna alsnog een echt antwoord komt.
+
+Verander NIETS aan de fallback- en beloftepatronen, aan het ruisfilter of aan de
+intentie-poort. Alleen de groepering komt erbij.
+
+
+VERWACHTING
+
+    behoeften (nu 413)      -> circa 341
+    percentage beantwoord   -> circa 81,5%, in elk geval tussen 80% en 88%
+    gesprekken die meetellen -> blijft 201
+
+Kom je niet in die band, ga dan NIET tunen. Rapporteer in plaats daarvan hoeveel episodes
+er zijn, hoeveel er als "niet beantwoord" gelden ZONDER dat er een fallback- of
+beloftepatroon in zat, en hoeveel episodes helemaal geen agent-antwoord bevatten. Dat
+laatste getal moet na deze fix vrijwel nul zijn.
+
+
+EXTRA CONTROLE
+
+Print de verdeling van het aantal berichten per episode (1, 2, 3, 4+). Als bijna elke
+episode uit één bericht bestaat, werkt de groepering niet, ongeacht wat het percentage
+zegt.
+
+
+STOP en rapporteer. Verander niets aan de intentie-, sentiment-, onderwerp- of taal-as.

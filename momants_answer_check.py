@@ -166,6 +166,20 @@ def detect_questions(
     intent_model: object | None = None,
 ) -> pd.DataFrame:
     """Use the existing intent model to select visitor information needs."""
+    classified = _classify_visitor_messages(
+        data,
+        batch_size=batch_size,
+        intent_model=intent_model,
+    )
+    return classified.loc[classified["intent"].ne("None")].reset_index(drop=True)
+
+
+def _classify_visitor_messages(
+    data: pd.DataFrame,
+    batch_size: int = 32,
+    intent_model: object | None = None,
+) -> pd.DataFrame:
+    """Classify all usable non-button visitor messages once for episode grouping."""
     ordered = _with_message_order(data)
     visitors = select_visitor_messages(ordered)
     normalized_text = visitors["text"].astype(str).str.strip().str.casefold()
@@ -177,88 +191,154 @@ def detect_questions(
         batchgrootte=batch_size,
         model=intent_model,
     )
-    return classified.loc[classified["intent"].ne("None")].reset_index(drop=True)
+    return classified.reset_index(drop=True)
+
+
+def _agent_asks_followup(text: object) -> bool:
+    if pd.isna(text):
+        return False
+    cleaned = str(text).strip().casefold()
+    return bool(
+        cleaned.endswith("?")
+        or any(
+            phrase in cleaned
+            for phrase in (
+                "wil je ook weten",
+                "kan ik je ook",
+                "zal ik",
+                "would you like",
+                "shall i",
+            )
+        )
+    )
 
 
 def pair_questions_with_answers(
     data: pd.DataFrame,
     questions: pd.DataFrame | None = None,
+    classified_visitors: pd.DataFrame | None = None,
     batch_size: int = 32,
     intent_model: object | None = None,
 ) -> pd.DataFrame:
-    """Build one episode per information need using only valid agent replies."""
+    """Group visitor followups and valid agent replies into question episodes."""
     ordered = _with_message_order(data)
-    if questions is None:
-        questions = detect_questions(
+    if classified_visitors is None:
+        classified_visitors = _classify_visitor_messages(
             ordered,
             batch_size=batch_size,
             intent_model=intent_model,
         )
     columns = [
+        "episode_id",
         "conversation_id",
         "question_text",
         "answer_text",
         "has_agent_answer",
         "has_reply_takeover",
         "llm_responses",
+        "visitor_message_count",
     ]
-    pairs: list[dict[str, object]] = []
-    for conversation_id, conversation_questions in questions.groupby(
+    episodes: list[dict[str, object]] = []
+    visitor_by_order = {
+        int(row["_message_order"]): row
+        for row in classified_visitors.to_dict(orient="records")
+    }
+
+    for conversation_id, conversation_messages in ordered.groupby(
         "conversation_id", sort=False
     ):
-        conversation_messages = ordered.loc[
-            ordered["conversation_id"].eq(conversation_id)
-        ]
-        question_rows = conversation_questions.sort_values(
-            ["created_at", "_message_order"], kind="stable"
-        ).to_dict(
-            orient="records"
-        )
-        for question_index, question in enumerate(question_rows):
-            next_order = (
-                question_rows[question_index + 1]["_message_order"]
-                if question_index + 1 < len(question_rows)
-                else float("inf")
-            )
-            episode = conversation_messages.loc[
-                conversation_messages["_message_order"].gt(question["_message_order"])
-                & conversation_messages["_message_order"].lt(next_order)
-                & conversation_messages["created_at"].gt(question["created_at"])
-                & conversation_messages["from_agent"].eq(True)
-            ].copy()
-            episode["_normalized_type"] = episode["message_type"].map(
-                _normalized_message_type
-            )
-            episode = episode.loc[
-                episode["_normalized_type"].isin(ANSWER_MESSAGE_TYPES)
-            ]
-            replies = [
-                str(value).strip()
-                for value in episode["text"]
-                if pd.notna(value) and str(value).strip()
-            ]
-            llm_responses = [
-                str(text).strip()
-                for text, message_type in zip(
-                    episode["text"], episode["_normalized_type"]
-                )
-                if message_type == "LLM_RESPONSE"
-                and pd.notna(text)
-                and str(text).strip()
-            ]
-            has_takeover = episode["_normalized_type"].eq("REPLY_TAKEOVER").any()
-            pairs.append(
-                {
-                    "conversation_id": conversation_id,
-                    "question_text": str(question["text"]).strip(),
-                    "answer_text": " ||| ".join(replies) if replies else None,
-                    "has_agent_answer": bool(replies) or bool(has_takeover),
-                    "has_reply_takeover": bool(has_takeover),
-                    "llm_responses": llm_responses,
-                }
-            )
+        current: dict[str, object] | None = None
+        last_valid_agent_asked_followup = False
 
-    return pd.DataFrame(pairs, columns=columns)
+        def finish_current() -> None:
+            nonlocal current
+            if current is not None:
+                episodes.append(current)
+                current = None
+
+        for message in conversation_messages.to_dict(orient="records"):
+            message_order = int(message["_message_order"])
+            visitor = visitor_by_order.get(message_order)
+            if visitor is not None:
+                intent = str(visitor["intent"])
+                if current is None:
+                    if intent != "None":
+                        current = {
+                            "episode_id": len(episodes) + 1,
+                            "conversation_id": conversation_id,
+                            "_intent": intent,
+                            "_visitor_messages": [str(visitor["text"]).strip()],
+                            "_replies": [],
+                            "has_reply_takeover": False,
+                            "llm_responses": [],
+                        }
+                else:
+                    has_agent_answer = bool(current["_replies"]) or bool(
+                        current["has_reply_takeover"]
+                    )
+                    is_followup = (
+                        intent == "None"
+                        or last_valid_agent_asked_followup
+                        or (
+                            has_agent_answer
+                            and intent == str(current["_intent"])
+                        )
+                    )
+                    if is_followup:
+                        current["_visitor_messages"].append(
+                            str(visitor["text"]).strip()
+                        )
+                    else:
+                        finish_current()
+                        current = {
+                            "episode_id": len(episodes) + 1,
+                            "conversation_id": conversation_id,
+                            "_intent": intent,
+                            "_visitor_messages": [str(visitor["text"]).strip()],
+                            "_replies": [],
+                            "has_reply_takeover": False,
+                            "llm_responses": [],
+                        }
+                last_valid_agent_asked_followup = False
+                continue
+
+            if message["from_agent"] is not True or current is None:
+                continue
+            message_type = _normalized_message_type(message["message_type"])
+            if message_type not in ANSWER_MESSAGE_TYPES:
+                continue
+            text = (
+                str(message["text"]).strip()
+                if pd.notna(message["text"]) and str(message["text"]).strip()
+                else ""
+            )
+            if text:
+                current["_replies"].append(text)
+            if message_type == "REPLY_TAKEOVER":
+                current["has_reply_takeover"] = True
+            elif message_type == "LLM_RESPONSE" and text:
+                current["llm_responses"].append(text)
+            last_valid_agent_asked_followup = _agent_asks_followup(text)
+
+        finish_current()
+
+    rows: list[dict[str, object]] = []
+    for episode_id, episode in enumerate(episodes, start=1):
+        replies = list(episode.pop("_replies"))
+        visitor_messages = list(episode.pop("_visitor_messages"))
+        episode.pop("_intent")
+        rows.append(
+            {
+                **episode,
+                "episode_id": episode_id,
+                "question_text": " ||| ".join(visitor_messages),
+                "answer_text": " ||| ".join(replies) if replies else None,
+                "has_agent_answer": bool(replies)
+                or bool(episode["has_reply_takeover"]),
+                "visitor_message_count": len(visitor_messages),
+            }
+        )
+    return pd.DataFrame(rows, columns=columns)
 
 
 def _matching_pattern_names(
@@ -313,52 +393,83 @@ def classify_question_answer_pairs(
     result["answered"] = False
     result["relevance_score"] = pd.Series(index=result.index, dtype="float64")
     result["answer_rule"] = "geen_geldig_agentantwoord"
+    result["has_fallback_or_promise"] = False
 
     has_takeover = result["has_reply_takeover"].eq(True)
     result.loc[has_takeover, "answered"] = True
     result.loc[has_takeover, "answer_rule"] = "reply_takeover"
 
-    has_llm_response = result["llm_responses"].apply(bool)
-    to_classify = result.index[~has_takeover & has_llm_response]
-    if not to_classify.empty:
-        model = model or CrossEncoder(CROSS_ENCODER_MODEL_ID)
-        combined_llm_answers = result.loc[to_classify, "llm_responses"].apply(
-            lambda responses: " ||| ".join(responses)
-        )
-        question_answer_pairs = list(
-            zip(
-                result.loc[to_classify, "question_text"].astype(str),
-                combined_llm_answers,
+    response_rows: list[dict[str, object]] = []
+    for pair_index in result.index[~has_takeover]:
+        for response in result.at[pair_index, "llm_responses"]:
+            response_rows.append(
+                {
+                    "pair_index": pair_index,
+                    "question_text": str(result.at[pair_index, "question_text"]),
+                    "response": response,
+                }
             )
+
+    if response_rows:
+        model = model or CrossEncoder(CROSS_ENCODER_MODEL_ID)
+        question_answer_pairs = list(
+            (row["question_text"], row["response"]) for row in response_rows
         )
         scores = np.asarray(
             model.predict(question_answer_pairs, batch_size=batch_size),
             dtype=float,
         ).reshape(-1)
-        result.loc[to_classify, "relevance_score"] = scores
-        result.loc[to_classify, "answered"] = scores >= RELEVANCE_THRESHOLD
-        result.loc[to_classify, "answer_rule"] = "llm_response"
+        assessments: dict[int, list[dict[str, object]]] = {}
+        for row, score in zip(response_rows, scores):
+            response = str(row["response"])
+            fallback = _has_fallback([response])
+            promise = _is_promise_without_answer([response])
+            external_channel = _is_external_channel_only([response])
+            response_answered = bool(
+                score >= RELEVANCE_THRESHOLD
+                and not fallback
+                and not promise
+                and not external_channel
+            )
+            assessments.setdefault(int(row["pair_index"]), []).append(
+                {
+                    "score": float(score),
+                    "answered": response_answered,
+                    "fallback": fallback,
+                    "promise": promise,
+                    "external_channel": external_channel,
+                }
+            )
 
-    fallback = ~has_takeover & result["llm_responses"].apply(_has_fallback)
-    result.loc[fallback, "answered"] = False
-    result.loc[fallback, "answer_rule"] = "fallback"
+        for pair_index, response_assessments in assessments.items():
+            result.at[pair_index, "relevance_score"] = max(
+                assessment["score"] for assessment in response_assessments
+            )
+            result.at[pair_index, "has_fallback_or_promise"] = any(
+                assessment["fallback"] or assessment["promise"]
+                for assessment in response_assessments
+            )
+            if any(
+                assessment["answered"] for assessment in response_assessments
+            ):
+                result.at[pair_index, "answered"] = True
+                result.at[pair_index, "answer_rule"] = "llm_response"
+            elif any(
+                assessment["fallback"] for assessment in response_assessments
+            ):
+                result.at[pair_index, "answer_rule"] = "fallback"
+            elif any(
+                assessment["promise"] for assessment in response_assessments
+            ):
+                result.at[pair_index, "answer_rule"] = "belofte_zonder_antwoord"
+            elif any(
+                assessment["external_channel"]
+                for assessment in response_assessments
+            ):
+                result.at[pair_index, "answer_rule"] = "extern_kanaal"
+            else:
+                result.at[pair_index, "answer_rule"] = "llm_response_afgewezen"
 
-    external_channel = (
-        ~has_takeover
-        & ~fallback
-        & result["llm_responses"].apply(_is_external_channel_only)
-    )
-    result.loc[external_channel, "answered"] = False
-    result.loc[external_channel, "answer_rule"] = "extern_kanaal"
-
-    promise_only = (
-        ~has_takeover
-        & ~fallback
-        & ~external_channel
-        & result["llm_responses"].apply(_is_promise_without_answer)
-    )
-    result.loc[promise_only, "answered"] = False
-    result.loc[promise_only, "answer_rule"] = "belofte_zonder_antwoord"
     result["relevance_score"] = result["relevance_score"].round(4)
     return result
 
@@ -435,14 +546,14 @@ def create_conversation_summary(
     conversations = pd.Index(
         data["conversation_id"].drop_duplicates(), name="conversation_id"
     )
-    questions = detect_questions(
+    classified_visitors = _classify_visitor_messages(
         data,
         batch_size=batch_size,
         intent_model=intent_model,
     )
     pairs = pair_questions_with_answers(
         data,
-        questions=questions,
+        classified_visitors=classified_visitors,
         batch_size=batch_size,
         intent_model=intent_model,
     )
@@ -485,7 +596,22 @@ def create_conversation_summary(
         ),
         axis=1,
     )
-    return summary[OUTPUT_COLUMNS]
+    output = summary[OUTPUT_COLUMNS].copy()
+    message_counts = pairs["visitor_message_count"]
+    output.attrs["episode_count"] = len(pairs)
+    output.attrs["episode_message_distribution"] = {
+        "1": int(message_counts.eq(1).sum()),
+        "2": int(message_counts.eq(2).sum()),
+        "3": int(message_counts.eq(3).sum()),
+        "4+": int(message_counts.ge(4).sum()),
+    }
+    output.attrs["unanswered_without_fallback_or_promise"] = int(
+        (~assessed["answered"] & ~assessed["has_fallback_or_promise"]).sum()
+    )
+    output.attrs["episodes_without_agent_answer"] = int(
+        (~pairs["has_agent_answer"]).sum()
+    )
+    return output
 
 
 def process_csv(
