@@ -1,0 +1,351 @@
+text,sentiment,certainty,language,source
+"Ik heb mijn ticketmail niet ontvangen, kun je helpen?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Kan ik de naam op mijn ticket nog wijzigen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Mijn ticket scant niet bij de ingang, dit is al de derde keer dat ik het probeer!",Negative (frustrated),high,nl,answer_key_sentiment_v2
+"Mijn polsbandje is kapot gegaan, wat moet ik nu doen?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Moet ik me kunnen legitimeren bij de leeftijdscontrole?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik mijn dagticket omzetten naar een weekendticket?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe laat rijdt de laatste pendelbus terug naar het station?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+How much does parking cost for the whole weekend?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Waar kan ik mijn fiets stallen dichtbij de ingang?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Gibt es einen Ladepunkt für Elektroautos auf dem Parkplatz?,Neutral (task-oriented),high,de,answer_key_sentiment_v2
+Vanaf hoe laat kunnen we inchecken op de camping?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"We staan al 40 minuten bij de camping-ingang en er gebeurt helemaal niets, dit is echt te gek voor woorden!",Negative (frustrated),high,nl,answer_key_sentiment_v2
+Zijn er stopcontacten op de camping om mijn telefoon op te laden?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Mogen we een gasfles gebruiken om te koken op de camping?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik het terrein even verlaten en later weer terugkomen met hetzelfde bandje?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Waar kan ik een kluisje huren op het terrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Ik ben mijn telefoon kwijtgeraakt gisteravond bij het hoofdpodium, wat nu?",Negative (frustrated),high,nl,answer_key_sentiment_v2
+Hoe kom ik van podium 2 naar de foodtrucks?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is er een plek waar ik mijn powerbank kan opladen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn er ook merchandise-winkels op het terrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Er ligt iemand bewusteloos bij podium 2, we hebben nu hulp nodig!",Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"Er breekt brand uit bij de foodtrucks, help snel!",Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"Mijn dochter is zoek, ik kan haar nergens meer vinden op het terrein.",Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"There's a medical emergency near the main stage, someone collapsed!",Neutral (task-oriented),REVIEW-emergency,en,answer_key_sentiment_v2
+Er is geld van mijn cashcard afgeschreven maar mijn saldo is niet aangepast!,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Ik wil graag het resterende saldo op mijn cashcard terugvragen.,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Krijg ik statiegeld terug voor mijn plastic bekers?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Are there vegan food options available on site?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Hoe laat begint de hoofdact vanavond?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Is er ook randprogrammering overdag, of alleen muziek?",Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Wanneer gaan de tickets voor volgend jaar in de verkoop?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Het geluid bij podium 3 staat zo hard dat het pijn doet aan mijn oren dit kan echt niet!,Negative (frustrated),high,nl,answer_key_sentiment_v2
+De toiletten bij vak 4 zijn al uren niet schoongemaakt het is echt niet meer te doen.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Een van de beveiligers sprak me heel onvriendelijk aan zonder reden dat vind ik echt niet kunnen.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+"Dankjewel, dat helpt!",Positive,high,nl,answer_key_sentiment_v2
+"Dit is geen antwoord op mijn vraag, ik wil dit nu opgelost hebben!",Negative (frustrated),high,nl,answer_key_sentiment_v2
+"Top, bedankt voor de snelle reactie.",Positive,high,nl,answer_key_sentiment_v2
+"Oke duidelijk, dank je.",Positive,high,nl,answer_key_sentiment_v2
+"Thanks, that's helpful!",Positive,high,en,answer_key_sentiment_v2
+"Mijn e-ticket staat niet in mijn mailbox, ook niet in spam.",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+"Ik ben mijn toegangsbewijs verloren tijdens de reis, hoe kom ik binnen?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+I booked last week but never got a confirmation with my ticket.,Neutral (task-oriented),borderline,en,answer_key_sentiment_v2
+Mijn telefoon is gestolen en daar stond mijn kaartje op.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Ich habe meine Buchungsbestätigung nicht bekommen.,Neutral (task-oriented),borderline,de,answer_key_sentiment_v2
+Kan het kaartje op naam van mijn vriendin worden gezet?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Mijn zus gaat in mijn plaats, moet de naam dan gewijzigd worden?",Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is it possible to transfer my booking to someone else?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Ik wil de naamgegevens van mijn reservering aanpassen.,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"De naam op mijn boeking is verkeerd gespeld, kan dat gecorrigeerd worden?",Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+De poortjes geven een rode melding als ik mijn code laat zien.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Mijn QR-code wordt niet gelezen door het apparaat bij de deur.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+The scanner at the entrance keeps rejecting my barcode.,Neutral (task-oriented),borderline,en,answer_key_sentiment_v2
+"Bij de noordingang lukt het scannen niet, moet ik naar een andere ingang?",Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Der Scanner am Eingang akzeptiert meinen Code nicht.,Neutral (task-oriented),borderline,de,answer_key_sentiment_v2
+Mijn bandje zit te los en dreigt eraf te vallen.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+"Ik heb mijn armbandje per ongeluk doorgeknipt, kan ik een nieuw krijgen?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Where do I exchange my ticket for a wristband?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Moet ik mijn bandje ook omhouden als ik overnacht?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Vanaf welke leeftijd mag je zonder begeleiding naar binnen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is een rijbewijs genoeg als identificatie of moet het een paspoort zijn?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Do you check ID at the door for alcohol?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+"Mijn zoon is 16, mag hij mee naar binnen?",Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Ik wil er nog twee kaartjes bij kopen voor vrienden.,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik mijn reservering uitbreiden naar een groter gezelschap?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Can I upgrade to the VIP package after booking?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Is het mogelijk mijn kaartje door te verkopen via TicketSwap?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Ik wil mijn losse dag omzetten naar het hele arrangement.,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Rijdt er een pendeldienst vanaf het centraal station?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe vaak gaat de bus heen en terug naar het terrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+What time does the last shuttle leave in the evening?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Moet ik voor de pendelbus een apart kaartje kopen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Wo hält der Shuttlebus genau?,Neutral (task-oriented),high,de,answer_key_sentiment_v2
+Wat kost een parkeerplaats voor een dag?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is er een plek waar ik iemand kan afzetten dichtbij de ingang?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+What is the exact address to enter in my navigation?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Hoe ver is het parkeerterrein lopen naar de entree?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik met de auto het terrein weer af nadat ik geparkeerd heb?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn er oplaadpunten voor elektrische autos bij de parkeerplaats?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik mijn scooter ergens kwijt in de buurt?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Welke trein moet ik nemen en hoe laat gaat de laatste terug?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is there a place to leave my bicycle safely?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Rijdt er openbaar vervoer na middernacht nog?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe laat mogen we ons verblijf betreden?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Tot welk tijdstip moeten we uitgecheckt zijn?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Can we arrive a day earlier than booked?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Waar meld ik me aan bij aankomst op het kampeerterrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+De code van onze lodge werkt niet meer.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+"Het slot van onze huisje gaat niet open, we staan buiten.",Negative (frustrated),high,nl,answer_key_sentiment_v2
+We wait at the accommodation entrance and nobody is helping us.,Negative (frustrated),high,en,answer_key_sentiment_v2
+"Onze sleutel is niet afgegeven bij de balie, wat nu?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+De deur van de comfortcabine klemt en we kunnen er niet in.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Mag ik tussendoor naar buiten en later weer naar binnen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik even iets naar de auto brengen en dan terugkomen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+If I leave for lunch can I come back with the same ticket?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Is uitchecken en later weer inchecken toegestaan op dezelfde dag?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn er warme douches aanwezig?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoeveel toiletten zijn er per veld?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Mag ik zelf koken op mijn plek?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Are there any wheelchair accessible toilets?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+De wc's zitten al de hele middag vol en zijn niet schoongemaakt.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Er is nergens stromend water te vinden bij ons vak.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Gibt es Duschen auf dem Gelände?,Neutral (task-oriented),high,de,answer_key_sentiment_v2
+De rij voor de toiletten is onacceptabel lang.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Wat mag ik wel en niet meenemen naar binnen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn huisdieren toegestaan?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Are glass bottles allowed inside?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Mag ik een eigen partytent neerzetten naast mijn plek?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Wat zijn de regels rondom roken op het terrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe groot zijn de bagagekluizen en kan ik er een reserveren?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Waar vind ik de bewaarplek voor mijn spullen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Can I store my backpack somewhere during the day?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Zijn de kluisjes de hele nacht toegankelijk?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Ik heb mijn jas laten liggen, waar kan ik die ophalen?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Waar is het bureau voor verloren voorwerpen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"I left my sunglasses at the table yesterday, do you have them?",Neutral (task-oriented),borderline,en,answer_key_sentiment_v2
+"Mijn portemonnee is kwijt, is die ergens ingeleverd?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Hoe krijg ik iets terug dat na afloop is gevonden?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Kan ik ergens een powerbank huren?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is er een oplaadstation voor telefoons?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"My phone is almost dead, where can I charge it?",Neutral (task-oriented),borderline,en,answer_key_sentiment_v2
+Zijn er stopcontacten beschikbaar voor bezoekers?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Waar staat het informatiepunt precies?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe loop ik van de ingang naar de grote zaal?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Where can I find the first aid post?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+"Ik ben de weg kwijt, waar is de uitgang?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Heb je een plattegrond van het terrein?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Welche Richtung muss ich zum Haupteingang gehen?,Neutral (task-oriented),high,de,answer_key_sentiment_v2
+Is er een supermarkt of kiosk in de buurt?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Verkopen jullie ook souvenirs of kleding?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Do you sell painkillers or basic medicine on site?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Waar kan ik tandpasta en zeep kopen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Is er een winkeltje waar ik batterijen kan krijgen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Iemand is hier in elkaar gezakt, kom snel!",Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+We hebben direct een arts nodig bij de ingang.,Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"There is smoke coming from the kitchen, please help!",Neutral (task-oriented),REVIEW-emergency,en,answer_key_sentiment_v2
+Ik ben mijn kind kwijt en kan hem nergens vinden!,Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"Bel de beveiliging, er is een vechtpartij!",Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+"Hilfe, jemand ist verletzt und blutet stark!",Neutral (task-oriented),REVIEW-emergency,de,answer_key_sentiment_v2
+Er zit iemand op de grond die niet meer reageert.,Neutral (task-oriented),REVIEW-emergency,nl,answer_key_sentiment_v2
+De muziek staat zo hard dat ik er hoofdpijn van krijg.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Wij wonen ernaast en de bass dendert door onze muren.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+The volume in the main room is dangerously loud.,Negative (frustrated),high,en,answer_key_sentiment_v2
+Er is veel te veel lawaai van de buren op de camping.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+"Kan het geluid wat zachter, dit is niet te verdragen.",Negative (frustrated),high,nl,answer_key_sentiment_v2
+Een medewerker deed erg onbeschoft tegen mij.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Ik werd zonder uitleg tegengehouden door de beveiliging.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+The staff at the counter was extremely rude to us.,Negative (frustrated),high,en,answer_key_sentiment_v2
+De portier weigerde ons zonder geldige reden.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Ik voel me onheus behandeld door iemand van het personeel.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Ik heb opgewaardeerd maar het geld staat niet op mijn kaart.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Mijn betaling is mislukt maar er is wel afgeschreven.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+How can I check how much credit is left on my card?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Het opwaarderen lukt niet met mijn pinpas.,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Er is twee keer hetzelfde bedrag afgeschreven.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Hoe vraag ik het bedrag dat overblijft terug?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Krijg ik mijn geld terug als ik niet kan komen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+When will I receive the refund of my unused credit?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Ik wil mijn aanbetaling terug ontvangen.,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Waar lever ik de bekers in voor mijn geld terug?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoeveel krijg ik per beker retour?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Do I get money back for returning the cups?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Is er borg op de glazen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hebben jullie glutenvrije gerechten?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn er vegetarische opties beschikbaar?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Do you have any halal food available?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Mag ik mijn eigen eten meenemen vanwege een allergie?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+"Ich bin Vegetarier, gibt es passende Gerichte?",Neutral (task-oriented),high,de,answer_key_sentiment_v2
+Hoe laat begint het eerste optreden?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Wanneer is de tour afgelopen?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+What time does the show start tonight?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Is er een tijdschema van vandaag beschikbaar?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Hoe laat gaan de deuren open?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Zijn er ook activiteiten in de middag?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Wanneer komt de aftermovie online?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Waar kan ik de fotos van vorig jaar terugvinden?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+When do tickets for the next edition go on sale?,Neutral (task-oriented),high,en,answer_key_sentiment_v2
+Is de datum voor volgend seizoen al bekend?,Neutral (task-oriented),high,nl,answer_key_sentiment_v2
+Dank je wel voor de snelle hulp!,Positive,high,nl,answer_key_sentiment_v2
+"Oke helder, bedankt.",Positive,high,nl,answer_key_sentiment_v2
+"Thanks a lot, appreciated.",Positive,high,en,answer_key_sentiment_v2
+"Prima, dan weet ik het.",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Fijne dag nog!,Positive,high,nl,answer_key_sentiment_v2
+Danke schön!,Positive,high,de,answer_key_sentiment_v2
+"Hallo, is daar iemand?",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Goedemorgen,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Top!,Positive,high,nl,answer_key_sentiment_v2
+"Ik snap het, dank voor de uitleg.",Positive,high,nl,answer_key_sentiment_v2
+"Dat is duidelijk zo, tot later.",Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+"Cheers, that helps.",Positive,high,en,answer_key_sentiment_v2
+Nog een vraagje trouwens,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Ok,Neutral (task-oriented),borderline,und,answer_key_sentiment_v2
+Dit is geen antwoord op mijn vraag.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Ik wacht nog steeds op reactie.,Negative (frustrated),high,nl,answer_key_sentiment_v2
+Kun je iemand anders erbij halen?,Neutral (task-oriented),borderline,nl,answer_key_sentiment_v2
+Bedankt voor het meedenken.,Positive,high,nl,answer_key_sentiment_v2
+"Voor de derde keer nu, er is nog steeds niemand langsgekomen.",Negative (frustrated),high,nl,curated_hard_cases
+Ik heb dit nu al twee keer gevraagd en krijg steeds hetzelfde antwoord.,Negative (frustrated),high,nl,curated_hard_cases
+"Dit is echt belachelijk, ik sta hier al een uur te wachten.",Negative (frustrated),high,nl,curated_hard_cases
+"Je helpt me totaal niet, ik wil gewoon een echt persoon spreken.",Negative (frustrated),high,nl,curated_hard_cases
+"Waardeloos dat dit niet gewoon geregeld is, ik baal er enorm van.",Negative (frustrated),high,nl,curated_hard_cases
+"Wat een slechte organisatie zeg, hier klopt niks van.",Negative (frustrated),high,nl,curated_hard_cases
+Ik word van het kastje naar de muur gestuurd en niemand doet iets.,Negative (frustrated),high,nl,curated_hard_cases
+"Dat antwoord had ik al, daar heb ik dus helemaal niets aan.",Negative (frustrated),high,nl,curated_hard_cases
+"Ik ben het echt zat, dit is nu al de hele dag zo.",Negative (frustrated),high,nl,curated_hard_cases
+Serieus? Dit kan toch niet waar zijn.,Negative (frustrated),high,nl,curated_hard_cases
+"Jullie reageren nergens op, ik voel me totaal niet serieus genomen.",Negative (frustrated),high,nl,curated_hard_cases
+"Hier heb ik dus echt niks aan, bedankt voor niets.",Negative (frustrated),high,nl,curated_hard_cases
+"Nou, geweldig hoor, weer geen antwoord op mijn vraag.",Negative (frustrated),high,nl,curated_hard_cases
+"Ik snap er niks meer van, dit is veel te ingewikkeld gemaakt.",Negative (frustrated),high,nl,curated_hard_cases
+This is the third time I am asking and nobody is helping me.,Negative (frustrated),high,en,curated_hard_cases
+"That does not answer my question at all, please read it again.",Negative (frustrated),high,en,curated_hard_cases
+"Honestly this is ridiculous, I have been waiting for over an hour.",Negative (frustrated),high,en,curated_hard_cases
+You keep repeating yourself and it is not helping me one bit.,Negative (frustrated),high,en,curated_hard_cases
+"Terrible organisation, nobody seems to know anything here.",Negative (frustrated),high,en,curated_hard_cases
+"I am done with this, just give me a real person to talk to.",Negative (frustrated),high,en,curated_hard_cases
+"Das ist wirklich frustrierend, niemand kann mir hier helfen.",Negative (frustrated),high,de,curated_hard_cases
+Ich habe das jetzt schon dreimal gefragt und bekomme keine Antwort.,Negative (frustrated),high,de,curated_hard_cases
+"C'est vraiment inadmissible, personne ne me répond depuis ce matin.",Negative (frustrated),high,fr,curated_hard_cases
+"Er is 30 euro afgeschreven terwijl ik het maar een uur gebruikt heb, klopt dat?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+Mijn betaling is mislukt maar het bedrag is wel afgeschreven.,Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Er is een bout losgeraakt van mijn karretje, hebben jullie reserveonderdelen?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Mijn tent is kapot gewaaid, kan ik ergens een nieuwe kopen?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Het nummer dat jullie gaven is niet in gebruik, is er een ander nummer?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+"De link werkt bij mij niet, kun je hem opnieuw sturen?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+Ik krijg de recap van zondag niet geopend.,Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Ik ben mijn sleutelbos verloren tijdens de eindshow, waar kan ik terecht?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Mijn vrouw is gisteren haar telefoon verloren bij het podium, is die ingeleverd?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+Ik kan niet meer bij mijn tickets omdat mijn telefoon weg is.,Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Ik sta niet meer op het terrein, kan ik dit ook op een andere manier regelen?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+"Er wordt op de camping nog steeds muziek gedraaid, tot hoe laat mag dat?",Neutral (task-oriented),borderline,nl,curated_hard_cases
+Waarom staat het volume bij de mainstage zachter dan bij de andere podia?,Neutral (task-oriented),borderline,nl,curated_hard_cases
+I paid for my food but the order did not go through.,Neutral (task-oriented),borderline,en,curated_hard_cases
+"I lost my wallet last night with all my cards in it, where do I ask?",Neutral (task-oriented),borderline,en,curated_hard_cases
+"My tent zipper broke, is there anywhere on site to buy a new one?",Neutral (task-oriented),borderline,en,curated_hard_cases
+The wristband scanner did not work for me this morning.,Neutral (task-oriented),borderline,en,curated_hard_cases
+"Ich habe meinen Schlüssel verloren, wo kann ich nachfragen?",Neutral (task-oriented),borderline,de,curated_hard_cases
+Meine Karte funktioniert nicht mehr am Automaten.,Neutral (task-oriented),borderline,de,curated_hard_cases
+"J'ai perdu mon téléphone hier soir, où puis-je le récupérer ?",Neutral (task-oriented),borderline,fr,curated_hard_cases
+"Je n'arrive pas à payer avec ma carte, que dois-je faire ?",Neutral (task-oriented),borderline,fr,curated_hard_cases
+Ja,Neutral (task-oriented),high,nl,curated_hard_cases
+Ja graag,Neutral (task-oriented),high,nl,curated_hard_cases
+Jaa graag,Neutral (task-oriented),high,nl,curated_hard_cases
+Ja dat mag,Neutral (task-oriented),high,nl,curated_hard_cases
+Nee dankjewel,Neutral (task-oriented),high,nl,curated_hard_cases
+"Nee hoor, dat was het.",Neutral (task-oriented),high,nl,curated_hard_cases
+Nee,Neutral (task-oriented),high,nl,curated_hard_cases
+Oke duidelijk,Neutral (task-oriented),high,nl,curated_hard_cases
+"Ah oke, bedankt.",Positive,high,nl,curated_hard_cases
+Dankjewel,Positive,high,nl,curated_hard_cases
+Bedankt voor je hulp.,Positive,high,nl,curated_hard_cases
+"Dank je wel, fijne dag verder.",Positive,high,nl,curated_hard_cases
+Ok thanks,Positive,high,en,curated_hard_cases
+Yes please,Neutral (task-oriented),high,en,curated_hard_cases
+"No thanks, that was all.",Neutral (task-oriented),high,en,curated_hard_cases
+"Alright, got it.",Neutral (task-oriented),high,en,curated_hard_cases
+Thanks,Positive,high,en,curated_hard_cases
+Danke schön,Positive,high,de,curated_hard_cases
+"Alles klar, danke.",Positive,high,de,curated_hard_cases
+Merci beaucoup,Positive,high,fr,curated_hard_cases
+Het is op de camping als het goed is.,Neutral (task-oriented),high,nl,curated_hard_cases
+Het is nu vier uur en we hebben de tickets al.,Neutral (task-oriented),high,nl,curated_hard_cases
+En de kiss and ride dan?,Neutral (task-oriented),high,nl,curated_hard_cases
+Op zondag,Neutral (task-oriented),high,nl,curated_hard_cases
+En hoe zit dat voor de zaterdag?,Neutral (task-oriented),high,nl,curated_hard_cases
+Wat kost de shuttlebus eigenlijk?,Neutral (task-oriented),high,nl,curated_hard_cases
+Hoe koop ik een kluisje?,Neutral (task-oriented),high,nl,curated_hard_cases
+Ontbijt camping,Neutral (task-oriented),high,nl,curated_hard_cases
+Waar is de kiss and ride op maandag?,Neutral (task-oriented),high,nl,curated_hard_cases
+Hoe laat komt deze artiest op het hoofdpodium?,Neutral (task-oriented),high,nl,curated_hard_cases
+List me the stages I can access please,Neutral (task-oriented),high,en,curated_hard_cases
+"Wat gaaf, ik heb er echt zin in dit weekend!",Positive,high,nl,curated_hard_cases
+"Super bedankt, je hebt me echt goed geholpen!",Positive,high,nl,curated_hard_cases
+"Top geregeld, hier ben ik heel blij mee.",Positive,high,nl,curated_hard_cases
+"Wat een fantastisch festival was dit, echt genoten!",Positive,high,nl,curated_hard_cases
+"Je bent een held, dankjewel hiervoor!",Positive,high,nl,curated_hard_cases
+"Wauw, dat is goed nieuws, daar word ik vrolijk van.",Positive,high,nl,curated_hard_cases
+"Perfect, dat scheelt me een hoop gedoe. Top!",Positive,high,nl,curated_hard_cases
+"Dat is echt heel fijn om te horen, dank je wel!",Positive,high,nl,curated_hard_cases
+"Amazing, thank you so much for sorting that out!",Positive,high,en,curated_hard_cases
+"That is brilliant news, I am really looking forward to it!",Positive,high,en,curated_hard_cases
+"You have been super helpful, thanks a lot!",Positive,high,en,curated_hard_cases
+"Best festival I have ever been to, absolutely loved it!",Positive,high,en,curated_hard_cases
+"Super, vielen Dank für die schnelle Hilfe!",Positive,high,de,curated_hard_cases
+"Das klingt fantastisch, ich freue mich riesig!",Positive,high,de,curated_hard_cases
+"Génial, merci beaucoup pour votre aide !",Positive,high,fr,curated_hard_cases
+Hoe krijg ik jou weg,Negative (frustrated),high,nl,curated_hard_cases
+"Hoe zet ik dit uit, ik wil geen berichten meer van je.",Negative (frustrated),high,nl,curated_hard_cases
+"Laat me met rust, ik heb hier niet om gevraagd.",Negative (frustrated),high,nl,curated_hard_cases
+"Stop met die berichten alsjeblieft, ik word er gek van.",Negative (frustrated),high,nl,curated_hard_cases
+Kan ik gewoon een mens spreken in plaats van deze bot?,Negative (frustrated),high,nl,curated_hard_cases
+Ik wil niet met een robot praten.,Negative (frustrated),high,nl,curated_hard_cases
+Hou op met spammen.,Negative (frustrated),high,nl,curated_hard_cases
+How do I get rid of you?,Negative (frustrated),high,en,curated_hard_cases
+"Stop sending me these messages, I never signed up for this.",Negative (frustrated),high,en,curated_hard_cases
+Can I talk to an actual human instead of this bot?,Negative (frustrated),high,en,curated_hard_cases
+Leave me alone please.,Negative (frustrated),high,en,curated_hard_cases
+Wie werde ich diese Nachrichten wieder los?,Negative (frustrated),high,de,curated_hard_cases
+Die is er dus niet,Negative (frustrated),borderline,nl,curated_hard_cases
+"Dus dat werkt niet, fijn.",Negative (frustrated),borderline,nl,curated_hard_cases
+Dat nummer bestaat helemaal niet.,Negative (frustrated),borderline,nl,curated_hard_cases
+"Nummer is niet beschikbaar, dat werkt dus niet.",Negative (frustrated),borderline,nl,curated_hard_cases
+Dus ik kom er niet uit zo.,Negative (frustrated),borderline,nl,curated_hard_cases
+"Ik heb het geprobeerd, werkt niet, en nu?",Negative (frustrated),borderline,nl,curated_hard_cases
+Dat had je ook meteen kunnen zeggen.,Negative (frustrated),borderline,nl,curated_hard_cases
+"Ja dat weet ik al, daar vroeg ik niet naar.",Negative (frustrated),high,nl,curated_hard_cases
+"Nee dat klopt niet, je begrijpt me niet.",Negative (frustrated),high,nl,curated_hard_cases
+Je snapt mijn vraag niet.,Negative (frustrated),high,nl,curated_hard_cases
+Dat is niet wat ik vroeg.,Negative (frustrated),high,nl,curated_hard_cases
+So that does not exist then.,Negative (frustrated),borderline,en,curated_hard_cases
+That is not what I asked you.,Negative (frustrated),high,en,curated_hard_cases
+You are not understanding my question at all.,Negative (frustrated),high,en,curated_hard_cases
+Well that was useless.,Negative (frustrated),high,en,curated_hard_cases
+"Tried it, does not work, now what?",Negative (frustrated),borderline,en,curated_hard_cases
+"Hoi! Wij komen dit weekend voor het eerst, super leuk.",Positive,high,nl,curated_hard_cases
+"Goedemorgen! We zijn van plan vandaag te komen, waar parkeren we?",Positive,borderline,nl,curated_hard_cases
+"Hey! Ik verheug me er nu al op, hoe laat gaan de deuren open?",Positive,high,nl,curated_hard_cases
+Hallo daar! Leuk dat jullie dit doen.,Positive,high,nl,curated_hard_cases
+Ik heb er echt zin in! Mag ik nog iets vragen?,Positive,high,nl,curated_hard_cases
+"Wat leuk dat er dit jaar weer een editie is, ik kom zeker.",Positive,high,nl,curated_hard_cases
+"Ik zie er iets gaafs varen op het water, kan ik daar ook mee?",Positive,borderline,nl,curated_hard_cases
+Klinkt goed! Doe mij maar de link.,Positive,borderline,nl,curated_hard_cases
+Ik wil graag de recap zien! 😀,Positive,high,nl,curated_hard_cases
+Mag ik alsjeblieft de foto's zien? 🙏,Positive,borderline,nl,curated_hard_cases
+"Leuke chat trouwens, werkt fijn.",Positive,high,nl,curated_hard_cases
+Kun je voor elk podium een danspasje verzinnen? 😄,Positive,high,nl,curated_hard_cases
+"Grappig idee, doe maar!",Positive,high,nl,curated_hard_cases
+"Fijn, dat scheelt weer.",Positive,borderline,nl,curated_hard_cases
+"Mooi zo, dan weten we dat.",Positive,borderline,nl,curated_hard_cases
+"Helemaal top, tot dit weekend!",Positive,high,nl,curated_hard_cases
+Hi there! Really looking forward to this weekend.,Positive,high,en,curated_hard_cases
+"Hey! First time visiting, so excited about it.",Positive,high,en,curated_hard_cases
+"Hello! We are planning to come today, where do we park?",Positive,borderline,en,curated_hard_cases
+I would love to see the recap! 😀,Positive,high,en,curated_hard_cases
+"Sounds great, send it over!",Positive,borderline,en,curated_hard_cases
+"Nice, that makes it a lot easier.",Positive,borderline,en,curated_hard_cases
+Can you match a cake recipe step to each stage? 😄,Positive,high,en,curated_hard_cases
+"Lovely, thanks for that.",Positive,high,en,curated_hard_cases
+"Great, see you this weekend!",Positive,high,en,curated_hard_cases
+"Salut ! Nous venons pour la première fois, trop bien.",Positive,high,fr,curated_hard_cases
+Bonjour ! On a hâte d'y être.,Positive,high,fr,curated_hard_cases
+Hallo! Wir freuen uns schon riesig auf das Wochenende.,Positive,high,de,curated_hard_cases
+"Servus! Wir kommen heute, wo parken wir?",Positive,borderline,de,curated_hard_cases
+"Goedemorgen, waar kan ik parkeren?",Neutral (task-oriented),high,nl,curated_hard_cases
+"Hallo, hoe laat gaat het terrein open?",Neutral (task-oriented),high,nl,curated_hard_cases
+"Hoi, mijn zoon zit in een rolstoel. Is er een aangepaste plek?",Neutral (task-oriented),high,nl,curated_hard_cases
+"Hey, waar is de shuttlebus halte?",Neutral (task-oriented),high,nl,curated_hard_cases
+"Hello, what time does the campsite close?",Neutral (task-oriented),high,en,curated_hard_cases
+"Hi, where can I find the lockers?",Neutral (task-oriented),high,en,curated_hard_cases
+"Guten Tag, wo finde ich den Informationspunkt?",Neutral (task-oriented),high,de,curated_hard_cases
+"Bonjour, où se trouve la consigne ?",Neutral (task-oriented),high,fr,curated_hard_cases

@@ -53,3 +53,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Trained sentiment model: 1.1 GB, rebuild with `python momants_sentiment.py --train`
+model/momants-sentiment/
