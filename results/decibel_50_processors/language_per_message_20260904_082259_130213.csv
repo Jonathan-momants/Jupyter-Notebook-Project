@@ -1,0 +1,73 @@
+conversation_id,created_at,text,language,confidence
+0586c631-e5d6-5ce9-93b5-80ad265c11d7,2026-08-30T01:00:45+00:00,Waar is de Kiss & Ride op maandag?,nl,0.9308
+0d0c71d4-69bd-55d6-9f48-aa086855f659,2026-09-01T04:01:50+00:00,Yes! (opt in),und,0.4506
+138eb5ef-f1c4-5921-8f48-7884ddeaa75d,2026-09-02T13:00:45+00:00,"Bonjour, j ai perdu ma carte d identite samedi au controle des tickets",und,0.4479
+17cb7462-9758-510b-bea1-8b671ef2ec1f,2026-08-30T13:00:45+00:00,Kan ik ergens tickets kopen voor die snelle rib op het water?,nl,0.8323
+1d6e5161-365c-5134-ad64-46e6c44fa9cd,2026-08-31T01:00:45+00:00,"Ons huisje gaat niet open met de code, we hebben het meerdere keren geprobeerd",nl,0.9981
+1d6e5161-365c-5134-ad64-46e6c44fa9cd,2026-08-31T01:03:15+00:00,We staan hier al een half uur in de regen,nl,0.9229
+24c40ca2-f8f1-5379-862d-f8684bd6dc1e,2026-09-02T04:00:45+00:00,Bis wann muessen wir am Montag auschecken?,de,0.9204
+27245162-edcd-5878-93f4-cbbed86296fd,2026-08-29T22:00:45+00:00,Wanneer komen de foto's van dit jaar online?,nl,0.8819
+27245162-edcd-5878-93f4-cbbed86296fd,2026-08-29T22:03:15+00:00,"Jammer, had ik graag geweten",nl,0.9537
+2b7b5a15-8a8e-5246-9b97-ad324bf7a51d,2026-08-28T13:00:45+00:00,Hoe laat gaat het festival zondag open?,nl,0.9802
+2d6173fb-b52e-5e4f-aae3-0ad38190d74c,2026-08-31T13:01:50+00:00,See Saturday's recap,en,0.9784
+2f101f5c-67ad-5a19-9dc4-63fed0da2d3a,2026-08-30T22:00:45+00:00,Ik wil de naam op mijn ticket laten wijzigen,nl,0.9935
+2f101f5c-67ad-5a19-9dc4-63fed0da2d3a,2026-08-30T22:03:15+00:00,Waarom kan dat niet gewoon hier,nl,0.9703
+3066203b-5344-5c9c-8e1e-933a39c30c17,2026-09-03T10:00:45+00:00,"De toiletten bij vak 4 zijn al uren niet schoongemaakt, dit is niet te doen",nl,0.9971
+3066203b-5344-5c9c-8e1e-933a39c30c17,2026-09-03T10:03:15+00:00,Ik hoop dat er nu echt iets gebeurt,nl,0.8701
+38e901d6-5550-5649-8db4-569abcd3516d,2026-08-28T22:00:45+00:00,Kan ik mijn dagticket nog omzetten naar een weekendticket?,nl,0.9976
+3c69e03a-1dff-5761-9c11-e06cd5d95e1c,2026-09-03T07:00:45+00:00,Er ligt hier iemand op de grond bij podium 2 die niet reageert,nl,0.9843
+404f13c4-096e-5b53-bc35-07f9a70a9812,2026-09-03T16:00:45+00:00,Wie speelt er vanavond op de mainstage?,nl,0.9437
+4bd312f5-6372-5d6a-9e13-8e96fcadb741,2026-08-29T01:00:45+00:00,Zijn er warme douches op de Lakeside camping?,nl,0.7581
+503eb262-2c0b-5f91-8491-fd0a72bff29d,2026-09-01T13:00:45+00:00,The scanner keeps rejecting my barcode at the gate,en,0.867
+503eb262-2c0b-5f91-8491-fd0a72bff29d,2026-09-01T13:03:15+00:00,"Sorted, thanks a lot",en,0.8311
+53c2890a-0cc7-5eb8-b585-5a9674fcb45a,2026-09-02T19:00:45+00:00,A quelle heure ouvre le festival dimanche?,und,0.4789
+556c9810-177b-5335-8898-3a28ecb21178,2026-08-29T04:00:45+00:00,Mag ik een eigen gasstel meenemen naar de camping?,nl,0.9084
+562ea53b-8f12-5b01-a4ea-1297a66f2919,2026-08-30T16:00:45+00:00,Verkopen jullie oordoppen op het terrein?,nl,0.9241
+56431006-e602-5075-9bc5-d2c131763374,2026-08-29T10:00:45+00:00,Afmetingen lockers,nl,0.69
+5a4ee559-14a2-5a02-9779-7a23cfabe5a4,2026-09-01T16:00:45+00:00,"I lost my wallet last night, where can I check",en,0.8043
+5a4ee559-14a2-5a02-9779-7a23cfabe5a4,2026-09-01T16:03:15+00:00,So you cannot help me at all,en,0.8411
+68e55fa1-b1e8-5604-8d04-71b0256165d5,2026-08-31T22:00:45+00:00,Yo,und,0.0
+6984de04-5921-5a1b-a8d0-484517aaf7d1,2026-08-30T19:00:45+00:00,Tot hoe laat kan ik maandag uitchecken op de camping?,nl,0.9721
+71588a13-ad68-58d8-9a5e-3bd8c5c821a2,2026-08-31T04:00:45+00:00,"Mijn polsbandje is doorgeknipt, wat nu?",nl,0.9895
+71588a13-ad68-58d8-9a5e-3bd8c5c821a2,2026-08-31T04:03:15+00:00,"Perfect, bedankt!",nl,0.7061
+78eaf8f2-fa37-52f8-aa9e-383c017e73ff,2026-09-02T07:00:45+00:00,Mein Armband ist gerissen,de,0.8257
+78eaf8f2-fa37-52f8-aa9e-383c017e73ff,2026-09-02T07:03:15+00:00,Danke schoen!,nl,0.7537
+7b73073a-daaf-5f32-810b-c2c9b54c8401,2026-08-30T07:00:45+00:00,Mag ik mijn hond meenemen naar de camping?,nl,0.989
+85a8171f-4541-5938-a3e5-4bfd77218cde,2026-09-03T13:00:45+00:00,Een beveiliger sprak me zonder reden heel onvriendelijk aan,nl,0.9996
+85a8171f-4541-5938-a3e5-4bfd77218cde,2026-09-03T13:03:15+00:00,Bij ingang Zuid,nl,0.9259
+88d29ae7-a6d0-5ef1-b0ed-3cfe269b99e0,2026-08-28T16:00:45+00:00,Wat kost de shuttlebus vanaf Tilburg CS?,nl,0.7543
+88d29ae7-a6d0-5ef1-b0ed-3cfe269b99e0,2026-08-28T16:03:15+00:00,Ja graag,nl,0.9931
+88d29ae7-a6d0-5ef1-b0ed-3cfe269b99e0,2026-08-28T16:07:05+00:00,"Top, dank je!",und,0.521
+89a25f3f-e57f-54ac-96fe-6c057226abc6,2026-09-01T19:00:45+00:00,Where should we get a taxi to pick us up on Monday morning,en,0.962
+8e8b3388-2cb8-57e9-b97b-01d11e3c455a,2026-08-31T16:01:50+00:00,See Saturday's recap,en,0.9784
+8e8b3388-2cb8-57e9-b97b-01d11e3c455a,2026-08-31T16:05:00+00:00,See Sunday's recap,en,0.9177
+94463ed0-2fe3-5f56-8ab4-40c185051493,2026-09-02T16:00:45+00:00,A que hora sale el ultimo autobus a Tilburg?,nl,0.566
+98adecb7-e0a0-5f83-87d3-fd59e864c55a,2026-09-01T10:00:45+00:00,Are there wheelchair accessible toilets on site?,en,0.9813
+99d1260c-d9a3-5dbe-b000-9d0b3fa79e24,2026-09-02T01:00:45+00:00,Gibt es Ladesaeulen fuer Elektroautos auf dem Parkplatz?,de,0.9956
+9ba8cb83-fdff-527f-aa42-5070d9b5a9dc,2026-08-28T19:00:45+00:00,Hoe groot zijn de lockers op het terrein?,nl,0.9695
+a0960cbd-7995-53f5-a9cf-4962db8922c9,2026-09-01T07:00:45+00:00,What time does the last shuttle leave on Sunday?,en,0.9782
+ab96f21b-c36f-5c27-8f43-a5f9436a49ec,2026-09-02T22:00:45+00:00,Hoe kom ik zondagavond terug naar Tilburg?,nl,0.9986
+ab96f21b-c36f-5c27-8f43-a5f9436a49ec,2026-09-02T22:03:15+00:00,Ja,und,0.0
+ab96f21b-c36f-5c27-8f43-a5f9436a49ec,2026-09-02T22:07:05+00:00,En hoe lang duurt de rit,nl,0.9361
+ab96f21b-c36f-5c27-8f43-a5f9436a49ec,2026-09-02T22:12:15+00:00,"Helder, dank!",und,0.505
+abbc594a-63dc-5517-9733-5e080c62d88d,2026-09-01T01:00:45+00:00,Bedankt voor het meedenken,nl,0.893
+b3b42dff-dac7-5fbc-bfa9-9217fb0e10d7,2026-08-29T16:00:45+00:00,Ik kan mijn ticket niet vinden in mijn mail,nl,0.9594
+b46e3517-607f-5815-96bd-dc32bc6ed5f0,2026-08-31T19:00:45+00:00,Dank je wel voor de snelle hulp!,nl,0.8231
+b7505b3a-601b-537c-a452-818fd920be3a,2026-09-03T04:00:45+00:00,How do I get from the campsite to the mainstage?,en,0.8397
+b7505b3a-601b-537c-a452-818fd920be3a,2026-09-03T04:03:15+00:00,"No thanks, that helps",en,0.8969
+c2ed83de-e28a-5036-a0ad-8e406abcf25c,2026-09-02T10:00:45+00:00,Entro che ora bisogna uscire lunedi dal campeggio?,en,0.5825
+c4a52e87-99c5-557a-8957-f3b7fbba70e3,2026-08-29T13:00:45+00:00,Geluidsoverlast melden comfort camping,nl,0.9461
+c5d4d3cf-a25b-56c5-ba16-cf276e4f1575,2026-08-31T07:00:45+00:00,Waar kan ik een gevonden telefoon inleveren?,nl,0.9978
+ce9ac876-270c-59df-996c-f616723f3138,2026-08-31T10:00:45+00:00,Mijn opwaardering is mislukt maar het geld is wel afgeschreven!,nl,0.9991
+ce9ac876-270c-59df-996c-f616723f3138,2026-08-31T10:03:15+00:00,"Opgelost, top!",nl,0.9447
+cf0ef829-f6bf-57dd-ab06-d95268c5975b,2026-09-01T22:00:45+00:00,Can I leave the site and come back with the same wristband?,en,0.807
+cf0ef829-f6bf-57dd-ab06-d95268c5975b,2026-09-01T22:03:15+00:00,Great,en,0.8286
+d46795d9-869c-5433-baea-c64753fae947,2026-08-30T10:00:45+00:00,Hoeveel borg zit er op een locker?,nl,0.893
+d46795d9-869c-5433-baea-c64753fae947,2026-08-30T10:03:15+00:00,Dat is niet handig,nl,0.8618
+daba352f-d83e-5112-97b6-893cbb2b741e,2026-08-29T07:00:45+00:00,Ik ben mijn jas kwijt bij de mainstage,nl,0.9758
+daba352f-d83e-5112-97b6-893cbb2b741e,2026-08-29T07:03:15+00:00,"Gevonden, dank!",nl,0.9606
+df952f64-16cb-5bca-85f6-e10ca84041ec,2026-08-29T19:00:45+00:00,Ik zoek de EHBO post,nl,0.7591
+e232f59d-595e-5a23-a30f-2b3812228612,2026-08-30T04:00:45+00:00,Zijn er oplaadpunten bij de mainstage?,nl,0.9831
+fcc733d1-8d3a-56bb-8bf9-978284ec1df5,2026-09-03T01:00:45+00:00,Ik wil een extra ticket bijkopen voor een vriend,nl,0.9566
+fcc733d1-8d3a-56bb-8bf9-978284ec1df5,2026-09-03T01:03:15+00:00,Weekend,nl,0.6471
+fcc733d1-8d3a-56bb-8bf9-978284ec1df5,2026-09-03T01:07:05+00:00,Dus je kunt niks voor me doen,nl,0.8958

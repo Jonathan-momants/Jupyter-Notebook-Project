@@ -98,3 +98,17 @@ mtime_ms = 1788444454948
 storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/38eca11f-f1f3-4345-9339-bff6bf07723f/8bb5ef44-c361-4728-a742-2dc85759fc36"
 storage_version_token = "1788444734851572"
 content_type = "text/csv"
+
+[[outputs]]
+id = "dV5jntjOl-FE_8jFDWc84"
+uri = "file://results/decibel_50_all_processors.csv"
+type = "table"
+title = "Decibel — 50 gesprekken, alle processors"
+description = "Eén rij per gesprek met sentiment, antwoordcheck, intenties, onderwerpen en taalresultaten. Meervoudige intenties en onderwerpen zijn samengevoegd met |||."
+logical_id = "eac384ea-310c-4262-bb7d-6ca9d785f1b2"
+content_hash = "sha256:49adff75e4cfa28360f1ec905a965136247037bab52a8d2b6d145f4d9d1e7421"
+size = 23880
+mtime_ms = 1788510180569
+storage_uri = "gcs://replit-rams-assets-picard/rams/assets/repl:5afd47ab-2256-446e-a95c-46dce3068c9d/eac384ea-310c-4262-bb7d-6ca9d785f1b2/69a4b87e-4d18-41d6-baf8-fd0cf9461eb0"
+storage_version_token = "1788510209955851"
+content_type = "text/csv"
